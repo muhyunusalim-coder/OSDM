@@ -113,7 +113,7 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
   return (
     <div className="space-y-6 mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
       {/* KPI Overview Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4.5">
         {[
           { label: 'Urgen (≤ 1 Tahun)', value: stats.within1Year.toString(), icon: Clock, color: 'rose' as const, subtext: 'Tindakan Segera Diperlukan' },
           { label: 'Proyeksi 5 Tahun', value: stats.within5Years.toString(), icon: Calendar, color: 'amber' as const, subtext: `${stats.percentage5Y}% dari seluruh SDM` },
@@ -121,37 +121,56 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
           { label: 'Indeks Suksesi', value: 'Kondusif', icon: Award, color: 'emerald' as const, subtext: 'Perencanaan Formasi Aktif' },
         ].map((stat, i) => {
           const statThemes = {
-            rose: { bg: 'bg-rose-50 dark:bg-rose-500/10 border-rose-100 dark:border-rose-800/30', text: 'text-rose-600 dark:text-rose-400', border: 'from-rose-500 to-red-500' },
-            amber: { bg: 'bg-amber-50 dark:bg-amber-500/10 border-amber-100 dark:border-amber-800/30', text: 'text-amber-600 dark:text-amber-400', border: 'from-amber-500 to-orange-500' },
-            emerald: { bg: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-800/30', text: 'text-emerald-600 dark:text-emerald-400', border: 'from-emerald-500 to-teal-500' }
+            rose: {
+              iconBg: 'bg-rose-50 dark:bg-rose-500/10 border-rose-100 dark:border-rose-800/40 text-rose-600 dark:text-rose-400',
+              dot: 'bg-rose-500 dark:bg-rose-400',
+              borderHover: 'hover:border-rose-300 dark:hover:border-rose-700/60',
+              glow: 'group-hover:bg-rose-500/5',
+            },
+            amber: {
+              iconBg: 'bg-amber-50 dark:bg-amber-500/10 border-amber-100 dark:border-amber-800/40 text-amber-600 dark:text-amber-400',
+              dot: 'bg-amber-500 dark:bg-amber-400',
+              borderHover: 'hover:border-amber-300 dark:hover:border-amber-700/60',
+              glow: 'group-hover:bg-amber-500/5',
+            },
+            emerald: {
+              iconBg: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-800/40 text-emerald-600 dark:text-emerald-400',
+              dot: 'bg-emerald-500 dark:bg-emerald-400',
+              borderHover: 'hover:border-emerald-300 dark:hover:border-emerald-700/60',
+              glow: 'group-hover:bg-emerald-500/5',
+            }
           };
           const theme = statThemes[stat.color];
           return (
             <div 
               key={i} 
-              className="text-left w-full relative rounded-2xl p-5 shadow-sm group hover:shadow-md transition-all duration-300 animate-in fade-in slide-in-from-bottom-4"
+              className={`group relative text-left w-full bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/90 dark:border-slate-800 shadow-sm ${theme.borderHover} hover:shadow-md transition-all duration-300 overflow-hidden animate-in fade-in slide-in-from-bottom-4`}
               style={{ animationDelay: `${i * 50}ms` }}
             >
-              {/* Gradient Border Background */}
-              <div className={`absolute inset-0 bg-gradient-to-r ${theme.border} rounded-2xl opacity-70 group-hover:opacity-100 transition-opacity`}></div>
-              
-              {/* Inner Card content */}
-              <div className="absolute inset-[1.5px] bg-white dark:bg-slate-900 rounded-[15px] z-0"></div>
+              {/* Subtle corner soft glow on hover */}
+              <div className={`absolute -right-8 -top-8 w-28 h-28 rounded-full transition-all duration-500 opacity-0 group-hover:opacity-100 pointer-events-none ${theme.glow} blur-xl`}></div>
 
-              <div className="relative z-10 flex items-start gap-4">
-                <div className={`p-3 rounded-xl ${theme.bg} ${theme.text} flex-shrink-0`}>
-                  <stat.icon size={20} strokeWidth={2} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] md:text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider leading-none mb-1.5">{stat.label}</p>
-                  <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-2xl md:text-3xl font-display font-bold text-slate-800 dark:text-slate-100 tracking-tight leading-none">
+              <div className="relative z-10 flex items-start justify-between gap-3 mb-3">
+                <div>
+                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
+                    {stat.label}
+                  </span>
+                  <div className="flex items-baseline gap-2 mt-1">
+                    <span className="text-3xl font-sans font-black text-slate-900 dark:text-slate-100 tracking-tight leading-none">
                       {stat.value}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium pt-2 border-t border-slate-100 dark:border-slate-800">
-                    {stat.subtext}
-                  </div>
+                </div>
+
+                <div className={`p-3 rounded-xl border ${theme.iconBg} shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm`}>
+                  <stat.icon size={20} strokeWidth={2} />
+                </div>
+              </div>
+
+              <div className="relative z-10 flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-xs font-medium text-slate-600 dark:text-slate-300">
+                <div className="flex items-center gap-2 truncate">
+                  <span className={`w-2 h-2 rounded-full ${theme.dot} shrink-0`}></span>
+                  <span className="truncate">{stat.subtext}</span>
                 </div>
               </div>
             </div>
