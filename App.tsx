@@ -11,16 +11,18 @@ import { getRandomQuote } from './utils/quotesGenerator';
 import { TRANSLATIONS, Language, getGreeting } from './utils/translationHelper';
 import { getBirthDateFromNIP, getRetirementAge, calculateTmtPensiun } from './utils/pensionHelpers';
 
-const DashboardPage = lazy(() => import('./components/DashboardPage'));
+import { lazyWithRetry } from './utils/lazyWithRetry';
 
-// Lazy loaded views for optimal initial loading performance
-const KGBDataPage = lazy(() => import('./components/KGBDataPage'));
-const PromotionTable = lazy(() => import('./components/PromotionTable'));
-const PensiunTable = lazy(() => import('./components/PensiunTable'));
-const KPCalendar = lazy(() => import('./components/KPCalendar'));
-const ReportPage = lazy(() => import('./components/ReportPage'));
-const FAQPage = lazy(() => import('./components/FAQPage'));
-const JamKerjaPage = lazy(() => import('./components/JamKerjaPage'));
+const DashboardPage = lazyWithRetry(() => import('./components/DashboardPage'));
+
+// Lazy loaded views with resilient retry logic
+const KGBDataPage = lazyWithRetry(() => import('./components/KGBDataPage'));
+const PromotionTable = lazyWithRetry(() => import('./components/PromotionTable'));
+const PensiunTable = lazyWithRetry(() => import('./components/PensiunTable'));
+const KPCalendar = lazyWithRetry(() => import('./components/KPCalendar'));
+const ReportPage = lazyWithRetry(() => import('./components/ReportPage'));
+const FAQPage = lazyWithRetry(() => import('./components/FAQPage'));
+const JamKerjaPage = lazyWithRetry(() => import('./components/JamKerjaPage'));
 
 // Lightweight Loading Component for Suspense
 const PageLoader = () => (

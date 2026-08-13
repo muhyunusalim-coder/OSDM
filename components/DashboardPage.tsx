@@ -1,20 +1,11 @@
-import React, { useCallback, useMemo, useState, useEffect, lazy, Suspense } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { Sparkles, X, CheckCircle, Activity, Banknote, Archive, ArrowUpRight, Check, ChevronRight, Building, Award, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Employee } from '../types';
 import { Language, TRANSLATIONS } from '../utils/translationHelper';
-
-const ServiceOverviewCharts = lazy(() => import('./ServiceOverviewCharts'));
-const ComparisonChart = lazy(() => import('./ComparisonChart'));
-const PensionProjectionDashboardChart = lazy(() => import('./PensionProjectionDashboardChart'));
-
-const ChartLoader = () => (
-  <div className="w-full h-64 bg-slate-100 dark:bg-slate-800/60 rounded-2xl animate-pulse flex flex-col items-center justify-center gap-2 border border-slate-200/50 my-4">
-    <div className="w-8 h-8 border-3 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
-    <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">Memuat grafik analitik...</span>
-  </div>
-);
-
+import ServiceOverviewCharts from './ServiceOverviewCharts';
+import ComparisonChart from './ComparisonChart';
+import PensionProjectionDashboardChart from './PensionProjectionDashboardChart';
 import { DeferredView } from './DeferredView';
 
 interface Regulation {
@@ -395,12 +386,12 @@ const DashboardPage: React.FC<Props> = React.memo(({
         </div>
       </div>
 
-      <DeferredView placeholder={<ChartLoader />}>
-        <Suspense fallback={<ChartLoader />}>
+      <DeferredView minHeight="300px">
+        <div className="space-y-6">
           <ServiceOverviewCharts employees={employees} promotionEmployees={promotionEmployees || []} stats={stats} language={language} />
           <ComparisonChart employees={employees} language={language} />
           <PensionProjectionDashboardChart employees={employees} language={language} />
-        </Suspense>
+        </div>
       </DeferredView>
     </>
   );
