@@ -1,0 +1,15 @@
+# Layanan Monitoring Kepegawaian BSKJI
+
+> Portal terpadu untuk monitoring Kenaikan Gaji Berkala (KGB), Kenaikan Pangkat (KP), Batas Usia Pensiun (BUP), dan Jam Kerja Aparatur Sipil Negara (ASN) di lingkungan Badan Standardisasi dan Kebijakan Jasa Industri (BSKJI), Kementerian Perindustrian Republik Indonesia.
+
+## Layanan Utama
+
+- [Kenaikan Gaji Berkala & Pangkat](https://www.kepegawaianbskji.my.id/#kgb): Informasi jadwal, estimasi TMT, dan pemantauan status proses KGB dan Kenaikan Pangkat.
+- [Manajemen Batas Usia Pensiun](https://www.kepegawaianbskji.my.id/#pensiun): Proyeksi pensiun ASN, estimasi tabungan pensiun, dan visualisasi distribusi usia.
+- [Pemantauan Jam Kerja](https://www.kepegawaianbskji.my.id/#jamkerja): Analisis jam kerja mingguan/bulanan, kepatuhan absensi, dan jam kerja fleksibel (FWA).
+- [Laporan & Statistik Kepegawaian](https://www.kepegawaianbskji.my.id/#laporan): Ringkasan eksekutif demografi ASN, statistik kepangkatan, dan laporan BSKJI.
+
+## Informasi Tambahan
+
+- [Panduan & FAQ](https://www.kepegawaianbskji.my.id/#faq): Pertanyaan umum terkait prosedur kepegawaian BSKJI.
+- [Portal Kepegawaian BSKJI](https://www.kepegawaianbskji.my.id/): Halaman utama layanan administrasi kepegawaian BSKJI Kemenperin.

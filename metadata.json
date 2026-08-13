@@ -1,0 +1,6 @@
+{
+  "name": "Layanan Administrasi Kepegawaian",
+  "description": "Sistem Manajemen Kepagawaian dengan integrasi Google Sheets dan Asisten AI Gemini.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

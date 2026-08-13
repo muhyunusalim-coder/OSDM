@@ -1,0 +1,31 @@
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; worker-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' ws: wss: https:; object-src 'none'; base-uri 'self'; form-action 'self';
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Access-Control-Allow-Origin: https://www.kepegawaianbskji.my.id
+  Server: Web Server
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  Expires: Thu, 31 Dec 2037 23:59:59 GMT
+
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+  Expires: Thu, 31 Dec 2037 23:59:59 GMT
+
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+  Expires: Thu, 31 Dec 2037 23:59:59 GMT
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+  Expires: Thu, 31 Dec 2037 23:59:59 GMT
+
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+  Expires: Thu, 31 Dec 2037 23:59:59 GMT
