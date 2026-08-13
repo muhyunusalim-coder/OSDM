@@ -184,9 +184,6 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                 <div className="absolute -top-32 -right-32 w-64 h-64 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.1)_0%,transparent_70%)] pointer-events-none"></div>
                 
                 <div className="mb-6 sm:mb-8 text-center relative z-10">
-                    <span className="px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] inline-block mb-3 sm:mb-4 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-                        {t('hero_tag')}
-                    </span>
                     <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 font-display tracking-tight">{t('login_title')}</h2>
                     <p className="text-slate-300 text-xs sm:text-sm">{t('login_subtitle')}</p>
                 </div>
