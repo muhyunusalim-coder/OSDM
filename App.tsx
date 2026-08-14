@@ -65,39 +65,64 @@ interface MenuItemProps {
   view: string;
   icon: any;
   label: string;
-  colorClass: string;
+  colorClass?: string;
   currentView: string;
   setCurrentView: (view: any) => void;
   setMobileMenuOpen: (open: boolean) => void;
   className?: string;
   isNested?: boolean;
+  badge?: string | number | null;
+  badgeColor?: string;
 }
 
-const MenuItem = React.memo(({ view, icon: Icon, label, colorClass, currentView, setCurrentView, setMobileMenuOpen, className = "", isNested = false }: MenuItemProps) => {
+const MenuItem = React.memo(({ 
+  view, 
+  icon: Icon, 
+  label, 
+  colorClass = "text-emerald-400", 
+  currentView, 
+  setCurrentView, 
+  setMobileMenuOpen, 
+  className = "", 
+  isNested = false,
+  badge = null,
+  badgeColor = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+}: MenuItemProps) => {
   const isActive = currentView === view;
   return (
     <button 
         onClick={() => { setCurrentView(view as any); setMobileMenuOpen(false); }}
-        className={`w-full flex items-center justify-start transition-all duration-200 group relative overflow-hidden ${
+        className={`w-full flex items-center justify-start transition-all duration-200 group relative overflow-hidden text-left ${
             isNested 
-            ? 'text-[13px] py-2 px-3 gap-3 rounded-lg ml-1' 
-            : 'text-sm py-2.5 px-3.5 gap-3.5 rounded-xl'
+            ? 'text-[13px] py-2 px-3 gap-2.5 rounded-xl ml-0.5' 
+            : 'text-sm py-2.5 px-3.5 gap-3 rounded-xl'
         } ${
             isActive 
-            ? 'bg-slate-900 text-white shadow-sm ring-1 ring-slate-800' 
-            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+            ? 'bg-gradient-to-r from-emerald-500/20 via-emerald-500/10 to-slate-900/40 text-emerald-300 font-semibold border-l-2 border-emerald-400 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] ring-1 ring-emerald-500/30' 
+            : 'text-slate-300 hover:text-white hover:bg-slate-900/90 font-medium'
         } ${className}`}
     >
-        <Icon 
-            size={isNested ? 16 : 18} 
-            strokeWidth={isActive ? 2.5 : 2}
-            className={`relative z-10 transition-all duration-300 ${
-                isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200'
-            }`} 
-        />
-        <span className={`relative z-10 whitespace-nowrap transition-transform duration-200 ${isActive ? 'font-semibold tracking-wide' : 'font-medium'}`}>
+        <div className={`flex items-center justify-center shrink-0 transition-all duration-300 ${
+          isActive 
+            ? 'text-emerald-400 scale-110 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]' 
+            : 'text-slate-400 group-hover:text-slate-200 group-hover:scale-105'
+        }`}>
+          <Icon 
+              size={isNested ? 16 : 18} 
+              strokeWidth={isActive ? 2.5 : 2}
+          />
+        </div>
+        <span className={`relative z-10 whitespace-nowrap transition-transform duration-200 flex-1 truncate ${isActive ? 'font-semibold tracking-wide text-white' : 'text-slate-300 group-hover:text-white'}`}>
             {label}
         </span>
+        {badge !== null && badge !== undefined && (
+          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full font-mono shrink-0 ml-auto ${badgeColor}`}>
+            {badge}
+          </span>
+        )}
+        {isActive && (
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)] ml-auto shrink-0 animate-pulse"></span>
+        )}
     </button>
   );
 });
@@ -623,39 +648,54 @@ function App() {
           <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[radial-gradient(circle_at_bottom_left,rgba(99,102,241,0.03)_0%,transparent_60%)] dark:bg-[radial-gradient(circle_at_bottom_left,rgba(99,102,241,0.06)_0%,transparent_60%)]"></div>
       </div>
 
-      {/* Modern Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-[260px] max-w-[85vw] bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 transform transition-transform duration-300 ease-out md:translate-x-0 md:static shadow-[4px_0_24px_rgba(0,0,0,0.02)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2)] flex flex-col border-r border-slate-200/80 dark:border-slate-800/80 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} print:hidden`}>
+      {/* Dark Theme Modern Sidebar */}
+      <aside className={`fixed inset-y-0 left-0 z-40 w-[270px] max-w-[85vw] bg-[#090d16] text-slate-200 transform transition-transform duration-300 ease-out md:translate-x-0 md:static shadow-[8px_0_32px_rgba(0,0,0,0.45)] flex flex-col border-r border-slate-800/80 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} print:hidden select-none relative overflow-hidden`}>
+
+        {/* Ambient Dark Glows */}
+        <div className="absolute top-0 left-0 right-0 h-48 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.12),transparent_70%)] pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-[radial-gradient(ellipse_at_bottom,rgba(99,102,241,0.06),transparent_70%)] pointer-events-none"></div>
 
         {/* Brand Area */}
-        <div className="px-5 pt-6 pb-5 group relative overflow-hidden">
-            <div className="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-colors duration-500"></div>
+        <div className="px-4.5 pt-5 pb-4 group relative overflow-hidden border-b border-slate-800/80">
             <div className="flex items-start justify-between gap-2 relative z-10">
                 <div className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer" onClick={() => { setCurrentView('dashboard'); setMobileMenuOpen(false); }}>
-                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300">
-                        <Landmark size={19} className="text-white" />
+                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)] border border-emerald-400/30 group-hover:scale-105 transition-transform duration-300">
+                        <Landmark size={20} className="text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                        <h1 className="font-display font-bold text-lg tracking-tight text-slate-900 dark:text-white leading-none flex items-center gap-2">
-                            BSKJI
-                        </h1>
-                        <p className="text-[10px] font-medium text-slate-500 dark:text-slate-500 leading-snug tracking-normal mt-1 group-hover:text-slate-700 dark:group-hover:text-slate-300 dark:text-slate-600 transition-colors">
-                            Badan Standardisasi dan Kebijakan Jasa Industri
+                        <div className="flex items-center gap-1.5">
+                            <h1 className="font-display font-bold text-lg tracking-tight text-white leading-none">
+                                BSKJI
+                            </h1>
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.9)] animate-pulse"></span>
+                        </div>
+                        <p className="text-[10px] font-medium text-slate-400 leading-snug tracking-normal mt-1 group-hover:text-slate-300 transition-colors truncate">
+                            Portal Layanan Kepegawaian
                         </p>
                     </div>
                 </div>
                 {/* Mobile Drawer Close Button */}
                 <button 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="md:hidden p-1.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-500 hover:text-slate-800 dark:hover:text-white rounded-lg transition-colors border border-slate-200/80 dark:border-slate-700 shrink-0 mt-0.5"
+                  className="md:hidden p-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-colors border border-slate-800 shrink-0 mt-0.5"
                   title="Tutup Menu"
                 >
                   <X size={18} />
                 </button>
             </div>
+            <div className="mt-2.5 flex items-center gap-1.5">
+                <span className="text-[9px] font-semibold tracking-wider uppercase text-emerald-400 bg-emerald-950/70 border border-emerald-800/60 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                    <span className="w-1 h-1 rounded-full bg-emerald-400"></span>
+                    Kemenperin RI
+                </span>
+                <span className="text-[9px] font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                    SIASN Ready
+                </span>
+            </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3.5 space-y-1.5 overflow-y-auto py-3 custom-scrollbar">
+        <nav className="flex-1 px-3 space-y-1.5 overflow-y-auto py-3 custom-scrollbar relative z-10">
             <div>
                 <button 
                     onClick={() => { 
@@ -668,21 +708,28 @@ function App() {
                     }}
                     className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-300 group relative overflow-hidden ${
                         currentView === 'dashboard' 
-                        ? 'bg-slate-900 dark:bg-slate-800 text-white shadow-sm ring-1 ring-slate-800 dark:ring-slate-700' 
-                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                        ? 'bg-gradient-to-r from-emerald-500/20 via-emerald-500/10 to-slate-900/40 text-emerald-300 font-semibold border-l-2 border-emerald-400 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] ring-1 ring-emerald-500/30' 
+                        : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
                     }`}
                 >
-                    <LayoutDashboard size={18} strokeWidth={currentView === 'dashboard' ? 2.5 : 2} className={`${currentView === 'dashboard' ? 'text-white' : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200'} relative z-10 transition-colors group-hover:scale-110 duration-300`} />
-                    <span className={`text-sm tracking-wide relative z-10 whitespace-nowrap ${currentView === 'dashboard' ? 'font-semibold' : 'font-medium'}`}>{t('sidebar_dashboard')}</span>
+                    <div className={`p-1 rounded-lg transition-colors ${currentView === 'dashboard' ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-400 group-hover:text-slate-200'}`}>
+                        <LayoutDashboard size={18} strokeWidth={currentView === 'dashboard' ? 2.5 : 2} className="relative z-10 group-hover:scale-110 duration-300" />
+                    </div>
+                    <span className={`text-sm tracking-wide relative z-10 whitespace-nowrap flex-1 text-left ${currentView === 'dashboard' ? 'font-semibold text-white' : 'font-medium'}`}>{t('sidebar_dashboard')}</span>
+                    {currentView === 'dashboard' && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)] ml-auto shrink-0 animate-pulse"></span>
+                    )}
                 </button>
             </div>
 
-            <div className="my-4 border-t border-slate-100 dark:border-slate-800 mx-2"></div>
+            <div className="my-3 border-t border-slate-800/80 mx-2"></div>
 
-            <div className="px-3 pt-1 pb-2">
-                <p className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{t('sidebar_monitoring_services')}</p>
+            <div className="px-3 pt-1 pb-1.5 flex items-center justify-between">
+                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">{t('sidebar_monitoring_services')}</p>
+                <span className="text-[9px] font-mono text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">LAYANAN</span>
             </div>
             
+            {/* Layanan Kenaikan Pangkat */}
             <div className="space-y-1 relative">
                 <button 
                     onClick={() => {
@@ -695,22 +742,25 @@ function App() {
                             setCurrentView('kenaikan-pangkat');
                         }
                     }}
-                    className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 group relative overflow-hidden ${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
+                    className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 group relative overflow-hidden ${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'bg-slate-900/90 text-white border border-slate-800 shadow-sm' : 'text-slate-300 hover:bg-slate-900/70 hover:text-white'}`}
                 >
-                    <Award size={18} className={`${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'text-emerald-600 dark:text-emerald-500' : 'text-slate-500 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'} relative z-10 group-hover:scale-110 transition-transform duration-300`} />
-                    <span className={`text-sm tracking-wide relative z-10 ${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'font-semibold' : 'font-medium'}`}>{t('sidebar_promotion')}</span>
-                    <ChevronRight size={16} className={`ml-auto transition-transform duration-300 relative z-10 ${isKenaikanPangkatExpanded ? 'rotate-90 text-slate-500 dark:text-slate-400' : 'rotate-0 opacity-60'}`} />
+                    <div className={`p-1 rounded-lg transition-colors ${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-900 text-slate-400 group-hover:text-emerald-400'}`}>
+                        <Award size={17} className="relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    <span className={`text-sm tracking-wide relative z-10 flex-1 text-left ${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'font-semibold text-white' : 'font-medium'}`}>{t('sidebar_promotion')}</span>
+                    <ChevronRight size={15} className={`ml-auto transition-transform duration-300 relative z-10 ${isKenaikanPangkatExpanded ? 'rotate-90 text-emerald-400' : 'rotate-0 text-slate-400'}`} />
                 </button>
                 
                 {isKenaikanPangkatExpanded && (
-                    <div className="pl-2.5 ml-5 border-l border-slate-100 dark:border-slate-800 space-y-1 my-1.5 animate-in slide-in-from-top-2 fade-in duration-200">
-                        <MenuItem view="kenaikan-pangkat" icon={ClipboardList} label={t('sidebar_promotion_service')} colorClass="text-emerald-600" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
-                        <MenuItem view="kalender-kp" icon={Calendar} label={t('sidebar_promotion_calendar')} colorClass="text-rose-600" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
-                        <MenuItem view="report-kp" icon={BarChart2} label={t('sidebar_promotion_report')} colorClass="text-amber-600" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                    <div className="pl-2.5 ml-4 border-l border-slate-800/80 space-y-1 my-1.5 animate-in slide-in-from-top-2 fade-in duration-200">
+                        <MenuItem view="kenaikan-pangkat" icon={ClipboardList} label={t('sidebar_promotion_service')} colorClass="text-emerald-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                        <MenuItem view="kalender-kp" icon={Calendar} label={t('sidebar_promotion_calendar')} colorClass="text-rose-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                        <MenuItem view="report-kp" icon={BarChart2} label={t('sidebar_promotion_report')} colorClass="text-amber-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
                     </div>
                 )}
             </div>
             
+            {/* Layanan KGB */}
             <div className="space-y-1 relative">
                 <button 
                     onClick={() => {
@@ -723,21 +773,29 @@ function App() {
                             setCurrentView('data-kgb');
                         }
                     }}
-                    className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 group relative overflow-hidden ${(isLayananKgbExpanded || isKGBAreaActive) ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
+                    className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 group relative overflow-hidden ${(isLayananKgbExpanded || isKGBAreaActive) ? 'bg-slate-900/90 text-white border border-slate-800 shadow-sm' : 'text-slate-300 hover:bg-slate-900/70 hover:text-white'}`}
                 >
-                    <Banknote size={18} className={`${(isLayananKgbExpanded || isKGBAreaActive) ? 'text-purple-600 dark:text-purple-500' : 'text-slate-500 dark:text-slate-400 group-hover:text-purple-600 dark:group-hover:text-purple-400'} relative z-10 group-hover:scale-110 transition-transform duration-300`} />
-                    <span className={`text-sm tracking-wide relative z-10 ${(isLayananKgbExpanded || isKGBAreaActive) ? 'font-semibold' : 'font-medium'}`}>{t('sidebar_kgb')}</span>
-                    <ChevronRight size={16} className={`ml-auto transition-transform duration-300 relative z-10 ${isLayananKgbExpanded ? 'rotate-90 text-slate-500 dark:text-slate-400' : 'rotate-0 opacity-60'}`} />
+                    <div className={`p-1 rounded-lg transition-colors ${(isLayananKgbExpanded || isKGBAreaActive) ? 'bg-purple-500/20 text-purple-400' : 'bg-slate-900 text-slate-400 group-hover:text-purple-400'}`}>
+                        <Banknote size={17} className="relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    <span className={`text-sm tracking-wide relative z-10 flex-1 text-left ${(isLayananKgbExpanded || isKGBAreaActive) ? 'font-semibold text-white' : 'font-medium'}`}>{t('sidebar_kgb')}</span>
+                    {stats.upcomingKGB > 0 && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 mr-1">
+                            {stats.upcomingKGB}
+                        </span>
+                    )}
+                    <ChevronRight size={15} className={`ml-auto transition-transform duration-300 relative z-10 ${isLayananKgbExpanded ? 'rotate-90 text-purple-400' : 'rotate-0 text-slate-400'}`} />
                 </button>
                 
                 {isLayananKgbExpanded && (
-                    <div className="pl-2.5 ml-5 border-l border-slate-100 dark:border-slate-800 space-y-1 my-1.5 animate-in slide-in-from-top-2 fade-in duration-200">
-                        <MenuItem view="data-kgb" icon={ClipboardList} label={t('sidebar_kgb_service')} colorClass="text-purple-600 dark:text-purple-500" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
-                        <MenuItem view="report" icon={BarChart2} label={t('sidebar_kgb_report')} colorClass="text-amber-600 dark:text-amber-500" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                    <div className="pl-2.5 ml-4 border-l border-slate-800/80 space-y-1 my-1.5 animate-in slide-in-from-top-2 fade-in duration-200">
+                        <MenuItem view="data-kgb" icon={ClipboardList} label={t('sidebar_kgb_service')} colorClass="text-purple-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested badge={stats.upcomingKGB > 0 ? stats.upcomingKGB : null} badgeColor="bg-purple-500/20 text-purple-300 border border-purple-500/30" />
+                        <MenuItem view="report" icon={BarChart2} label={t('sidebar_kgb_report')} colorClass="text-amber-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
                     </div>
                 )}
             </div>
 
+            {/* Layanan Pensiun */}
             <div className="space-y-1 relative">
                 <button 
                     onClick={() => {
@@ -750,20 +808,28 @@ function App() {
                             setCurrentView('pensiun');
                         }
                     }}
-                    className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 group relative overflow-hidden ${(isPensiunExpanded || isPensiunAreaActive) ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
+                    className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 group relative overflow-hidden ${(isPensiunExpanded || isPensiunAreaActive) ? 'bg-slate-900/90 text-white border border-slate-800 shadow-sm' : 'text-slate-300 hover:bg-slate-900/70 hover:text-white'}`}
                 >
-                    <Archive size={18} className={`${(isPensiunExpanded || isPensiunAreaActive) ? 'text-rose-600 dark:text-rose-500' : 'text-slate-500 dark:text-slate-400 group-hover:text-rose-600 dark:group-hover:text-rose-400'} relative z-10 group-hover:scale-110 transition-transform duration-300`} />
-                    <span className={`text-sm tracking-wide relative z-10 ${(isPensiunExpanded || isPensiunAreaActive) ? 'font-semibold' : 'font-medium'}`}>{t('sidebar_retirement')}</span>
-                    <ChevronRight size={16} className={`ml-auto transition-transform duration-300 relative z-10 ${isPensiunExpanded ? 'rotate-90 text-slate-500 dark:text-slate-400' : 'rotate-0 opacity-60'}`} />
+                    <div className={`p-1 rounded-lg transition-colors ${(isPensiunExpanded || isPensiunAreaActive) ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-900 text-slate-400 group-hover:text-rose-400'}`}>
+                        <Archive size={17} className="relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    <span className={`text-sm tracking-wide relative z-10 flex-1 text-left ${(isPensiunExpanded || isPensiunAreaActive) ? 'font-semibold text-white' : 'font-medium'}`}>{t('sidebar_retirement')}</span>
+                    {systemAlerts.filter(a => a.type === 'pensiun').length > 0 && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 mr-1">
+                            {systemAlerts.filter(a => a.type === 'pensiun').length}
+                        </span>
+                    )}
+                    <ChevronRight size={15} className={`ml-auto transition-transform duration-300 relative z-10 ${isPensiunExpanded ? 'rotate-90 text-rose-400' : 'rotate-0 text-slate-400'}`} />
                 </button>
                 
                 {isPensiunExpanded && (
-                    <div className="pl-2.5 ml-5 border-l border-slate-100 dark:border-slate-800 space-y-1 my-1.5 animate-in slide-in-from-top-2 fade-in duration-200">
-                        <MenuItem view="pensiun" icon={ClipboardList} label={t('sidebar_retirement_service')} colorClass="text-rose-600 dark:text-rose-500" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                    <div className="pl-2.5 ml-4 border-l border-slate-800/80 space-y-1 my-1.5 animate-in slide-in-from-top-2 fade-in duration-200">
+                        <MenuItem view="pensiun" icon={ClipboardList} label={t('sidebar_retirement_service')} colorClass="text-rose-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
                     </div>
                 )}
             </div>
 
+            {/* Layanan Jam Kerja */}
             <div className="space-y-1 relative">
                 <button 
                     onClick={() => {
@@ -776,32 +842,66 @@ function App() {
                             setCurrentView('jam-kerja');
                         }
                     }}
-                    className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 group relative overflow-hidden ${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
+                    className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 group relative overflow-hidden ${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'bg-slate-900/90 text-white border border-slate-800 shadow-sm' : 'text-slate-300 hover:bg-slate-900/70 hover:text-white'}`}
                 >
-                    <Clock size={18} className={`${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'text-emerald-600 dark:text-emerald-500' : 'text-slate-500 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'} relative z-10 group-hover:scale-110 transition-transform duration-300`} />
-                    <span className={`text-sm tracking-wide relative z-10 ${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'font-semibold' : 'font-medium'}`}>{t('sidebar_work_hours')}</span>
-                    <ChevronRight size={16} className={`ml-auto transition-transform duration-300 relative z-10 ${isJamKerjaExpanded ? 'rotate-90 text-slate-500 dark:text-slate-400' : 'rotate-0 opacity-60'}`} />
+                    <div className={`p-1 rounded-lg transition-colors ${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'bg-sky-500/20 text-sky-400' : 'bg-slate-900 text-slate-400 group-hover:text-sky-400'}`}>
+                        <Clock size={17} className="relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    <span className={`text-sm tracking-wide relative z-10 flex-1 text-left ${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'font-semibold text-white' : 'font-medium'}`}>{t('sidebar_work_hours')}</span>
+                    <ChevronRight size={15} className={`ml-auto transition-transform duration-300 relative z-10 ${isJamKerjaExpanded ? 'rotate-90 text-sky-400' : 'rotate-0 text-slate-400'}`} />
                 </button>
                 
                 {isJamKerjaExpanded && (
-                    <div className="pl-2.5 ml-5 border-l border-slate-100 dark:border-slate-800 space-y-1 my-1.5 animate-in slide-in-from-top-2 fade-in duration-200">
-                        <MenuItem view="jam-kerja" icon={ClipboardList} label={t('sidebar_work_hours_service')} colorClass="text-emerald-600 dark:text-emerald-500" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                    <div className="pl-2.5 ml-4 border-l border-slate-800/80 space-y-1 my-1.5 animate-in slide-in-from-top-2 fade-in duration-200">
+                        <MenuItem view="jam-kerja" icon={ClipboardList} label={t('sidebar_work_hours_service')} colorClass="text-sky-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
                     </div>
                 )}
             </div>
 
-            <div className="px-3 pt-3 pb-1">
-                <p className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{t('sidebar_help')}</p>
+            <div className="my-3 border-t border-slate-800/80 mx-2"></div>
+
+            <div className="px-3 pt-1 pb-1">
+                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">{t('sidebar_help')}</p>
             </div>
             <div className="pb-2">
-                <MenuItem view="faq" icon={BookOpen} label={t('sidebar_info_center')} colorClass="text-cyan-600 dark:text-cyan-500" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} />
+                <MenuItem view="faq" icon={BookOpen} label={t('sidebar_info_center')} colorClass="text-cyan-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} />
             </div>
         </nav>
+
+        {/* Sidebar Footer User Card */}
+        <div className="p-3 border-t border-slate-800/80 bg-slate-950/95 relative z-10">
+            <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800/90 flex items-center justify-between gap-2.5 shadow-xs group">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-700 text-white font-extrabold text-xs flex items-center justify-center shadow-xs border border-emerald-400/20 shrink-0">
+                        {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-slate-200 truncate leading-tight">
+                            {currentUser ? currentUser.nama.split(' ')[0] : 'Pegawai'}
+                        </p>
+                        <p className="text-[10px] font-mono text-slate-400 truncate mt-0.5">
+                            {currentUser?.nip || 'BSKJI ASN'}
+                        </p>
+                    </div>
+                </div>
+                <button
+                    onClick={handleLogout}
+                    title="Keluar / Log Out"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-colors shrink-0"
+                >
+                    <LogOut size={15} />
+                </button>
+            </div>
+            <div className="flex items-center justify-between px-1 pt-2 text-[9px] font-mono text-slate-400">
+                <span>PORTAL BSKJI</span>
+                <span className="text-emerald-400 font-semibold">v2.4 ONLINE</span>
+            </div>
+        </div>
       </aside>
 
       {/* Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 z-30 md:hidden" onClick={() => setMobileMenuOpen(false)}></div>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-30 md:hidden transition-opacity duration-300" onClick={() => setMobileMenuOpen(false)}></div>
       )}
 
       {/* Main Content Area */}
@@ -830,17 +930,20 @@ function App() {
         </AnimatePresence>
         
         {/* Sleek, responsive Top Header & Notification Center */}
-        <header className="bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-700/80 px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between sticky top-0 z-40 print:hidden shadow-sm w-full">
-          <div className="flex items-center gap-4 min-w-0 flex-1">
+        <header className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between sticky top-0 z-40 print:hidden shadow-xs w-full">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
             <button 
               onClick={() => setMobileMenuOpen(true)} 
-              className="md:hidden p-2 -ml-1 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800 rounded-xl transition-all shrink-0 active:scale-95"
+              className="md:hidden p-2 -ml-1 text-slate-200 bg-slate-900 hover:bg-slate-800 rounded-xl transition-all shrink-0 active:scale-95 border border-slate-800 shadow-xs"
               aria-label="Buka Menu"
             >
-              <Menu size={20} />
+              <Menu size={19} />
             </button>
-            <div className="flex flex-col gap-0.5 min-w-0 max-w-[200px] md:max-w-[250px] lg:max-w-[400px]">
-              <h2 className="font-display font-bold text-slate-900 text-lg sm:text-xl md:text-2xl leading-tight truncate pb-0.5">
+            <div className="flex flex-col gap-0.5 min-w-0 max-w-[200px] md:max-w-[280px] lg:max-w-[450px]">
+              <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider hidden sm:block">
+                Sistem Informasi Kepegawaian BSKJI
+              </span>
+              <h2 className="font-display font-bold text-slate-900 dark:text-white text-lg sm:text-xl md:text-2xl leading-tight truncate pb-0.5">
                 {viewTitle}
               </h2>
             </div>
