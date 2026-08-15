@@ -18,12 +18,30 @@ export function lazyWithRetry<T extends ComponentType<any>>(
         return await factory();
       } catch (secondError: any) {
         console.error('Dynamic import second retry failed:', secondError);
-        // If second retry fails, check if we already tried a hard reload once in this session
-        const key = `lazy_retry_reload_${Date.now()}`;
+        // If second retry fails, unregister service workers, clear cache and hard reload
         const lastReload = Number(sessionStorage.getItem('last_chunk_reload') || '0');
+        
         if (Date.now() - lastReload > 10000) {
           sessionStorage.setItem('last_chunk_reload', String(Date.now()));
-          window.location.reload();
+          
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+              for(let registration of registrations) {
+                registration.unregister();
+              }
+            });
+          }
+          if ('caches' in window) {
+            caches.keys().then((keyList) => {
+              return Promise.all(keyList.map((key) => {
+                return caches.delete(key);
+              }));
+            });
+          }
+          
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         }
         throw secondError;
       }

@@ -1,6 +1,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { TableVirtuoso } from 'react-virtuoso';
 import { Search, Briefcase, Clock, CheckCircle2, BadgeCheck, User, X, TrendingUp, Calendar, AlertCircle, ChevronRight, CalendarRange, ChevronLeft, ChevronsLeft, ChevronsRight, Download, FileDown, ArrowUpDown, Sparkles, FileText, Cpu, Copy, Check, SlidersHorizontal } from 'lucide-react';
 import { Employee } from '../types';
 import { useDebounce } from '../hooks/useDebounce';
@@ -579,8 +580,48 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
         )}
 
         <div className="overflow-x-auto custom-scrollbar touch-pan-x overscroll-x-contain">
-          <table className="w-full text-left border-collapse min-w-[1000px]">
-            <thead className="sticky top-0 z-10 shadow-sm">
+          
+          
+          <div className="h-[600px] shadow-inner bg-white dark:bg-slate-900 rounded-b-2xl border border-slate-200 dark:border-slate-800">
+          <TableVirtuoso
+            data={filtered}
+            components={{
+              Table: (props) => <table className="w-full text-left border-collapse min-w-[1000px]" {...props} />,
+              TableHead: React.forwardRef((props, ref) => <thead className="sticky top-0 z-20 shadow-sm" ref={ref} {...props} />),
+              TableRow: (props) => {
+                const emp = props.item;
+                return (
+                  <tr 
+                    {...props} 
+                    onClick={() => setSelectedEmployee(emp)}
+                    className={`transition-all duration-150 group cursor-pointer border-l-4 ${
+                      selectedEmployee?.id === emp?.id 
+                        ? 'bg-primary-50/80 dark:bg-primary-950/40 border-l-primary-500 shadow-[inset_0_1px_3px_rgba(0,0,0,0.02)]' 
+                        : 'border-l-transparent hover:bg-primary-50/40 dark:hover:bg-slate-800/70 hover:border-l-primary-400 dark:hover:border-l-primary-500'
+                    }`}
+                  />
+                );
+              },
+              TableBody: React.forwardRef((props, ref) => <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm" ref={ref} {...props} />),
+              EmptyPlaceholder: () => (
+                <tbody>
+                  <tr>
+                    <td colSpan={9} className="p-20 text-center">
+                      <div className="flex flex-col items-center justify-center text-slate-300 dark:text-slate-600 gap-4">
+                          <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center border border-slate-100 dark:border-slate-800">
+                              <Search size={32} />
+                          </div>
+                          <div>
+                              <p className="font-bold text-slate-500 dark:text-slate-500 text-lg">Tidak ada data ditemukan</p>
+                              <p className="text-sm">Coba sesuaikan filter atau kata kunci pencarian Anda.</p>
+                          </div>
+                      </div>
+                  </td>
+                  </tr>
+                </tbody>
+              )
+            }}
+            fixedHeaderContent={() => (
               <tr className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 text-[9px] md:text-[10px] uppercase font-bold tracking-widest border-b border-slate-200 dark:border-slate-700">
                 <th className={`w-10 text-center hidden md:table-cell ${isCompact ? 'px-2 py-1.5 md:py-2' : 'px-2 py-2.5 md:px-4 md:py-3'}`}>#</th>
                 <th 
@@ -613,21 +654,11 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                 <th className={`text-center ${isCompact ? 'px-2 py-1.5 md:px-3 md:py-2' : 'px-3 py-2.5 md:px-4 md:py-3'}`}>Hitungan Mundur KGB</th>
                 <th className={`text-center ${isCompact ? 'px-1 py-1.5 md:px-2 md:py-2' : 'px-2 py-2.5 md:px-3 md:py-3'}`}></th>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
-              {paginatedEmployees.length > 0 ? (
-                paginatedEmployees.map((emp, index) => (
-                  <tr 
-                    key={emp.id} 
-                    onClick={() => setSelectedEmployee(emp)}
-                    className={`transition-all duration-150 group cursor-pointer border-l-4 ${
-                      selectedEmployee?.id === emp.id 
-                        ? 'bg-primary-50/80 dark:bg-primary-950/40 border-l-primary-500 shadow-[inset_0_1px_3px_rgba(0,0,0,0.02)]' 
-                        : 'border-l-transparent hover:bg-primary-50/40 dark:hover:bg-slate-800/70 hover:border-l-primary-400 dark:hover:border-l-primary-500'
-                    }`}
-                  >
-                    <td className={`text-center text-slate-400 dark:text-slate-500 font-medium text-[10px] md:text-xs hidden md:table-cell ${isCompact ? 'px-2 py-1 md:py-1.5' : 'px-2 py-2 md:px-4 md:py-2.5'}`}>
-                      {(currentPage - 1) * itemsPerPage + index + 1}
+            )}
+            itemContent={(index, emp) => (
+              <>
+                <td className={`text-center text-slate-400 dark:text-slate-500 font-medium text-[10px] md:text-xs hidden md:table-cell ${isCompact ? 'px-2 py-1 md:py-1.5' : 'px-2 py-2 md:px-4 md:py-2.5'}`}>
+                      {index + 1}
                     </td>
                     <td className={isCompact ? 'px-2 py-1 md:px-3 md:py-1.5' : 'px-3 py-2 md:px-4 md:py-2.5'}>
                       <div className="flex items-center gap-2">
@@ -727,103 +758,16 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                     <td className={`text-center ${isCompact ? 'px-1 py-1 md:px-2 md:py-1.5' : 'px-2 py-2 md:px-3 md:py-2.5'}`}>
                         <ChevronRight size={14} className="text-slate-300 dark:text-slate-600 inline-block" />
                     </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={9} className="p-20 text-center">
-                      <div className="flex flex-col items-center justify-center text-slate-300 dark:text-slate-600 gap-4">
-                          <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800/50 rounded-full flex items-center justify-center border border-slate-100 dark:border-slate-800">
-                              <Search size={32} />
-                          </div>
-                          <div>
-                              <p className="font-bold text-slate-500 dark:text-slate-500 text-lg">Tidak ada data ditemukan</p>
-                              <p className="text-sm">Coba sesuaikan filter atau kata kunci pencarian Anda.</p>
-                          </div>
-                      </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        
-        <div className="bg-slate-50 dark:bg-slate-800/50 p-4 border-t border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-center justify-between px-6 md:px-8 gap-4">
-          <div className="flex flex-col md:flex-row items-center gap-4">
-            <span className="text-xs text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider">Total Data: {filtered.length}</span>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-slate-600 dark:text-slate-300 font-bold uppercase">Tampilkan:</span>
-              <select 
-                value={itemsPerPage}
-                onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-slate-700 dark:text-slate-200"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-            </div>
+              </>
+            )}
+            style={{ height: '100%' }}
+          />
           </div>
 
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="flex items-center gap-1">
-              <button 
-                onClick={() => handlePageChange(1)}
-                disabled={currentPage === 1}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
-                title="Halaman Pertama"
-              >
-                <ChevronsLeft size={16} />
-              </button>
-              <button 
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
-                title="Halaman Sebelumnya"
-              >
-                <ChevronLeft size={16} />
-              </button>
-              
-              <div className="flex items-center gap-1 px-2">
-                <span className="text-xs font-bold text-slate-700 dark:text-slate-200">Halaman</span>
-                <input 
-                  type="number" 
-                  min={1} 
-                  max={totalPages}
-                  value={currentPage}
-                  onChange={(e) => handlePageChange(Number(e.target.value))}
-                  className="w-12 text-center py-1 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900"
-                />
-                <span className="text-xs font-bold text-slate-600 dark:text-slate-300">dari {totalPages}</span>
-              </div>
-
-              <button 
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
-                title="Halaman Berikutnya"
-              >
-                <ChevronRight size={16} />
-              </button>
-              <button 
-                onClick={() => handlePageChange(totalPages)}
-                disabled={currentPage === totalPages}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
-                title="Halaman Terakhir"
-              >
-                <ChevronsRight size={16} />
-              </button>
-            </div>
-          )}
-
-          <span className="text-xs text-slate-600 dark:text-slate-300 font-medium hidden md:block">
-            Menampilkan {Math.min(filtered.length, (currentPage - 1) * itemsPerPage + 1)}-{Math.min(filtered.length, currentPage * itemsPerPage)}
-          </span>
-        </div>
+        
       </div>
 
+      </div>
       {/* Employee Detail Modal */}
       {selectedEmployee && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4">

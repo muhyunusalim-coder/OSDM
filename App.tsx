@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState, useMemo, Suspense, lazy } from 'react';
+import { useAppStore } from './src/store/useAppStore';
 import { LayoutDashboard, Calendar, X, LogOut, User, Clock, AlertTriangle, Menu, BookOpen, BarChart2, ClipboardList, ChevronRight, ChevronDown, Award, Banknote, Archive, Landmark, Bell, BellRing, CheckCircle, Sun, Moon } from 'lucide-react';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -165,13 +166,7 @@ const getTmtDate = (tmt: string) => {
 };
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    try {
-      return localStorage.getItem('kgb_auth_session') === 'true' || sessionStorage.getItem('kgb_auth_session') === 'true';
-    } catch {
-      return false;
-    }
-  });
+  const { isAuthenticated, login, logout, userNip } = useAppStore();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [promotionEmployees, setPromotionEmployees] = useState<Employee[]>([]);
   const [currentUser, setCurrentUser] = useState<Employee | null>(null);
@@ -324,17 +319,6 @@ function App() {
   const greeting = useMemo(() => getGreeting('id'), []);
 
   useEffect(() => {
-    try {
-      const isAuth = localStorage.getItem('kgb_auth_session') === 'true' || sessionStorage.getItem('kgb_auth_session') === 'true';
-      if (isAuth && !isAuthenticated) {
-        setIsAuthenticated(true);
-      }
-    } catch (e) {
-      console.warn("Storage check error:", e);
-    }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
     if (!isAuthenticated) return;
 
     const loadData = async () => {
@@ -385,33 +369,17 @@ function App() {
 
 
   const handleLogin = React.useCallback((nip: string) => {
-      setIsAuthenticated(true);
-      try {
-        localStorage.setItem('kgb_auth_session', 'true');
-        localStorage.setItem('kgb_user_nip', nip);
-        sessionStorage.setItem('kgb_auth_session', 'true');
-        sessionStorage.setItem('kgb_user_nip', nip);
-      } catch (e) {
-        console.warn("Error saving login session:", e);
-      }
+      login(nip);
       setQuote(getRandomQuote());
       setCurrentView('dashboard');
   }, []);
 
   const handleLogout = React.useCallback(() => {
-      setIsAuthenticated(false);
-      try {
-        localStorage.removeItem('kgb_auth_session');
-        localStorage.removeItem('kgb_user_nip');
-        sessionStorage.removeItem('kgb_auth_session');
-        sessionStorage.removeItem('kgb_user_nip');
-      } catch (e) {
-        console.warn("Error clearing login session:", e);
-      }
+      logout();
       setEmployees([]); 
       setCurrentUser(null);
       setNotification('Anda telah berhasil keluar.');
-  }, []);
+  }, [logout]);
 
   const handleNewQuote = React.useCallback(() => {
     let newQuote = quote;
