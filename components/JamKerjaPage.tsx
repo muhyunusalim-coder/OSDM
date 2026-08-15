@@ -6,7 +6,6 @@ import {
   Briefcase, Activity, CalendarDays, BarChart3, ArrowUpDown, ChevronDown, Award,
   FileSpreadsheet, Printer
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 import { 
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, Legend, LineChart, Line, AreaChart, Area, Cell, PieChart, Pie
@@ -2506,25 +2505,18 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
       )}
 
       {/* Employee Detail Sidebar Drawer */}
-      <AnimatePresence>
+      <>
         {selectedRecord && (
           <div className="fixed inset-0 z-50 overflow-hidden print:absolute print:inset-0 print:bg-white dark:bg-slate-900 print:text-black print:overflow-visible">
             {/* Backdrop */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <div
               onClick={() => setSelectedRecord(null)}
               className="absolute inset-0 bg-slate-950/40  print:hidden"
             />
 
             {/* Content Drawer Container */}
             <div className="absolute inset-y-0 right-0 max-w-4xl w-full flex pl-10 print:static print:w-full print:max-w-none print:p-0">
-              <motion.div 
-                initial={{ x: '100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '100%' }}
-                transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              <div
                 className="w-full bg-white dark:bg-slate-900 h-screen shadow-2xl flex flex-col print:h-auto print:shadow-none print:static"
               >
                 {/* Header */}
@@ -2787,11 +2779,11 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                     {t('done')}
                   </button>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         )}
-      </AnimatePresence>
+      </>
     </div>
   );
 });

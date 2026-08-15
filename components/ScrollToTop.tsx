@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowUp } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
 
 export const ScrollToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -36,21 +35,17 @@ export const ScrollToTop = () => {
   };
 
   return (
-    <AnimatePresence>
+    <>
       {isVisible && (
-        <motion.button
-          initial={{ opacity: 0, scale: 0.5, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.5, y: 20 }}
-          transition={{ duration: 0.2 }}
+        <button
           onClick={scrollToTop}
           className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 p-2.5 sm:p-3 rounded-full bg-primary-600 text-white shadow-xl hover:bg-primary-700 hover:shadow-primary-600/30 transition-all active:scale-95 border border-primary-500 cursor-pointer"
           title="Ke Atas"
           aria-label="Kembali ke atas"
         >
           <ArrowUp size={18} className="sm:w-5 sm:h-5" strokeWidth={2.5} />
-        </motion.button>
+        </button>
       )}
-    </AnimatePresence>
+    </>
   );
 };

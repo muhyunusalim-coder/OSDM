@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { KP_SCHEDULES } from '../src/constants_kp_schedule';
 import { Calendar, ChevronDown, Clock } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 
 import { Language } from '../utils/translationHelper';
 
@@ -57,21 +56,14 @@ export const KPCalendar: React.FC<Props> = React.memo(() => {
                     <div className="absolute left-[23px] sm:left-[39px] top-4 bottom-8 w-[2px] bg-gradient-to-b from-primary-200 via-purple-200 to-transparent rounded-full opacity-60"></div>
                     
                     <div className="space-y-5">
-                        <AnimatePresence mode="wait">
-                            <motion.div 
+                        <>
+                            <div 
                                 key={selectedMonth.month}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.15 }}
                                 className="space-y-5"
                             >
                                 {selectedMonth.activities.map((act, index) => (
-                                    <motion.div 
+                                    <div 
                                         key={act.id + selectedMonth.month}
-                                        initial={{ opacity: 0, y: 12 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.2, delay: index * 0.03, ease: "easeOut" }}
                                         className="relative flex items-start gap-4 sm:gap-6 group/item"
                                     >
                                         {/* Timeline Node */}
@@ -96,10 +88,10 @@ export const KPCalendar: React.FC<Props> = React.memo(() => {
                                             </div>
                                             <p className="font-medium text-slate-800 dark:text-slate-100 text-xs sm:text-sm md:text-[15px] leading-relaxed">{act.label}</p>
                                         </div>
-                                    </motion.div>
+                                    </div>
                                 ))}
-                            </motion.div>
-                        </AnimatePresence>
+                            </div>
+                        </>
                     </div>
                 </div>
             </div>

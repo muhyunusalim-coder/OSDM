@@ -136,7 +136,7 @@ export default defineConfig(({ mode }) => {
           output: {
             manualChunks: {
               'react-vendor': ['react', 'react-dom'],
-              'ui-vendor': ['motion', 'lucide-react'],
+              'ui-vendor': ['lucide-react'],
               'charts-vendor': ['recharts']
             }
           }

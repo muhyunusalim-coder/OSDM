@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { Sparkles, X, CheckCircle, Activity, Banknote, Archive, ArrowUpRight, Check, ChevronRight, Building, Award, Clock } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 import { Employee } from '../types';
 import { Language, TRANSLATIONS } from '../utils/translationHelper';
 import ServiceOverviewCharts from './ServiceOverviewCharts';
@@ -266,18 +265,14 @@ const DashboardPage: React.FC<Props> = React.memo(({
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Info & Inspirasi</p>
                     <div className="min-h-[48px] relative overflow-hidden flex items-start">
-                      <AnimatePresence mode="wait">
-                        <motion.p
+                      <>
+                        <p
                           key={activeMessageIndex}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          transition={{ duration: 0.3, ease: "easeOut" }}
                           className="text-[13px] text-slate-700 dark:text-slate-200 font-medium leading-relaxed"
                         >
                           {messages[activeMessageIndex]}
-                        </motion.p>
-                      </AnimatePresence>
+                        </p>
+                      </>
                     </div>
                   </div>
                 </div>
@@ -288,22 +283,15 @@ const DashboardPage: React.FC<Props> = React.memo(({
       </div>
 
       {/* Regulation Detail Modal */}
-      <AnimatePresence>
+      <>
         {selectedReg && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <div
               onClick={() => setSelectedReg(null)}
               className="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/60"
             />
 
-            <motion.div 
-              initial={{ scale: 0.95, opacity: 0, y: 10 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 10 }}
-              transition={{ duration: 0.15, ease: "easeOut" }}
+            <div
               className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-2xl w-full max-w-xl overflow-hidden relative z-10"
             >
               <div className="p-6 md:p-8 relative">
@@ -369,10 +357,10 @@ const DashboardPage: React.FC<Props> = React.memo(({
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         )}
-      </AnimatePresence>
+      </>
 
       <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 mt-12">
         <div className="flex items-center gap-3">

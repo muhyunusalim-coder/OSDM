@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState, useMemo, Suspense, lazy } from 'react';
 import { LayoutDashboard, Calendar, X, LogOut, User, Clock, AlertTriangle, Menu, BookOpen, BarChart2, ClipboardList, ChevronRight, ChevronDown, Award, Banknote, Archive, Landmark, Bell, BellRing, CheckCircle, Sun, Moon } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import LoginPage from './components/LoginPage';
@@ -898,13 +897,9 @@ function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col h-full min-w-0 overflow-hidden relative z-10 print:h-auto print:overflow-visible print:block">
-        <AnimatePresence>
+        <>
           {notification && (
-            <motion.div 
-              initial={{ opacity: 0, y: -20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
+            <div
               className="absolute top-4 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-4 z-[100] bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl border border-slate-800 flex items-center gap-3 w-[90%] max-w-sm md:w-auto"
             >
               <div className="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center shrink-0">
@@ -917,9 +912,9 @@ function App() {
               >
                 <X size={14} className="text-slate-300 dark:text-slate-600" />
               </button>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        </>
         
         {/* Sleek, responsive Top Header & Notification Center */}
         <header className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between sticky top-0 z-40 print:hidden shadow-xs w-full">
@@ -970,17 +965,13 @@ function App() {
               </button>
 
               {/* Notification Overlay Panel */}
-              <AnimatePresence>
+              <>
                 {isNotificationsOpen && (
                   <>
                     {/* Invisible backdrop to dismiss dropdown */}
                     <div className="fixed inset-0 z-40" onClick={() => setIsNotificationsOpen(false)}></div>
                     
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.98 }}
-                      transition={{ duration: 0.15, ease: "easeOut" }}
+                    <div
                       className="fixed inset-x-3 top-16 md:absolute md:top-auto md:right-0 md:left-auto md:mt-3 w-auto md:w-96 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xl rounded-2xl z-50 overflow-hidden max-w-sm ml-auto mr-0 md:mx-0"
                     >
                       <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-800/80">
@@ -1086,10 +1077,10 @@ function App() {
                           </button>
                         </div>
                       )}
-                    </motion.div>
+                    </div>
                   </>
                 )}
-              </AnimatePresence>
+              </>
             </div>
           </div>
         </header>
@@ -1102,13 +1093,9 @@ function App() {
             ) : (
                 <ErrorBoundary>
                   <Suspense fallback={<PageLoader />}>
-                    <AnimatePresence mode="wait">
-                      <motion.div
+                    <>
+                      <div
                         key={currentView}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        transition={{ duration: 0.15, ease: 'easeInOut' }}
                         className="w-full"
                       >
                         {currentView === 'kenaikan-pangkat' && <PromotionTable employees={promotionEmployees} language={language} />}
@@ -1120,8 +1107,8 @@ function App() {
                         {currentView === 'dashboard' && <DashboardPage {...dashboardProps} />}
                         {currentView === 'data-kgb' && <KGBDataPage {...dashboardProps} />}
                         {currentView === 'faq' && <FAQPage employees={employees} language={language} />}
-                      </motion.div>
-                    </AnimatePresence>
+                      </div>
+                    </>
                   </Suspense>
                 </ErrorBoundary>
             )}

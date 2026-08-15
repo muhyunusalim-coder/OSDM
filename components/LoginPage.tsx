@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Lock, AlertCircle, CreditCard, ArrowRight, ShieldCheck, Landmark, Building, FileCheck, Clock, Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { fetchEmployeeData } from '../services/dataService';
-import { motion, AnimatePresence } from 'motion/react';
 import { TRANSLATIONS } from '../utils/translationHelper';
 
 const GovtBackground = () => {
@@ -91,10 +90,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
         {/* Left Side: Brand & Info */}
         <div className="hidden md:flex flex-col justify-between w-1/2 p-12 lg:p-20 text-white relative">
             
-            <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
+            <div
                 className="relative z-10 my-auto"
             >
                 <div className="flex items-center gap-4 mb-8 group cursor-default">
@@ -122,8 +118,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                 </p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-lg">
-                    <motion.div 
-                        whileHover={{ y: -5 }}
+                    <div
                         className="p-5 bg-slate-900/[0.4] hover:bg-slate-900/[0.7] border border-slate-700/60 hover:border-primary-500/40 rounded-2xl transition-all duration-300 group"
                     >
                         <div className="p-2.5 bg-slate-900/60 rounded-xl inline-block mb-3 group-hover:scale-110 group-hover:bg-amber-500/20 transition-all duration-300">
@@ -131,10 +126,9 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                         </div>
                         <h4 className="text-xs font-bold uppercase tracking-wider text-slate-100 mb-1.5">{t('login_feature_kgb')}</h4>
                         <p className="text-[11px] text-slate-300 leading-relaxed">{t('login_feature_kgb_desc')}</p>
-                    </motion.div>
+                    </div>
 
-                    <motion.div 
-                        whileHover={{ y: -5 }}
+                    <div
                         className="p-5 bg-slate-900/[0.4] hover:bg-slate-900/[0.7] border border-slate-700/60 hover:border-primary-500/40 rounded-2xl transition-all duration-300 group"
                     >
                         <div className="p-2.5 bg-slate-900/60 rounded-xl inline-block mb-3 group-hover:scale-110 group-hover:bg-blue-500/20 transition-all duration-300">
@@ -142,10 +136,9 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                         </div>
                         <h4 className="text-xs font-bold uppercase tracking-wider text-slate-100 mb-1.5">{t('login_feature_pensiun')}</h4>
                         <p className="text-[11px] text-slate-300 leading-relaxed">{t('login_feature_pensiun_desc')}</p>
-                    </motion.div>
+                    </div>
 
-                    <motion.div 
-                        whileHover={{ y: -5 }}
+                    <div
                         className="p-5 bg-slate-900/[0.4] hover:bg-slate-900/[0.7] border border-slate-700/60 hover:border-primary-500/40 rounded-2xl transition-all duration-300 group"
                     >
                         <div className="p-2.5 bg-slate-900/60 rounded-xl inline-block mb-3 group-hover:scale-110 group-hover:bg-rose-500/20 transition-all duration-300">
@@ -153,14 +146,11 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                         </div>
                         <h4 className="text-xs font-bold uppercase tracking-wider text-slate-100 mb-1.5">{t('login_feature_clock')}</h4>
                         <p className="text-[11px] text-slate-300 leading-relaxed">{t('login_feature_clock_desc')}</p>
-                    </motion.div>
+                    </div>
                 </div>
-            </motion.div>
+            </div>
             
-            <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 0.8 }}
+            <div
                 className="flex gap-8 text-xs text-slate-300 font-medium relative z-10 pt-6 border-t border-white/10"
             >
                 <span className="flex items-center gap-2.5 bg-slate-900/60 px-3 py-1.5 rounded-full border border-slate-700/60 text-slate-300">
@@ -173,7 +163,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     </div>
                     {t('login_server_online')}
                 </span>
-            </motion.div>
+            </div>
         </div>
 
         {/* Right Side: Login Form */}
@@ -276,21 +266,18 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                         </div>
                     </div>
 
-                    <AnimatePresence>
+                    <>
                         {error && (
-                            <motion.div 
-                                initial={{ opacity: 0, y: -10, height: 0 }}
-                                animate={{ opacity: 1, y: 0, height: 'auto' }}
-                                exit={{ opacity: 0, y: -10, height: 0 }}
+                            <div
                                 className="overflow-hidden"
                             >
                                 <div className="p-3.5 mt-2 bg-rose-500/15 border border-rose-500/40 rounded-xl flex items-start gap-3 text-rose-200 text-xs shadow-sm">
                                     <AlertCircle size={16} className="flex-shrink-0 mt-0.5 text-rose-400" />
                                     <span className="font-semibold leading-relaxed">{error}</span>
                                 </div>
-                            </motion.div>
+                            </div>
                         )}
-                    </AnimatePresence>
+                    </>
 
                     <button 
                         type="submit" 
@@ -316,14 +303,11 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
 
             </div>
             
-            <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 1 }}
+            <p
                 className="mt-8 text-[11px] text-slate-400 font-medium text-center tracking-wide"
             >
                 {t('login_footer')}
-            </motion.p>
+            </p>
         </div>
       </div>
     </div>
