@@ -649,7 +649,7 @@ function App() {
       </div>
 
       {/* Dark Theme Modern Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-[270px] max-w-[85vw] bg-[#090d16] text-slate-200 transform transition-transform duration-300 ease-out md:translate-x-0 md:static shadow-[8px_0_32px_rgba(0,0,0,0.45)] flex flex-col border-r border-slate-800/80 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} print:hidden select-none relative overflow-hidden`}>
+      <aside className={`fixed inset-y-0 left-0 z-40 w-[270px] max-w-[85vw] bg-[#090d16] text-slate-200 transform transition-transform duration-300 ease-out md:translate-x-0 md:static flex flex-col border-r border-slate-800/80 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} print:hidden select-none relative overflow-hidden`}>
 
         {/* Ambient Dark Glows */}
         <div className="absolute top-0 left-0 right-0 h-48 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.12),transparent_70%)] pointer-events-none"></div>
