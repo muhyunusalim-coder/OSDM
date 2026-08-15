@@ -5,9 +5,10 @@ import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import viteCompression from 'vite-plugin-compression';
 
+const buildTimestamp = Date.now().toString();
+
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
-
     return {
       server: {
         port: 3000,
@@ -18,6 +19,15 @@ export default defineConfig(({ mode }) => {
         tailwindcss(), 
         viteCompression({ algorithm: 'gzip', ext: '.gz' }),
         viteCompression({ algorithm: 'brotliCompress', ext: '.br' }),
+        {
+          name: 'inject-build-timestamp',
+          transformIndexHtml(html) {
+            return html.replace(
+              '</head>',
+              `    <meta name="build-timestamp" content="${buildTimestamp}" />\n  </head>`
+            );
+          },
+        },
         VitePWA({
           registerType: 'autoUpdate',
           includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'mask-icon.svg', 'preview.png'],
@@ -54,6 +64,9 @@ export default defineConfig(({ mode }) => {
           },
           workbox: {
             cleanupOutdatedCaches: true,
+            additionalManifestEntries: [
+              { url: '/index.html', revision: buildTimestamp }
+            ],
             globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
             runtimeCaching: [
               {
