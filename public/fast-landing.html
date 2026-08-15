@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Platform solusi digital super cepat, ringan, dan efisien untuk bisnis Anda.">
+    <title>Optima - Solusi Digital Berperforma Tinggi</title>
+    
+    <style>
+        /* CSS Variables untuk kemudahan kustomisasi warna dan jarak */
+        :root {
+            --primary: #059669; /* Emerald 600 */
+            --primary-hover: #047857; /* Emerald 700 */
+            --bg-main: #ffffff;
+            --bg-alt: #f9fafb; /* Gray 50 */
+            --text-main: #111827; /* Gray 900 */
+            --text-muted: #4b5563; /* Gray 600 */
+            --border: #e5e7eb; /* Gray 200 */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 2rem;
+            --space-lg: 4rem;
+        }
+
+        /* CSS Reset Minimalis */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Base Typography menggunakan System Font Stack */
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            color: var(--text-main);
+            background-color: var(--bg-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Typography Styles */
+        h1, h2, h3 {
+            line-height: 1.2;
+            margin-bottom: var(--space-sm);
+            color: var(--text-main);
+        }
+        h1 { font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -0.02em; }
+        h2 { font-size: clamp(1.5rem, 4vw, 2.25rem); letter-spacing: -0.01em; }
+        h3 { font-size: 1.25rem; }
+        p { color: var(--text-muted); margin-bottom: var(--space-sm); }
+        
+        a { color: var(--primary); text-decoration: none; transition: color 0.2s ease-in-out; }
+        a:hover, a:focus { color: var(--primary-hover); text-decoration: underline; }
+
+        /* Reusable Components */
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 var(--space-sm);
+        }
+
+        .section { padding: var(--space-lg) 0; }
+        .bg-alt { background-color: var(--bg-alt); }
+        .text-center { text-align: center; }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary);
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .btn:hover, .btn:focus {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .btn:active { transform: scale(0.98); }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+        }
+        .btn-outline:hover, .btn-outline:focus {
+            background-color: var(--primary);
+            color: #ffffff;
+        }
+
+        /* Grid Layouts (CSS Grid) */
+        .grid { display: grid; gap: var(--space-md); }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+
+        /* Card Component */
+        .card {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            height: 100%;
+            transition: border-color 0.2s ease;
+        }
+        .card:hover { border-color: var(--primary); }
+
+        /* Header & Navigation */
+        header {
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+        }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .brand:hover { text-decoration: none; color: var(--primary-hover); }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .nav-links a { font-weight: 500; color: var(--text-main); }
+        .nav-links a:hover { color: var(--primary); text-decoration: none; }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-main);
+            padding: var(--space-xs);
+        }
+
+        /* Hero Section */
+        .hero { padding: 6rem 0 5rem; }
+        .hero-content { max-width: 800px; margin: 0 auto; }
+        .hero p { font-size: 1.25rem; margin-bottom: var(--space-md); }
+        .hero-btns {
+            display: flex;
+            gap: var(--space-sm);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Value / About Section */
+        .about-visual {
+            background-color: var(--bg-alt);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Benefits List */
+        .benefit-list { list-style: none; margin-top: 1.5rem; }
+        .benefit-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        .benefit-icon { color: var(--primary); font-weight: bold; }
+        
+        .stats-box {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+        }
+        .stats-box h3, .stats-box p, .stats-box span { color: #ffffff; }
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #ffffff;
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        /* FAQ (Semantic HTML Details/Summary) */
+        details {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-xs);
+            background: var(--bg-main);
+            overflow: hidden;
+        }
+        summary {
+            padding: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        summary::-webkit-details-marker { display: none; }
+        summary::after {
+            content: '+';
+            font-size: 1.25rem;
+            color: var(--primary);
+            transition: transform 0.2s;
+        }
+        details[open] summary { border-bottom: 1px solid var(--border); }
+        details[open] summary::after { transform: rotate(45deg); }
+        details > p { padding: 1rem; margin: 0; }
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-alt);
+            border-top: 1px solid var(--border);
+            padding: var(--space-md) 0;
+            text-align: center;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .hero { padding: 4rem 0 3rem; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: var(--bg-main);
+                flex-direction: column;
+                padding: var(--space-sm) 0;
+                border-bottom: 1px solid var(--border);
+                box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            }
+            .nav-links.active { display: flex; }
+            .nav-links a, .nav-links .btn {
+                width: 100%;
+                text-align: center;
+                padding: 0.75rem var(--space-sm);
+                border: none;
+                border-radius: 0;
+            }
+            .mobile-menu-btn { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="brand">Optima.</a>
+            <button class="mobile-menu-btn" id="menuBtn" aria-label="Buka navigasi" aria-expanded="false">
+                &#9776; <!-- Unicode Hamburger Icon -->
+            </button>
+            <nav class="nav-links" id="navLinks">
+                <a href="#about">Tentang</a>
+                <a href="#services">Layanan</a>
+                <a href="#benefits">Manfaat</a>
+                <a href="#faq">FAQ</a>
+                <a href="#cta" class="btn">Mulai Sekarang</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="section hero bg-alt text-center">
+            <div class="container hero-content">
+                <h1>Performa Maksimal, Tanpa Kompromi</h1>
+                <p>Tingkatkan efisiensi operasional bisnis Anda dengan solusi digital yang dirancang murni untuk kecepatan, keamanan, dan keandalan tinggi.</p>
+                <div class="hero-btns">
+                    <a href="#services" class="btn">Lihat Layanan</a>
+                    <a href="#about" class="btn btn-outline">Pelajari Lebih Lanjut</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About / Value Proposition -->
+        <section id="about" class="section">
+            <div class="container grid grid-2">
+                <div>
+                    <h2>Fokus Pada Solusi Nyata</h2>
+                    <p>Kami memahami bahwa waktu loading adalah aset konversi. Oleh karena itu, platform kami dibangun dengan arsitektur HTML murni dan CSS modern tanpa <em>bloatware</em>.</p>
+                    <p>Tanpa library eksternal berlebihan. Hanya instruksi mesin yang efisien, memastikan website Anda merespon dalam hitungan milidetik di semua perangkat.</p>
+                </div>
+                <!-- Visual Placeholder Ringan -->
+                <div class="about-visual" aria-hidden="true">
+                    [ Placeholder Visual Ilustrasi Sistem ]
+                </div>
+            </div>
+        </section>
+
+        <!-- Services / Features -->
+        <section id="services" class="section bg-alt">
+            <div class="container">
+                <h2 class="text-center" style="margin-bottom: var(--space-lg);">Layanan Unggulan Kami</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h3>&#9889; Optimasi Ekstrem</h3> <!-- Unicode Lightning -->
+                        <p>Penyempurnaan infrastruktur web untuk menjamin skor performa standar industri (95+) secara konsisten.</p>
+                    </div>
+                    <div class="card">
+                        <h3>&#128274; Arsitektur Aman</h3> <!-- Unicode Lock -->
+                        <p>Kode statis dan bersih secara alami mengurangi celah kerentanan (vulnerability) dari framework pihak ketiga.</p>
+                    </div>
+                    <div class="card">
+                        <h3>&#128200; Skalabilitas Statis</h3> <!-- Unicode Chart -->
+                        <p>Aset yang sangat ringan membuat biaya bandwidth turun drastis dan mampu menangani lonjakan traffic berat.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Benefits -->
+        <section id="benefits" class="section">
+            <div class="container grid grid-2" style="align-items: center;">
+                <div>
+                    <h2>Mengapa Pendekatan Ini Berhasil?</h2>
+                    <ul class="benefit-list">
+                        <li class="benefit-item">
+                            <span class="benefit-icon">&#10003;</span> <!-- Unicode Check -->
+                            <div>
+                                <strong>Minim Request HTTP</strong>
+                                <p>Tanpa perlu mengunduh puluhan file JS dan CSS eksternal yang memblokir rendering halaman.</p>
+                            </div>
+                        </li>
+                        <li class="benefit-item">
+                            <span class="benefit-icon">&#10003;</span>
+                            <div>
+                                <strong>Aksesibilitas Sempurna</strong>
+                                <p>Struktur Semantic HTML menjamin kemudahan navigasi bagi screen reader dan SEO yang kuat.</p>
+                            </div>
+                        </li>
+                        <li class="benefit-item">
+                            <span class="benefit-icon">&#10003;</span>
+                            <div>
+                                <strong>Bebas Kumulatif Layout Shift (CLS)</strong>
+                                <p>Dimensi elemen yang jelas mencegah loncatan konten saat halaman dimuat.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Stats Box -->
+                <div class="card stats-box">
+                    <h3>Metrik Performa Internal</h3>
+                    <p style="margin-bottom: 2rem;">Estimasi pengujian pada jaringan 3G.</p>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Skor Lighthouse (Performance)</span>
+                            <strong>100/100</strong>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+                    </div>
+                    
+                    <div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Time to Interactive (TTI)</span>
+                            <strong>&lt; 0.8 Detik</strong>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 98%;"></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials / Social Proof -->
+        <section id="testimonials" class="section bg-alt">
+            <div class="container">
+                <h2 class="text-center" style="margin-bottom: var(--space-lg);">Dipercaya oleh Profesional</h2>
+                <div class="grid grid-2">
+                    <div class="card">
+                        <p style="font-style: italic; color: var(--text-main);">"Menghilangkan framework raksasa dan beralih ke HTML/CSS murni membuat bounce rate kami turun 45%. Konversi meningkat drastis karena user tidak perlu menunggu loading."</p>
+                        <div style="margin-top: 1rem;">
+                            <strong>Andi Pratama</strong>
+                            <p style="margin: 0; font-size: 0.875rem;">CTO, TechLogistik</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <p style="font-style: italic; color: var(--text-main);">"Maintenance sangat mudah. Siapapun engineer yang masuk, langsung mengerti kode ini tanpa harus mempelajari struktur toolchain atau framework baru."</p>
+                        <div style="margin-top: 1rem;">
+                            <strong>Diana Rosyida</strong>
+                            <p style="margin: 0; font-size: 0.875rem;">Lead Engineer, StudioWeb</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="section">
+            <div class="container" style="max-width: 800px;">
+                <h2 class="text-center" style="margin-bottom: var(--space-lg);">Pertanyaan Umum (FAQ)</h2>
+                
+                <details>
+                    <summary>Apakah arsitektur ringan ini cocok untuk aplikasi kompleks?</summary>
+                    <p>Ya. Sebagian besar aplikasi web seringkali dipaksa menggunakan Single Page Application (SPA) ketika sebenarnya dokumen statis (MPA) sudah cukup. Jika interaktivitas kompleks diperlukan, kami hanya melampirkan JS pada modul yang membutuhkan (Island Architecture).</p>
+                </details>
+                
+                <details>
+                    <summary>Bagaimana dengan kompatibilitas di browser lama?</summary>
+                    <p>Karena kami tidak menggunakan sintaks JavaScript yang mutakhir dan berat, kompatibilitas mundur (backward compatibility) justru jauh lebih aman dibandingkan framework berbasis virtual DOM.</p>
+                </details>
+                
+                <details>
+                    <summary>Apakah bisa dikembangkan lebih lanjut dengan CMS?</summary>
+                    <p>Sangat bisa. HTML dan CSS statis adalah fondasi murni yang bisa diintegrasikan dengan sistem backend apa saja (PHP, Node, Go) atau Headless CMS tanpa konflik dependensi.</p>
+                </details>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section id="cta" class="section bg-alt text-center" style="padding-top: 5rem; padding-bottom: 5rem;">
+            <div class="container">
+                <h2 style="margin-bottom: 1rem;">Siap Mempercepat Layanan Anda?</h2>
+                <p style="max-width: 600px; margin: 0 auto 2rem;">Tinggalkan kode yang berlebihan. Beralih ke arsitektur ringan, cepat, dan mudah dirawat sekarang juga.</p>
+                <a href="#contact" class="btn">Mulai Konsultasi Gratis</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <strong style="display: block; margin-bottom: 0.5rem;">Optima &copy; 2026</strong>
+            <p style="font-size: 0.875rem; margin-bottom: 0;">Rekayasa Kinerja Tinggi & Efisiensi Web.</p>
+        </div>
+    </footer>
+
+    <!-- JS Minimalist HANYA untuk toggle menu mobile -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuBtn = document.getElementById('menuBtn');
+            const navLinks = document.getElementById('navLinks');
+            
+            if (menuBtn && navLinks) {
+                menuBtn.addEventListener('click', () => {
+                    const isActive = navLinks.classList.toggle('active');
+                    // Mengubah icon dari hamburger (&#9776;) ke close (&#10005;)
+                    menuBtn.innerHTML = isActive ? '&#10005;' : '&#9776;';
+                    menuBtn.setAttribute('aria-expanded', isActive);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
