@@ -704,7 +704,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                                         <div className="flex items-center gap-2">
                                             <div className="min-w-0">
                                                 <div className={`font-bold text-slate-800 dark:text-slate-100 mb-0.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors font-display truncate pr-1 md:pr-2 ${isCompact ? 'text-[11px] md:text-xs' : 'text-xs md:text-sm'}`}>{emp.nama}</div>
-                                                <div className={`text-emerald-700 dark:text-emerald-400 font-mono font-medium truncate ${isCompact ? 'text-[9px] md:text-[10px]' : 'text-[10px] md:text-xs'}`}>{emp.nip}</div>
+                                                <div className={`text-slate-500 dark:text-slate-400 font-mono font-medium truncate ${isCompact ? 'text-[9px] md:text-[10px]' : 'text-[10px] md:text-xs'}`}>{emp.nip}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -874,8 +874,8 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                     <div className="flex-1">
                         <h2 className="text-xl sm:text-2xl font-display font-bold mb-1 text-white leading-tight">{selectedEmployee.nama}</h2>
                         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs sm:text-sm font-medium">
-                            <span className="flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-lg border border-emerald-500/30 font-mono">
-                                <BadgeCheck size={14} className="text-emerald-400" /> {selectedEmployee.nip}
+                            <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-700 font-mono">
+                                <BadgeCheck size={14} className="text-slate-500" /> {selectedEmployee.nip}
                             </span>
                             <span className={`px-3 py-1 rounded-lg border flex items-center gap-1.5 ${
                                 selectedEmployee.statusKepegawaian === 'PNS' 

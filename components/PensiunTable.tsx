@@ -406,7 +406,7 @@ const PensiunTable = React.memo(({ employees }: Props) => {
                           <div className="flex items-center gap-2">
                               <div>
                                   <div className={`font-display font-bold text-slate-800 dark:text-slate-100 mb-0.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors ${isCompact ? 'text-[11px] md:text-xs' : 'text-xs md:text-sm'}`}>{emp.nama}</div>
-                                  <div className={`text-emerald-700 dark:text-emerald-400 font-mono font-medium ${isCompact ? 'text-[9px]' : 'text-[10px]'}`}>{emp.nip}</div>
+                                  <div className={`text-slate-500 dark:text-slate-400 font-mono font-medium ${isCompact ? 'text-[9px]' : 'text-[10px]'}`}>{emp.nip}</div>
                               </div>
                           </div>
                       </td>
@@ -529,7 +529,7 @@ const PensiunTable = React.memo(({ employees }: Props) => {
                       </div>
                       <div>
                           <h3 className="font-display font-bold text-xl text-slate-800 dark:text-slate-100">{selectedEmployee.nama}</h3>
-                          <p className="text-emerald-700 dark:text-emerald-400 font-mono text-xs font-bold">{selectedEmployee.nip}</p>
+                          <p className="text-slate-500 dark:text-slate-400 font-mono text-xs font-bold">{selectedEmployee.nip}</p>
                       </div>
                   </div>
 
