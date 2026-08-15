@@ -64,14 +64,14 @@ const ComparisonChart: React.FC<Props> = React.memo(({ employees, language }) =>
 
   return (
     <div className="w-full bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden flex flex-col justify-between group mt-6">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-500/5 dark:from-emerald-500/10 to-transparent rounded-full blur-[40px] pointer-events-none -mr-20 -mt-20"></div>
+      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary-500/5 dark:from-primary-500/10 to-transparent rounded-full blur-[40px] pointer-events-none -mr-20 -mt-20"></div>
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.01] dark:opacity-[0.05] mix-blend-overlay pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-emerald-500 via-purple-500 to-pink-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+      <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-primary-500 via-purple-500 to-pink-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
       
       {/* Header with Title and Toggle Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3 relative z-10">
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100/30 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-500 shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-500/10 border border-primary-100/30 dark:border-primary-500/20 flex items-center justify-center text-primary-600 dark:text-primary-500 shadow-sm">
             <Layers size={18} />
           </div>
           <div>
@@ -93,7 +93,7 @@ const ComparisonChart: React.FC<Props> = React.memo(({ employees, language }) =>
             onClick={() => setComparisonTab('unit')}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer ${
               comparisonTab === 'unit'
-                ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm shadow-emerald-100 dark:shadow-none'
+                ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 shadow-sm shadow-primary-100 dark:shadow-none'
                 : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >
@@ -104,7 +104,7 @@ const ComparisonChart: React.FC<Props> = React.memo(({ employees, language }) =>
             onClick={() => setComparisonTab('golongan')}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer ${
               comparisonTab === 'golongan'
-                ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm shadow-emerald-100 dark:shadow-none'
+                ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 shadow-sm shadow-primary-100 dark:shadow-none'
                 : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100'
             }`}
           >

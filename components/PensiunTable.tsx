@@ -246,7 +246,7 @@ const PensiunTable = React.memo(({ employees }: Props) => {
           </div>
           
           <div className="flex flex-col md:flex-row gap-2.5 flex-wrap">
-            <button onClick={handleExportExcel} disabled={isExportingExcel || filtered.length === 0} className="flex items-center justify-center gap-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap cursor-pointer">
+            <button onClick={handleExportExcel} disabled={isExportingExcel || filtered.length === 0} className="flex items-center justify-center gap-2 px-3.5 py-2 bg-primary-600 hover:bg-primary-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap cursor-pointer">
                 {isExportingExcel ? <Loader2 size={14} className="animate-spin" /> : <FileSpreadsheet size={14} />}
                 {isExportingExcel ? 'Memproses...' : 'Ekspor Excel'}
             </button>
@@ -397,15 +397,15 @@ const PensiunTable = React.memo(({ employees }: Props) => {
                     key={emp.id} 
                     className={`transition-all duration-150 group cursor-pointer border-l-4 ${
                       selectedEmployee?.id === emp.id 
-                        ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-l-emerald-500 shadow-[inset_0_1px_3px_rgba(0,0,0,0.02)]' 
-                        : 'border-l-transparent hover:bg-emerald-50/40 dark:hover:bg-slate-800/70 hover:border-l-emerald-400 dark:hover:border-l-emerald-500'
+                        ? 'bg-primary-50/80 dark:bg-primary-950/40 border-l-primary-500 shadow-[inset_0_1px_3px_rgba(0,0,0,0.02)]' 
+                        : 'border-l-transparent hover:bg-primary-50/40 dark:hover:bg-slate-800/70 hover:border-l-primary-400 dark:hover:border-l-primary-500'
                     }`} 
                     onClick={() => setSelectedEmployee(emp)}
                   >
                       <td className={isCompact ? 'px-3 py-1.5' : 'px-3 py-2.5'}>
                           <div className="flex items-center gap-2">
                               <div>
-                                  <div className={`font-display font-bold text-slate-800 dark:text-slate-100 mb-0.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors ${isCompact ? 'text-[11px] md:text-xs' : 'text-xs md:text-sm'}`}>{emp.nama}</div>
+                                  <div className={`font-display font-bold text-slate-800 dark:text-slate-100 mb-0.5 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors ${isCompact ? 'text-[11px] md:text-xs' : 'text-xs md:text-sm'}`}>{emp.nama}</div>
                                   <div className={`text-slate-500 dark:text-slate-400 font-mono font-medium ${isCompact ? 'text-[9px]' : 'text-[10px]'}`}>{emp.nip}</div>
                               </div>
                           </div>
@@ -420,7 +420,7 @@ const PensiunTable = React.memo(({ employees }: Props) => {
                           {emp.tmtPensiun.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
                       </td>
                       <td className={`text-center ${isCompact ? 'px-3 py-1.5' : 'px-3 py-2.5'}`}>
-                          {emp.pStatus.status === 'Aktif' && <span className={`bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg font-bold border border-emerald-100 dark:border-emerald-800 ${isCompact ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-1 text-[10px]'}`}>{emp.pStatus.monthsRemaining} bulan lagi</span>}
+                          {emp.pStatus.status === 'Aktif' && <span className={`bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 rounded-lg font-bold border border-primary-100 dark:border-primary-800 ${isCompact ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-1 text-[10px]'}`}>{emp.pStatus.monthsRemaining} bulan lagi</span>}
                           {emp.pStatus.status === 'Mendekati' && <span className={`bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg font-bold border border-amber-100 dark:border-amber-800 ${isCompact ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-1 text-[10px]'}`}>Mendekati ({emp.pStatus.monthsRemaining} bln)</span>}
                           {emp.pStatus.status === 'Pensiun' && <span className={`bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-lg font-bold border border-rose-100 dark:border-rose-800 ${isCompact ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-1 text-[10px]'}`}>Pensiun</span>}
                       </td>

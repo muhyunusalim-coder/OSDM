@@ -389,10 +389,10 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
             ].map((stat, i) => {
                 const statThemes = {
                     primary: {
-                        iconBg: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-800/40 text-emerald-600 dark:text-emerald-400',
-                        dot: 'bg-emerald-500 dark:bg-emerald-400',
-                        borderHover: 'hover:border-emerald-300 dark:hover:border-emerald-700/60',
-                        glow: 'group-hover:bg-emerald-500/5',
+                        iconBg: 'bg-primary-50 dark:bg-primary-500/10 border-primary-100 dark:border-primary-800/40 text-primary-600 dark:text-primary-400',
+                        dot: 'bg-primary-500 dark:bg-primary-400',
+                        borderHover: 'hover:border-primary-300 dark:hover:border-primary-700/60',
+                        glow: 'group-hover:bg-primary-500/5',
                     },
                     warning: {
                         iconBg: 'bg-amber-50 dark:bg-amber-500/10 border-amber-100 dark:border-amber-800/40 text-amber-600 dark:text-amber-400',
@@ -407,10 +407,10 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                         glow: 'group-hover:bg-rose-500/5',
                     },
                     success: {
-                        iconBg: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-800/40 text-emerald-600 dark:text-emerald-400',
-                        dot: 'bg-emerald-500 dark:bg-emerald-400',
-                        borderHover: 'hover:border-emerald-300 dark:hover:border-emerald-700/60',
-                        glow: 'group-hover:bg-emerald-500/5',
+                        iconBg: 'bg-primary-50 dark:bg-primary-500/10 border-primary-100 dark:border-primary-800/40 text-primary-600 dark:text-primary-400',
+                        dot: 'bg-primary-500 dark:bg-primary-400',
+                        borderHover: 'hover:border-primary-300 dark:hover:border-primary-700/60',
+                        glow: 'group-hover:bg-primary-500/5',
                     }
                 };
                 const theme = statThemes[stat.color];
@@ -462,7 +462,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                     <button 
                         onClick={handleExportExcel}
                         disabled={isExporting || filteredEmployees.length === 0}
-                        className="flex items-center justify-center gap-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                        className="flex items-center justify-center gap-2 px-3.5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
                     >
                         {isExporting ? (
                           <>
@@ -505,12 +505,12 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                         onClick={() => setIsCompact(!isCompact)}
                         className={`flex items-center justify-center gap-2 px-3.5 py-2 border rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap cursor-pointer ${
                             isCompact 
-                            ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100/70' 
-                            : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50'
+                            ? 'bg-primary-50 border-primary-200 text-primary-700 hover:bg-primary-100/70' 
+                            : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-primary-600 hover:border-primary-200 hover:bg-primary-50'
                         }`}
                         title="Aktifkan Mode Ringkas untuk menampilkan lebih banyak baris"
                     >
-                        <SlidersHorizontal size={14} className={isCompact ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'} />
+                        <SlidersHorizontal size={14} className={isCompact ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'} />
                         <span>{isCompact ? 'Mode Normal' : 'Mode Ringkas'}</span>
                     </button>
 
@@ -518,26 +518,26 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                         onClick={() => setIsAdvancedFilterOpen(!isAdvancedFilterOpen)}
                         className={`flex items-center justify-center gap-2 px-3.5 py-2 border rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap cursor-pointer ${
                             isAdvancedFilterOpen 
-                            ? 'bg-emerald-600 border-emerald-600 text-white hover:bg-emerald-700' 
-                            : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50'
+                            ? 'bg-primary-600 border-primary-600 text-white hover:bg-primary-700' 
+                            : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-primary-600 hover:border-primary-200 hover:bg-primary-50'
                         }`}
                     >
                         <SlidersHorizontal size={14} className={isAdvancedFilterOpen ? 'text-white' : 'text-slate-500 dark:text-slate-400'} />
                         <span>Filter Lanjutan</span>
                         {(selectedUnit !== 'All' || selectedGol !== 'All' || masaKerjaFilter !== 'All') && (
-                            <span className={`w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-extrabold ${isAdvancedFilterOpen ? 'bg-white dark:bg-slate-900 text-emerald-600' : 'bg-emerald-600 text-white'}`}>
+                            <span className={`w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-extrabold ${isAdvancedFilterOpen ? 'bg-white dark:bg-slate-900 text-primary-600' : 'bg-primary-600 text-white'}`}>
                                 {(selectedUnit !== 'All' ? 1 : 0) + (selectedGol !== 'All' ? 1 : 0) + (masaKerjaFilter !== 'All' ? 1 : 0)}
                             </span>
                         )}
                     </button>
                     
                     {/* Search */}
-                    <div className={`relative flex-grow md:flex-grow-0 group w-full md:w-auto transition-all ${searchTerm !== '' ? 'ring-1 ring-emerald-500 rounded-lg' : ''}`}>
-                        <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 transition-colors ${searchTerm !== '' ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'} group-focus-within:text-emerald-500`} size={16} />
+                    <div className={`relative flex-grow md:flex-grow-0 group w-full md:w-auto transition-all ${searchTerm !== '' ? 'ring-1 ring-primary-500 rounded-lg' : ''}`}>
+                        <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 transition-colors ${searchTerm !== '' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'} group-focus-within:text-primary-500`} size={16} />
                         <input 
                             type="text" 
                             placeholder="Cari Nama, NIP..." 
-                            className="pl-9 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 text-xs w-full md:w-56 bg-slate-50 dark:bg-slate-800/50 focus:bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 transition-all font-medium"
+                            className="pl-9 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 text-xs w-full md:w-56 bg-slate-50 dark:bg-slate-800/50 focus:bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 transition-all font-medium"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -545,10 +545,10 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
 
                     <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 no-scrollbar">
                         {/* Tahun */}
-                        <div className={`relative flex-shrink-0 transition-all ${yearFilter !== 'All' ? 'ring-1 ring-emerald-400 rounded-lg' : ''}`}>
-                            <Calendar className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${yearFilter !== 'All' ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'}`} size={14} />
+                        <div className={`relative flex-shrink-0 transition-all ${yearFilter !== 'All' ? 'ring-1 ring-primary-400 rounded-lg' : ''}`}>
+                            <Calendar className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${yearFilter !== 'All' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'}`} size={14} />
                             <select 
-                                className={`pl-9 pr-8 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:border-emerald-500 text-xs appearance-none ${yearFilter !== 'All' ? 'bg-emerald-50' : 'bg-slate-50 dark:bg-slate-800/50'} hover:bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold cursor-pointer w-full md:w-auto`}
+                                className={`pl-9 pr-8 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:border-primary-500 text-xs appearance-none ${yearFilter !== 'All' ? 'bg-primary-50' : 'bg-slate-50 dark:bg-slate-800/50'} hover:bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold cursor-pointer w-full md:w-auto`}
                                 value={yearFilter}
                                 onChange={(e) => setYearFilter(e.target.value)}
                             >
@@ -558,10 +558,10 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                         </div>
 
                         {/* Bulan */}
-                        <div className={`relative flex-shrink-0 transition-all ${monthFilter !== 'All' ? 'ring-1 ring-emerald-400 rounded-lg' : ''}`}>
-                            <CalendarRange className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${monthFilter !== 'All' ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'}`} size={14} />
+                        <div className={`relative flex-shrink-0 transition-all ${monthFilter !== 'All' ? 'ring-1 ring-primary-400 rounded-lg' : ''}`}>
+                            <CalendarRange className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${monthFilter !== 'All' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'}`} size={14} />
                             <select 
-                                className={`pl-9 pr-8 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:border-emerald-500 text-xs appearance-none ${monthFilter !== 'All' ? 'bg-emerald-50' : 'bg-slate-50 dark:bg-slate-800/50'} hover:bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold cursor-pointer w-full md:w-auto`}
+                                className={`pl-9 pr-8 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:border-primary-500 text-xs appearance-none ${monthFilter !== 'All' ? 'bg-primary-50' : 'bg-slate-50 dark:bg-slate-800/50'} hover:bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold cursor-pointer w-full md:w-auto`}
                                 value={monthFilter}
                                 onChange={(e) => setMonthFilter(e.target.value)}
                             >
@@ -581,11 +581,11 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                     {/* Unit Kerja */}
                     <div className="flex flex-col gap-1.5">
                         <label className="text-slate-700 dark:text-slate-300 font-extrabold text-[10px] uppercase tracking-wider flex items-center gap-1">
-                            <Briefcase size={12} className="text-emerald-500" />
+                            <Briefcase size={12} className="text-primary-500" />
                             <span>Unit Kerja</span>
                         </label>
                         <select
-                            className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 cursor-pointer shadow-sm hover:border-slate-300 transition-colors"
+                            className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 cursor-pointer shadow-sm hover:border-slate-300 transition-colors"
                             value={selectedUnit}
                             onChange={(e) => setSelectedUnit(e.target.value)}
                         >
@@ -599,11 +599,11 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                     {/* Golongan */}
                     <div className="flex flex-col gap-1.5">
                         <label className="text-slate-700 dark:text-slate-300 font-extrabold text-[10px] uppercase tracking-wider flex items-center gap-1">
-                            <BadgeCheck size={12} className="text-emerald-500" />
+                            <BadgeCheck size={12} className="text-primary-500" />
                             <span>Golongan / Pangkat</span>
                         </label>
                         <select
-                            className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 cursor-pointer shadow-sm hover:border-slate-300 transition-colors"
+                            className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 cursor-pointer shadow-sm hover:border-slate-300 transition-colors"
                             value={selectedGol}
                             onChange={(e) => setSelectedGol(e.target.value)}
                         >
@@ -617,12 +617,12 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                     {/* Masa Kerja */}
                     <div className="flex flex-col gap-1.5">
                         <label className="text-slate-700 dark:text-slate-300 font-extrabold text-[10px] uppercase tracking-wider flex items-center gap-1">
-                            <Clock size={12} className="text-emerald-500" />
+                            <Clock size={12} className="text-primary-500" />
                             <span>Masa Kerja</span>
                         </label>
                         <div className="flex gap-2">
                             <select
-                                className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 cursor-pointer shadow-sm hover:border-slate-300 transition-colors"
+                                className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 cursor-pointer shadow-sm hover:border-slate-300 transition-colors"
                                 value={masaKerjaFilter}
                                 onChange={(e) => setMasaKerjaFilter(e.target.value)}
                             >
@@ -662,11 +662,11 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                                 <div className="flex items-center gap-4 text-slate-600 dark:text-slate-300 text-[9px] md:text-[10px] uppercase font-bold tracking-widest">
                                     <div className="flex items-center gap-1" onClick={() => requestSort('nama')}>
                                         Nama
-                                        <ArrowUpDown size={10} className={sortConfig?.key === 'nama' ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'} />
+                                        <ArrowUpDown size={10} className={sortConfig?.key === 'nama' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'} />
                                     </div>
                                     <div className="flex items-center gap-1" onClick={() => requestSort('nip')}>
                                         NIP
-                                        <ArrowUpDown size={10} className={sortConfig?.key === 'nip' ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'} />
+                                        <ArrowUpDown size={10} className={sortConfig?.key === 'nip' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'} />
                                     </div>
                                 </div>
                             </th>
@@ -678,7 +678,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                             >
                                 <div className="flex items-center gap-1">
                                     TMT
-                                    <ArrowUpDown size={12} className={sortConfig?.key === 'tmtDate' ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'} />
+                                    <ArrowUpDown size={12} className={sortConfig?.key === 'tmtDate' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'} />
                                 </div>
                             </th>
                             <th className={`text-center ${isCompact ? 'px-2 py-1.5 md:px-3 md:py-2' : 'px-3 py-2.5 md:px-4 md:py-3'}`}>Status KP</th>
@@ -693,8 +693,8 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                                     onClick={() => setSelectedEmployee(emp)}
                                     className={`transition-all duration-150 group cursor-pointer border-l-4 ${
                                         selectedEmployee?.id === emp.id 
-                                            ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-l-emerald-500 shadow-[inset_0_1px_3px_rgba(0,0,0,0.02)]' 
-                                            : 'border-l-transparent hover:bg-emerald-50/40 dark:hover:bg-slate-800/70 hover:border-l-emerald-400 dark:hover:border-l-emerald-500'
+                                            ? 'bg-primary-50/80 dark:bg-primary-950/40 border-l-primary-500 shadow-[inset_0_1px_3px_rgba(0,0,0,0.02)]' 
+                                            : 'border-l-transparent hover:bg-primary-50/40 dark:hover:bg-slate-800/70 hover:border-l-primary-400 dark:hover:border-l-primary-500'
                                     }`}
                                 >
                                     <td className={`text-center text-slate-400 dark:text-slate-500 font-medium text-[10px] md:text-xs hidden md:table-cell ${isCompact ? 'px-2 py-1 md:py-1.5' : 'px-2 py-2 md:px-4 md:py-2.5'}`}>
@@ -703,7 +703,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                                     <td className={isCompact ? 'px-2 py-1 md:px-3 md:py-1.5' : 'px-3 py-2 md:px-4 md:py-2.5'}>
                                         <div className="flex items-center gap-2">
                                             <div className="min-w-0">
-                                                <div className={`font-bold text-slate-800 dark:text-slate-100 mb-0.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors font-display truncate pr-1 md:pr-2 ${isCompact ? 'text-[11px] md:text-xs' : 'text-xs md:text-sm'}`}>{emp.nama}</div>
+                                                <div className={`font-bold text-slate-800 dark:text-slate-100 mb-0.5 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors font-display truncate pr-1 md:pr-2 ${isCompact ? 'text-[11px] md:text-xs' : 'text-xs md:text-sm'}`}>{emp.nama}</div>
                                                 <div className={`text-slate-500 dark:text-slate-400 font-mono font-medium truncate ${isCompact ? 'text-[9px] md:text-[10px]' : 'text-[10px] md:text-xs'}`}>{emp.nip}</div>
                                             </div>
                                         </div>
@@ -712,13 +712,13 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                                         <div className="flex items-center gap-2">
                                             <span className={`font-bold text-slate-500 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 rounded-md border border-slate-200 dark:border-slate-700 ${isCompact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs'}`}>{emp.pangkatLama || '-'}</span>
                                             <ChevronRightIcon size={12} className="text-slate-400 dark:text-slate-500" />
-                                            <span className={`font-bold text-emerald-700 bg-emerald-50 rounded-md border border-emerald-200 ${isCompact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs'}`}>{emp.pangkatBaru || emp.pangkat}</span>
+                                            <span className={`font-bold text-primary-700 bg-primary-50 rounded-md border border-primary-200 ${isCompact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs'}`}>{emp.pangkatBaru || emp.pangkat}</span>
                                         </div>
                                     </td>
                                     <td className={`text-slate-600 dark:text-slate-500 hidden lg:table-cell ${isCompact ? 'px-2 py-1 md:px-3 md:py-1.5' : 'px-3 py-2 md:px-4 md:py-2.5'}`}>
                                         <div className={`font-semibold text-slate-700 dark:text-slate-200 mb-0.5 truncate max-w-[200px] ${isCompact ? 'text-[11px]' : 'text-xs'}`}>{emp.unitKerja}</div>
                                         {emp.suratUsulan && emp.suratUsulan !== '-' && (
-                                            <div className={`text-emerald-500 font-medium truncate max-w-[200px] ${isCompact ? 'text-[9px]' : 'text-[10px]'}`}>Surat: {emp.suratUsulan}</div>
+                                            <div className={`text-primary-500 font-medium truncate max-w-[200px] ${isCompact ? 'text-[9px]' : 'text-[10px]'}`}>Surat: {emp.suratUsulan}</div>
                                         )}
                                     </td>
                                     <td className={`hidden md:table-cell ${isCompact ? 'px-2 py-1 md:px-3 md:py-1.5' : 'px-3 py-2 md:px-4 md:py-2.5'}`}>
@@ -729,7 +729,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                                     <td className={`text-center whitespace-nowrap ${isCompact ? 'px-2 py-1 md:py-1.5' : 'px-2 py-2 md:px-4 md:py-2.5'}`}>
                                         <div className="flex items-center justify-center gap-1">
                                             {emp.status === 'Processed' ? (
-                                            <div className={`inline-flex items-center gap-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm ${isCompact ? 'px-1.5 py-0.5' : 'px-2 py-1'}`} title="Selesai">
+                                            <div className={`inline-flex items-center gap-1 rounded-lg bg-primary-50 text-primary-700 border border-primary-200 shadow-sm ${isCompact ? 'px-1.5 py-0.5' : 'px-2 py-1'}`} title="Selesai">
                                                 <CheckCircle2 size={isCompact ? 10 : 12} className="flex-shrink-0" />
                                                 <span className="text-[10px] font-bold hidden sm:inline">Selesai</span>
                                             </div>
@@ -755,7 +755,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                                         </div>
                                     </td>
                                     <td className={`text-center ${isCompact ? 'px-1 py-1 md:px-2 md:py-1.5' : 'px-2 py-2 md:px-3 md:py-2.5'}`}>
-                                        <ChevronRightIcon size={14} className="text-slate-300 dark:text-slate-600 group-hover:text-emerald-400 transition-colors inline-block" />
+                                        <ChevronRightIcon size={14} className="text-slate-300 dark:text-slate-600 group-hover:text-primary-400 transition-colors inline-block" />
                                     </td>
                                 </tr>
                             ))
@@ -787,7 +787,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                     <select 
                         value={itemsPerPage}
                         onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-slate-700 dark:text-slate-200"
+                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-slate-700 dark:text-slate-200"
                     >
                         <option value={10}>10</option>
                         <option value={25}>25</option>
@@ -802,14 +802,14 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                     <button 
                         onClick={() => handlePageChange(1)}
                         disabled={currentPage === 1}
-                        className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                        className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
                     >
                         <ChevronsLeft size={16} />
                     </button>
                     <button 
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                        className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
                     >
                         <ChevronLeft size={16} />
                     </button>
@@ -822,7 +822,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                         max={totalPages}
                         value={currentPage}
                         onChange={(e) => handlePageChange(Number(e.target.value))}
-                        className="w-12 text-center py-1 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900"
+                        className="w-12 text-center py-1 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900"
                         />
                         <span className="text-xs font-bold text-slate-600 dark:text-slate-300">dari {totalPages}</span>
                     </div>
@@ -830,14 +830,14 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                     <button 
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                        className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
                     >
                         <ChevronRight size={16} />
                     </button>
                     <button 
                         onClick={() => handlePageChange(totalPages)}
                         disabled={currentPage === totalPages}
-                        className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                        className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
                     >
                         <ChevronsRight size={16} />
                     </button>
@@ -858,7 +858,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
             <div className="relative bg-slate-50 dark:bg-slate-800/50 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] animate-in scale-in-95 duration-200 flex flex-col overflow-hidden z-10 border border-slate-200/60">
             {/* Modal Header */}
             <div className="bg-slate-900 p-6 md:p-8 relative overflow-hidden text-white flex-shrink-0 border-b border-slate-800">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
                 
                 <button 
                     onClick={() => setSelectedEmployee(null)}
@@ -868,7 +868,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                 </button>
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 relative z-10 text-center sm:text-left">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-emerald-600 to-emerald-900 border-2 border-emerald-500 text-white font-bold text-lg sm:text-xl shadow-lg shadow-emerald-500/20 flex-shrink-0">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-primary-600 to-primary-900 border-2 border-primary-500 text-white font-bold text-lg sm:text-xl shadow-lg shadow-primary-500/20 flex-shrink-0">
                         {selectedEmployee.nama.slice(0, 2).toUpperCase()}
                     </div>
                     <div className="flex-1">
@@ -879,7 +879,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                             </span>
                             <span className={`px-3 py-1 rounded-lg border flex items-center gap-1.5 ${
                                 selectedEmployee.statusKepegawaian === 'PNS' 
-                                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
+                                ? 'bg-primary-500/20 text-primary-300 border-primary-500/30' 
                                 : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
                             }`}>
                                 <User size={14} /> {selectedEmployee.statusKepegawaian}
@@ -903,8 +903,8 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                             <div className="w-px h-8 bg-slate-200 dark:bg-slate-700 mx-4"></div>
 
                             <div className="flex-1 text-right">
-                                <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider mb-1">Pangkat / Golongan Baru</p>
-                                <p className="text-lg sm:text-2xl font-bold text-emerald-700">
+                                <p className="text-[10px] font-bold text-primary-500 uppercase tracking-wider mb-1">Pangkat / Golongan Baru</p>
+                                <p className="text-lg sm:text-2xl font-bold text-primary-700">
                                     {selectedEmployee.pangkatBaru || selectedEmployee.pangkat}
                                 </p>
                             </div>
@@ -917,7 +917,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                             {/* Info Jabatan */}
                             <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] p-5 sm:p-6 shadow-sm">
                                 <h3 className="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-bold mb-4 text-xs uppercase tracking-wider border-b border-slate-50 pb-3">
-                                    <Briefcase size={14} className="text-emerald-500" /> Unit & Kepegawaian
+                                    <Briefcase size={14} className="text-primary-500" /> Unit & Kepegawaian
                                 </h3>
                                 <div className="space-y-4">
                                     <div>
@@ -930,7 +930,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                                     </div>
                                     <div>
                                         <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase mb-1">Status Kepegawaian</p>
-                                        <span className="inline-block bg-emerald-50 text-emerald-700 font-bold text-xs px-2 py-1 rounded-md border border-emerald-100">{selectedEmployee.statusKepegawaian}</span>
+                                        <span className="inline-block bg-primary-50 text-primary-700 font-bold text-xs px-2 py-1 rounded-md border border-primary-100">{selectedEmployee.statusKepegawaian}</span>
                                     </div>
                                     <div>
                                         <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase mb-1">Masa Kerja Pegawai</p>
@@ -948,7 +948,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                             {/* Kelengkapan Berkas KP */}
                             <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] p-5 sm:p-6 shadow-sm">
                                 <h3 className="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-bold mb-4 text-xs uppercase tracking-wider border-b border-slate-50 pb-3">
-                                    <ListTodo size={14} className="text-emerald-500" /> Kelengkapan Dokumen KP
+                                    <ListTodo size={14} className="text-primary-500" /> Kelengkapan Dokumen KP
                                 </h3>
                                 {(() => {
                                     const docsForEmp = KP_DOC_CHECKLIST.filter(d => checkedDocs[`${selectedEmployee.id}_${d.id}`]).length;
@@ -957,10 +957,10 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                                         <div className="mb-4">
                                             <div className="flex justify-between items-center text-xs font-bold mb-1.5">
                                                 <span className="text-slate-400 dark:text-slate-500">Progres Berkas</span>
-                                                <span className="text-emerald-600 font-mono">{pct}%</span>
+                                                <span className="text-primary-600 font-mono">{pct}%</span>
                                             </div>
                                             <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                                                <div className="bg-gradient-to-r from-emerald-500 to-emerald-500 h-full transition-all duration-300" style={{ width: `${pct}%` }}></div>
+                                                <div className="bg-gradient-to-r from-primary-500 to-primary-500 h-full transition-all duration-300" style={{ width: `${pct}%` }}></div>
                                             </div>
                                         </div>
                                     );
@@ -973,7 +973,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                                                 key={doc.id} 
                                                 className={`flex items-start gap-2.5 p-2 rounded-xl border transition-all cursor-pointer ${
                                                     isChecked 
-                                                    ? 'bg-emerald-50/50 border-emerald-200 text-slate-700 dark:text-slate-200' 
+                                                    ? 'bg-primary-50/50 border-primary-200 text-slate-700 dark:text-slate-200' 
                                                     : 'bg-slate-50/30 border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-500'
                                                 }`}
                                             >
@@ -981,7 +981,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                                                     type="checkbox" 
                                                     checked={isChecked}
                                                     onChange={() => toggleDoc(doc.id)}
-                                                    className="mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 h-3.5 w-3.5 cursor-pointer"
+                                                    className="mt-0.5 rounded border-slate-300 text-primary-600 focus:ring-primary-500 h-3.5 w-3.5 cursor-pointer"
                                                 />
                                                 <div className="flex-1 min-w-0">
                                                     <p className={`text-[11px] font-semibold leading-tight ${isChecked ? 'text-slate-800 dark:text-slate-100 line-through' : 'text-slate-600 dark:text-slate-500'}`}>{doc.label}</p>
@@ -996,7 +996,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                         {/* Status KP */}
                         <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] p-5 sm:p-6 shadow-sm flex flex-col">
                             <h3 className="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-bold mb-4 text-xs uppercase tracking-wider border-b border-slate-50 pb-3">
-                                <TrendingUp size={14} className="text-emerald-500" /> Informasi Kenaikan
+                                <TrendingUp size={14} className="text-primary-500" /> Informasi Kenaikan
                             </h3>
 
                             <div className="mb-4 sm:mb-6">
@@ -1065,7 +1065,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                                 <div className="pt-2">
                                     <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase mb-2">Status Saat Ini</p>
                                     {selectedEmployee.status === 'Processed' ? (
-                                        <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-primary-50 text-primary-700 border border-primary-200">
                                             <CheckCircle2 size={16} />
                                             <span className="text-sm font-bold">Selesai</span>
                                         </div>

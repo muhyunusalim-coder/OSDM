@@ -44,7 +44,7 @@ export const ScrollToTop = () => {
           exit={{ opacity: 0, scale: 0.5, y: 20 }}
           transition={{ duration: 0.2 }}
           onClick={scrollToTop}
-          className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 p-2.5 sm:p-3 rounded-full bg-emerald-600 text-white shadow-xl hover:bg-emerald-700 hover:shadow-emerald-600/30 transition-all active:scale-95 border border-emerald-500 cursor-pointer"
+          className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 p-2.5 sm:p-3 rounded-full bg-primary-600 text-white shadow-xl hover:bg-primary-700 hover:shadow-primary-600/30 transition-all active:scale-95 border border-primary-500 cursor-pointer"
           title="Ke Atas"
           aria-label="Kembali ke atas"
         >

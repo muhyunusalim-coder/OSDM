@@ -27,7 +27,7 @@ const JamKerjaPage = lazyWithRetry(() => import('./components/JamKerjaPage'));
 // Lightweight Loading Component for Suspense
 const PageLoader = () => (
   <div className="w-full h-64 flex flex-col items-center justify-center gap-3 animate-pulse">
-    <div className="w-10 h-10 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+    <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
     <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">Memuat komponen...</span>
   </div>
 );
@@ -79,16 +79,17 @@ const MenuItem = React.memo(({
   view, 
   icon: Icon, 
   label, 
-  colorClass = "text-emerald-400", 
+  colorClass = "text-primary-400", 
   currentView, 
   setCurrentView, 
   setMobileMenuOpen, 
   className = "", 
   isNested = false,
   badge = null,
-  badgeColor = "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+  badgeColor = "bg-primary-500/20 text-primary-400 border border-primary-500/30"
 }: MenuItemProps) => {
   const isActive = currentView === view;
+
   return (
     <button 
         onClick={() => { setCurrentView(view as any); setMobileMenuOpen(false); }}
@@ -98,13 +99,13 @@ const MenuItem = React.memo(({
             : 'text-sm py-2.5 px-3.5 gap-3 rounded-xl'
         } ${
             isActive 
-            ? 'bg-gradient-to-r from-emerald-500/20 via-emerald-500/10 to-slate-900/40 text-emerald-300 font-semibold border-l-2 border-emerald-400 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] ring-1 ring-emerald-500/30' 
+            ? 'bg-gradient-to-r from-primary-500/20 via-primary-500/10 to-slate-900/40 text-primary-400 font-semibold border-l-2 border-primary-400 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] ring-1 ring-primary-500/30' 
             : 'text-slate-300 hover:text-white hover:bg-slate-900/90 font-medium'
         } ${className}`}
     >
         <div className={`flex items-center justify-center shrink-0 transition-all duration-300 ${
           isActive 
-            ? 'text-emerald-400 scale-110 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]' 
+            ? 'text-primary-400 scale-110 drop-shadow-[0_0_8px_var(--primary-500)]' 
             : 'text-slate-400 group-hover:text-slate-200 group-hover:scale-105'
         }`}>
           <Icon 
@@ -121,7 +122,7 @@ const MenuItem = React.memo(({
           </span>
         )}
         {isActive && (
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)] ml-auto shrink-0 animate-pulse"></span>
+          <span className="w-1.5 h-1.5 rounded-full bg-primary-400 shadow-[0_0_8px_rgba(16,185,129,0.8)] ml-auto shrink-0 animate-pulse"></span>
         )}
     </button>
   );
@@ -139,7 +140,7 @@ const HeaderClock = React.memo(() => {
   return (
     <div className="hidden lg:flex items-center gap-3 ml-6 text-[13px] font-medium">
       <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 px-3.5 py-1.5 rounded-full border border-slate-200/80 dark:border-slate-700">
-        <Clock size={14} className="text-emerald-600" />
+        <Clock size={14} className="text-primary-600" />
         <span className="tracking-wide">
           {time.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
         </span>
@@ -284,7 +285,7 @@ function App() {
     });
   }, [employees, dismissedAlertIds]);
 
-  // Automatically expand/collapse sidebar sections based on currentView to provide a fluid, premium UX
+  // Automatically expand/collapse primary sections based on currentView to provide a fluid, premium UX
   useEffect(() => {
     if (currentView === 'kenaikan-pangkat' || currentView === 'kalender-kp' || currentView === 'report-kp') {
       setIsKenaikanPangkatExpanded(true);
@@ -641,7 +642,7 @@ function App() {
   const isJamKerjaAreaActive = ['jam-kerja'].includes(currentView);
 
   return (
-    <div className="h-[100dvh] min-h-[100dvh] w-full flex bg-slate-50/50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans selection:bg-emerald-500 selection:text-white overflow-hidden transition-colors duration-300">
+    <div className="h-[100dvh] min-h-[100dvh] w-full flex bg-slate-50/50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans selection:bg-primary-500 selection:text-white overflow-hidden transition-colors duration-300">
       {/* Background Ambient Mesh (Optimized for performance: Static Gradients instead of heavy blurs) */}
       <div className="fixed inset-0 z-0 pointer-events-none bg-slate-50 dark:bg-slate-900 print:hidden transition-colors duration-300">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.04)_0%,transparent_60%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.08)_0%,transparent_60%)]"></div>
@@ -659,7 +660,7 @@ function App() {
         <div className="px-4.5 pt-5 pb-4 group relative overflow-hidden border-b border-slate-800/80">
             <div className="flex items-start justify-between gap-2 relative z-10">
                 <div className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer" onClick={() => { setCurrentView('dashboard'); setMobileMenuOpen(false); }}>
-                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)] border border-emerald-400/30 group-hover:scale-105 transition-transform duration-300">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)] border border-primary-400/30 group-hover:scale-105 transition-transform duration-300">
                         <Landmark size={20} className="text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -667,7 +668,7 @@ function App() {
                             <h1 className="font-display font-bold text-lg tracking-tight text-white leading-none">
                                 BSKJI
                             </h1>
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.9)] animate-pulse"></span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary-400 shadow-[0_0_6px_rgba(16,185,129,0.9)] animate-pulse"></span>
                         </div>
                         <p className="text-[10px] font-medium text-slate-400 leading-snug tracking-normal mt-1 group-hover:text-slate-300 transition-colors truncate">
                             Portal Layanan Kepegawaian
@@ -699,16 +700,16 @@ function App() {
                     }}
                     className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-300 group relative overflow-hidden ${
                         currentView === 'dashboard' 
-                        ? 'bg-gradient-to-r from-emerald-500/20 via-emerald-500/10 to-slate-900/40 text-emerald-300 font-semibold border-l-2 border-emerald-400 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] ring-1 ring-emerald-500/30' 
+                        ? 'bg-gradient-to-r from-primary-500/20 via-primary-500/10 to-slate-900/40 text-primary-400 font-semibold border-l-2 border-primary-400 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] ring-1 ring-primary-500/30' 
                         : 'text-slate-300 hover:text-white hover:bg-slate-900/80'
                     }`}
                 >
-                    <div className={`p-1 rounded-lg transition-colors ${currentView === 'dashboard' ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-400 group-hover:text-slate-200'}`}>
+                    <div className={`p-1 rounded-lg transition-colors ${currentView === 'dashboard' ? 'bg-primary-500/20 text-primary-400' : 'text-slate-400 group-hover:text-slate-200'}`}>
                         <LayoutDashboard size={18} strokeWidth={currentView === 'dashboard' ? 2.5 : 2} className="relative z-10 group-hover:scale-110 duration-300" />
                     </div>
                     <span className={`text-sm tracking-wide relative z-10 whitespace-nowrap flex-1 text-left ${currentView === 'dashboard' ? 'font-semibold text-white' : 'font-medium'}`}>{t('sidebar_dashboard')}</span>
                     {currentView === 'dashboard' && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)] ml-auto shrink-0 animate-pulse"></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary-400 shadow-[0_0_8px_var(--primary-500)] ml-auto shrink-0 animate-pulse"></span>
                     )}
                 </button>
             </div>
@@ -735,18 +736,18 @@ function App() {
                     }}
                     className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 group relative overflow-hidden ${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'bg-slate-900/90 text-white border border-slate-800 shadow-sm' : 'text-slate-300 hover:bg-slate-900/70 hover:text-white'}`}
                 >
-                    <div className={`p-1 rounded-lg transition-colors ${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-900 text-slate-400 group-hover:text-emerald-400'}`}>
+                    <div className={`p-1 rounded-lg transition-colors ${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'bg-primary-500/20 text-primary-400' : 'bg-slate-900 text-slate-400 group-hover:text-primary-400'}`}>
                         <Award size={17} className="relative z-10 group-hover:scale-110 transition-transform duration-300" />
                     </div>
                     <span className={`text-sm tracking-wide relative z-10 flex-1 text-left ${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'font-semibold text-white' : 'font-medium'}`}>{t('sidebar_promotion')}</span>
-                    <ChevronRight size={15} className={`ml-auto transition-transform duration-300 relative z-10 ${isKenaikanPangkatExpanded ? 'rotate-90 text-emerald-400' : 'rotate-0 text-slate-400'}`} />
+                    <ChevronRight size={15} className={`ml-auto transition-transform duration-300 relative z-10 ${isKenaikanPangkatExpanded ? 'rotate-90 text-primary-400' : 'rotate-0 text-slate-400'}`} />
                 </button>
                 
                 {isKenaikanPangkatExpanded && (
                     <div className="pl-2.5 ml-4 border-l border-slate-800/80 space-y-1 my-1.5 animate-in slide-in-from-top-2 fade-in duration-200">
-                        <MenuItem view="kenaikan-pangkat" icon={ClipboardList} label={t('sidebar_promotion_service')} colorClass="text-emerald-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
-                        <MenuItem view="kalender-kp" icon={Calendar} label={t('sidebar_promotion_calendar')} colorClass="text-rose-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
-                        <MenuItem view="report-kp" icon={BarChart2} label={t('sidebar_promotion_report')} colorClass="text-amber-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                        <MenuItem view="kenaikan-pangkat" icon={ClipboardList} label={t('sidebar_promotion_service')} colorClass="text-primary-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                        <MenuItem view="kalender-kp" icon={Calendar} label={t('sidebar_promotion_calendar')} colorClass="text-primary-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                        <MenuItem view="report-kp" icon={BarChart2} label={t('sidebar_promotion_report')} colorClass="text-primary-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
                     </div>
                 )}
             </div>
@@ -766,22 +767,22 @@ function App() {
                     }}
                     className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 group relative overflow-hidden ${(isLayananKgbExpanded || isKGBAreaActive) ? 'bg-slate-900/90 text-white border border-slate-800 shadow-sm' : 'text-slate-300 hover:bg-slate-900/70 hover:text-white'}`}
                 >
-                    <div className={`p-1 rounded-lg transition-colors ${(isLayananKgbExpanded || isKGBAreaActive) ? 'bg-purple-500/20 text-purple-400' : 'bg-slate-900 text-slate-400 group-hover:text-purple-400'}`}>
+                    <div className={`p-1 rounded-lg transition-colors ${(isLayananKgbExpanded || isKGBAreaActive) ? 'bg-primary-500/20 text-primary-400' : 'bg-slate-900 text-slate-400 group-hover:text-primary-400'}`}>
                         <Banknote size={17} className="relative z-10 group-hover:scale-110 transition-transform duration-300" />
                     </div>
                     <span className={`text-sm tracking-wide relative z-10 flex-1 text-left ${(isLayananKgbExpanded || isKGBAreaActive) ? 'font-semibold text-white' : 'font-medium'}`}>{t('sidebar_kgb')}</span>
                     {stats.upcomingKGB > 0 && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 mr-1">
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary-500/20 text-primary-400 border border-primary-500/30 mr-1">
                             {stats.upcomingKGB}
                         </span>
                     )}
-                    <ChevronRight size={15} className={`ml-auto transition-transform duration-300 relative z-10 ${isLayananKgbExpanded ? 'rotate-90 text-purple-400' : 'rotate-0 text-slate-400'}`} />
+                    <ChevronRight size={15} className={`ml-auto transition-transform duration-300 relative z-10 ${isLayananKgbExpanded ? 'rotate-90 text-primary-400' : 'rotate-0 text-slate-400'}`} />
                 </button>
                 
                 {isLayananKgbExpanded && (
                     <div className="pl-2.5 ml-4 border-l border-slate-800/80 space-y-1 my-1.5 animate-in slide-in-from-top-2 fade-in duration-200">
-                        <MenuItem view="data-kgb" icon={ClipboardList} label={t('sidebar_kgb_service')} colorClass="text-purple-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested badge={stats.upcomingKGB > 0 ? stats.upcomingKGB : null} badgeColor="bg-purple-500/20 text-purple-300 border border-purple-500/30" />
-                        <MenuItem view="report" icon={BarChart2} label={t('sidebar_kgb_report')} colorClass="text-amber-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                        <MenuItem view="data-kgb" icon={ClipboardList} label={t('sidebar_kgb_service')} colorClass="text-primary-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested badge={stats.upcomingKGB > 0 ? stats.upcomingKGB : null} badgeColor="bg-primary-500/20 text-primary-400 border border-primary-500/30" />
+                        <MenuItem view="report" icon={BarChart2} label={t('sidebar_kgb_report')} colorClass="text-primary-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
                     </div>
                 )}
             </div>
@@ -801,21 +802,21 @@ function App() {
                     }}
                     className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 group relative overflow-hidden ${(isPensiunExpanded || isPensiunAreaActive) ? 'bg-slate-900/90 text-white border border-slate-800 shadow-sm' : 'text-slate-300 hover:bg-slate-900/70 hover:text-white'}`}
                 >
-                    <div className={`p-1 rounded-lg transition-colors ${(isPensiunExpanded || isPensiunAreaActive) ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-900 text-slate-400 group-hover:text-rose-400'}`}>
+                    <div className={`p-1 rounded-lg transition-colors ${(isPensiunExpanded || isPensiunAreaActive) ? 'bg-primary-500/20 text-primary-400' : 'bg-slate-900 text-slate-400 group-hover:text-primary-400'}`}>
                         <Archive size={17} className="relative z-10 group-hover:scale-110 transition-transform duration-300" />
                     </div>
                     <span className={`text-sm tracking-wide relative z-10 flex-1 text-left ${(isPensiunExpanded || isPensiunAreaActive) ? 'font-semibold text-white' : 'font-medium'}`}>{t('sidebar_retirement')}</span>
                     {systemAlerts.filter(a => a.type === 'pensiun').length > 0 && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 mr-1">
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary-500/20 text-primary-400 border border-primary-500/30 mr-1">
                             {systemAlerts.filter(a => a.type === 'pensiun').length}
                         </span>
                     )}
-                    <ChevronRight size={15} className={`ml-auto transition-transform duration-300 relative z-10 ${isPensiunExpanded ? 'rotate-90 text-rose-400' : 'rotate-0 text-slate-400'}`} />
+                    <ChevronRight size={15} className={`ml-auto transition-transform duration-300 relative z-10 ${isPensiunExpanded ? 'rotate-90 text-primary-400' : 'rotate-0 text-slate-400'}`} />
                 </button>
                 
                 {isPensiunExpanded && (
                     <div className="pl-2.5 ml-4 border-l border-slate-800/80 space-y-1 my-1.5 animate-in slide-in-from-top-2 fade-in duration-200">
-                        <MenuItem view="pensiun" icon={ClipboardList} label={t('sidebar_retirement_service')} colorClass="text-rose-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                        <MenuItem view="pensiun" icon={ClipboardList} label={t('sidebar_retirement_service')} colorClass="text-primary-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
                     </div>
                 )}
             </div>
@@ -835,16 +836,16 @@ function App() {
                     }}
                     className={`w-full flex items-center justify-start gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 group relative overflow-hidden ${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'bg-slate-900/90 text-white border border-slate-800 shadow-sm' : 'text-slate-300 hover:bg-slate-900/70 hover:text-white'}`}
                 >
-                    <div className={`p-1 rounded-lg transition-colors ${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'bg-sky-500/20 text-sky-400' : 'bg-slate-900 text-slate-400 group-hover:text-sky-400'}`}>
+                    <div className={`p-1 rounded-lg transition-colors ${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'bg-primary-500/20 text-primary-400' : 'bg-slate-900 text-slate-400 group-hover:text-primary-400'}`}>
                         <Clock size={17} className="relative z-10 group-hover:scale-110 transition-transform duration-300" />
                     </div>
                     <span className={`text-sm tracking-wide relative z-10 flex-1 text-left ${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'font-semibold text-white' : 'font-medium'}`}>{t('sidebar_work_hours')}</span>
-                    <ChevronRight size={15} className={`ml-auto transition-transform duration-300 relative z-10 ${isJamKerjaExpanded ? 'rotate-90 text-sky-400' : 'rotate-0 text-slate-400'}`} />
+                    <ChevronRight size={15} className={`ml-auto transition-transform duration-300 relative z-10 ${isJamKerjaExpanded ? 'rotate-90 text-primary-400' : 'rotate-0 text-slate-400'}`} />
                 </button>
                 
                 {isJamKerjaExpanded && (
                     <div className="pl-2.5 ml-4 border-l border-slate-800/80 space-y-1 my-1.5 animate-in slide-in-from-top-2 fade-in duration-200">
-                        <MenuItem view="jam-kerja" icon={ClipboardList} label={t('sidebar_work_hours_service')} colorClass="text-sky-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                        <MenuItem view="jam-kerja" icon={ClipboardList} label={t('sidebar_work_hours_service')} colorClass="text-primary-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
                     </div>
                 )}
             </div>
@@ -855,7 +856,7 @@ function App() {
                 <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">{t('sidebar_help')}</p>
             </div>
             <div className="pb-2">
-                <MenuItem view="faq" icon={BookOpen} label={t('sidebar_info_center')} colorClass="text-cyan-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} />
+                <MenuItem view="faq" icon={BookOpen} label={t('sidebar_info_center')} colorClass="text-primary-400" currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} />
             </div>
         </nav>
 
@@ -863,7 +864,7 @@ function App() {
         <div className="p-3 border-t border-slate-800/80 bg-slate-950/95 relative z-10">
             <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800/90 flex items-center justify-between gap-2.5 shadow-xs group">
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-700 text-white font-extrabold text-xs flex items-center justify-center shadow-xs border border-emerald-400/20 shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 text-white font-extrabold text-xs flex items-center justify-center shadow-xs border border-primary-400/20 shrink-0">
                         {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -878,14 +879,14 @@ function App() {
                 <button
                     onClick={handleLogout}
                     title="Keluar / Log Out"
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-colors shrink-0"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-primary-400 hover:bg-primary-500/10 border border-transparent hover:border-primary-500/20 transition-colors shrink-0"
                 >
                     <LogOut size={15} />
                 </button>
             </div>
             <div className="flex items-center justify-between px-1 pt-2 text-[9px] font-mono text-slate-400">
                 <span>PORTAL BSKJI</span>
-                <span className="text-emerald-400 font-semibold">v2.4 ONLINE</span>
+                <span className="text-primary-400 font-semibold">v2.4 ONLINE</span>
             </div>
         </div>
       </aside>
@@ -906,8 +907,8 @@ function App() {
               transition={{ duration: 0.2, ease: "easeOut" }}
               className="absolute top-4 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-4 z-[100] bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl border border-slate-800 flex items-center gap-3 w-[90%] max-w-sm md:w-auto"
             >
-              <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
-                <CheckCircle size={16} className="text-emerald-400" />
+              <div className="w-8 h-8 rounded-full bg-primary-500/20 flex items-center justify-center shrink-0">
+                <CheckCircle size={16} className="text-primary-400" />
               </div>
               <p className="text-sm font-medium tracking-wide flex-1">{notification}</p>
               <button 
@@ -931,7 +932,7 @@ function App() {
               <Menu size={19} />
             </button>
             <div className="flex flex-col gap-0.5 min-w-0 max-w-[200px] md:max-w-[280px] lg:max-w-[450px]">
-              <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider hidden sm:block">
+              <span className="text-[10px] font-bold text-primary-600 dark:text-primary-400 uppercase tracking-wider hidden sm:block">
                 Sistem Informasi Kepegawaian BSKJI
               </span>
               <h2 className="font-display font-bold text-slate-900 dark:text-white text-lg sm:text-xl md:text-2xl leading-tight truncate pb-0.5">
@@ -950,18 +951,18 @@ function App() {
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
                 className={`p-2 rounded-full border transition-all active:scale-95 flex items-center justify-center cursor-pointer relative shadow-sm ${
                   isNotificationsOpen
-                    ? 'bg-emerald-50 border-emerald-200 text-emerald-600'
-                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 hover:bg-emerald-50/50 hover:border-emerald-100'
+                    ? 'bg-primary-50 border-primary-200 text-primary-600'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50/50 hover:border-primary-100'
                 }`}
                 title="Pusat Notifikasi Kepegawaian"
               >
                 {systemAlerts.length > 0 ? (
                   <>
-                    <BellRing size={16} className="text-rose-500 animate-bounce" />
-                    <span className="absolute -top-1.5 -right-1.5 min-w-4.5 h-4.5 rounded-full bg-rose-600 text-white font-black text-[8px] flex items-center justify-center px-1 border border-white shadow-sm">
+                    <BellRing size={16} className="text-primary-400 animate-bounce" />
+                    <span className="absolute -top-1.5 -right-1.5 min-w-4.5 h-4.5 rounded-full bg-primary-500 text-white font-black text-[8px] flex items-center justify-center px-1 border border-white shadow-sm">
                       {systemAlerts.length}
                     </span>
-                    <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                    <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary-500 animate-ping"></span>
                   </>
                 ) : (
                   <Bell size={16} />
@@ -984,7 +985,7 @@ function App() {
                     >
                       <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-800/80">
                         <div className="flex items-center gap-1.5">
-                          <BellRing size={15} className="text-emerald-600 dark:text-emerald-500" />
+                          <BellRing size={15} className="text-primary-600 dark:text-primary-500" />
                           <h3 className="font-extrabold text-xs text-slate-800 dark:text-slate-200 tracking-tight">
                             Pusat Notifikasi Kepegawaian
                           </h3>
@@ -1002,7 +1003,7 @@ function App() {
                             </button>
                           )}
                           {systemAlerts.length > 0 && (
-                            <span className="px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-800 font-extrabold text-[9px] uppercase tracking-wide">
+                            <span className="px-2 py-0.5 rounded-full bg-primary-500 dark:bg-primary-500/10 text-primary-400 dark:text-primary-400 border border-primary-500 dark:border-primary-500 font-extrabold text-[9px] uppercase tracking-wide">
                               {systemAlerts.length} Peringatan
                             </span>
                           )}
@@ -1012,7 +1013,7 @@ function App() {
                       <div className="max-h-[320px] overflow-y-auto custom-scrollbar p-2 space-y-1.5">
                         {systemAlerts.length === 0 ? (
                           <div className="py-8 px-4 text-center flex flex-col items-center gap-2">
-                            <div className="w-9 h-9 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 flex items-center justify-center border border-emerald-100 dark:border-emerald-800 shadow-sm">
+                            <div className="w-9 h-9 rounded-full bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-500 flex items-center justify-center border border-primary-100 dark:border-primary-800 shadow-sm">
                               <CheckCircle size={18} />
                             </div>
                             <div className="space-y-0.5">
@@ -1038,14 +1039,14 @@ function App() {
                               }}
                               className={`p-2.5 rounded-xl border transition-all hover:bg-slate-50/50 dark:hover:bg-slate-800 cursor-pointer flex gap-2.5 ${
                                 alert.severity === 'critical'
-                                  ? 'border-rose-100 dark:border-rose-900/50 bg-rose-50/30 dark:bg-rose-500/5 hover:border-rose-200 dark:hover:border-rose-800'
-                                  : 'border-amber-100 dark:border-amber-900/50 bg-amber-50/10 dark:bg-amber-500/5 hover:border-amber-200 dark:hover:border-amber-800'
+                                  ? 'border-primary-500 dark:border-primary-500/50 bg-primary-500/30 dark:bg-primary-500/5 hover:border-primary-500 dark:hover:border-primary-500'
+                                  : 'border-primary-500 dark:border-primary-500/50 bg-primary-500/10 dark:bg-primary-500/5 hover:border-primary-500 dark:hover:border-primary-500'
                               }`}
                             >
                               <div className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center border ${
                                 alert.severity === 'critical'
-                                  ? 'bg-rose-50 dark:bg-rose-500/10 border-rose-100 dark:border-rose-800 text-rose-600 dark:text-rose-400 shadow-sm'
-                                  : 'bg-amber-50 dark:bg-amber-500/10 border-amber-100 dark:border-amber-800 text-amber-600 dark:text-amber-400 shadow-sm'
+                                  ? 'bg-primary-500 dark:bg-primary-500/10 border-primary-500 dark:border-primary-500 text-primary-400 dark:text-primary-400 shadow-sm'
+                                  : 'bg-primary-500 dark:bg-primary-500/10 border-primary-500 dark:border-primary-500 text-primary-400 dark:text-primary-400 shadow-sm'
                               }`}>
                                 {alert.type === 'kgb' ? <Banknote size={14} /> : <Archive size={14} />}
                               </div>
@@ -1056,8 +1057,8 @@ function App() {
                                   </p>
                                   <span className={`text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full tracking-wide ${
                                     alert.severity === 'critical'
-                                      ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-400'
-                                      : 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400'
+                                      ? 'bg-primary-500 dark:bg-primary-500/20 text-primary-400 dark:text-primary-400'
+                                      : 'bg-primary-500 dark:bg-primary-500/20 text-primary-400 dark:text-primary-400'
                                   }`}>
                                     {alert.severity === 'critical' ? 'URGENT' : 'PERINGATAN'}
                                   </span>
@@ -1078,7 +1079,7 @@ function App() {
                               setIsNotificationsOpen(false);
                               setCurrentView('dashboard');
                             }}
-                            className="hover:text-emerald-800 dark:hover:text-emerald-400 text-[10px] font-bold text-emerald-600 dark:text-emerald-500 flex items-center gap-1 cursor-pointer transition-all active:translate-x-0.5"
+                            className="hover:text-primary-800 dark:hover:text-primary-400 text-[10px] font-bold text-primary-600 dark:text-primary-500 flex items-center gap-1 cursor-pointer transition-all active:translate-x-0.5"
                           >
                             <span>Buka Dashboard</span>
                             <ChevronRight size={12} />
@@ -1098,7 +1099,7 @@ function App() {
                 className="flex items-center gap-2 rounded-full p-1 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group text-left outline-none border border-transparent focus-visible:border-slate-300 dark:focus-visible:border-slate-700"
                 title="Menu Profil"
               >
-                <div className="w-8 h-8 rounded-full border border-emerald-200/50 flex items-center justify-center bg-gradient-to-br from-emerald-500 to-emerald-700 text-white font-extrabold text-xs shadow-sm flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+                <div className="w-8 h-8 rounded-full border border-primary-200/50 flex items-center justify-center bg-gradient-to-br from-primary-500 to-primary-700 text-white font-extrabold text-xs shadow-sm flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
                   {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
                 </div>
                 <div className="hidden sm:flex flex-col text-left pr-1">
@@ -1106,7 +1107,7 @@ function App() {
                     {currentUser ? currentUser.nama.split(' ')[0] : 'Pegawai'}
                   </span>
                 </div>
-                <ChevronDown size={14} className={`text-slate-500 dark:text-slate-400 transition-transform duration-200 shrink-0 mr-0.5 ${isProfileMenuOpen ? 'rotate-180 text-emerald-600 dark:text-emerald-500' : ''}`} />
+                <ChevronDown size={14} className={`text-slate-500 dark:text-slate-400 transition-transform duration-200 shrink-0 mr-0.5 ${isProfileMenuOpen ? 'rotate-180 text-primary-600 dark:text-primary-500' : ''}`} />
               </button>
 
               <AnimatePresence>
@@ -1130,7 +1131,7 @@ function App() {
                           NIP: {currentUser?.nip || '-'}
                         </p>
                         {currentUser?.unitKerja && (
-                          <p className="text-[10px] font-medium text-emerald-700 dark:text-emerald-300 mt-1.5 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800 inline-block">
+                          <p className="text-[10px] font-medium text-primary-700 dark:text-primary-400 mt-1.5 bg-primary-50 dark:bg-primary-500/10 px-2 py-0.5 rounded border border-primary-200 dark:border-primary-800 inline-block">
                             {currentUser.unitKerja}
                           </p>
                         )}
@@ -1143,7 +1144,7 @@ function App() {
                           setIsProfileMenuOpen(false);
                           handleLogout();
                         }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-700 dark:hover:text-rose-300 rounded-xl transition-colors cursor-pointer border border-rose-100 dark:border-rose-900/50 bg-rose-50/40 dark:bg-rose-500/5"
+                        className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-primary-400 dark:text-primary-400 hover:bg-primary-500 dark:hover:bg-primary-500/10 hover:text-primary-400 dark:hover:text-primary-400 rounded-xl transition-colors cursor-pointer border border-primary-500 dark:border-primary-500/50 bg-primary-500/40 dark:bg-primary-500/5"
                       >
                         <LogOut size={16} />
                         <span>Keluar / Log Out</span>

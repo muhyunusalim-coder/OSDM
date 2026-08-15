@@ -197,13 +197,13 @@ export const FAQPage: React.FC<FAQPageProps> = React.memo(({ employees }) => {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-5 duration-500 pb-4">
       
       {/* Dynamic Header Banner with elegant background */}
-      <div className="bg-gradient-to-br from-emerald-950 via-slate-900 to-emerald-900 rounded-2xl p-6 md:p-8 shadow-md relative overflow-hidden text-white border border-emerald-800/40">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none"></div>
+      <div className="bg-gradient-to-br from-primary-950 via-slate-900 to-primary-900 rounded-2xl p-6 md:p-8 shadow-md relative overflow-hidden text-white border border-primary-800/40">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-primary-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-60 h-60 bg-primary-500/10 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none"></div>
         
         <div className="relative z-10 max-w-3xl">
-          <span className="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 shadow-sm">
-            <BookOpen size={14} className="text-emerald-400" />
+          <span className="inline-flex items-center gap-1.5 bg-primary-500/10 text-primary-300 border border-primary-500/20 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 shadow-sm">
+            <BookOpen size={14} className="text-primary-400" />
             Pusat Informasi & Bantuan Terpadu
           </span>
           <h1 className="text-3xl md:text-5xl font-display font-black leading-tight tracking-tight mb-4">
@@ -242,7 +242,7 @@ export const FAQPage: React.FC<FAQPageProps> = React.memo(({ employees }) => {
                   placeholder="Cari topik atau kata kunci..." 
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 pr-4 py-2 w-full sm:w-64 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all placeholder-slate-400 dark:placeholder-slate-500 text-slate-800 dark:text-slate-100"
+                  className="pl-9 pr-4 py-2 w-full sm:w-64 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/10 transition-all placeholder-slate-400 dark:placeholder-slate-500 text-slate-800 dark:text-slate-100"
                 />
               </div>
             </div>
@@ -255,7 +255,7 @@ export const FAQPage: React.FC<FAQPageProps> = React.memo(({ employees }) => {
                   onClick={() => setActiveTab(cat.id)}
                   className={`px-4 py-2 text-xs font-bold rounded-xl whitespace-nowrap transition-all border cursor-pointer shrink-0 ${
                     activeTab === cat.id
-                    ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
+                    ? 'bg-primary-600 text-white border-primary-700 shadow-sm'
                     : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-100'
                   }`}
                 >
@@ -274,7 +274,7 @@ export const FAQPage: React.FC<FAQPageProps> = React.memo(({ employees }) => {
                       key={index}
                       className={`rounded-2xl border transition-all duration-300 ${
                         isOpen 
-                        ? 'border-emerald-200 dark:border-emerald-800 bg-emerald-50/20 dark:bg-emerald-950/20 shadow-sm shadow-emerald-500/5 ring-1 ring-emerald-50 dark:ring-emerald-900/50' 
+                        ? 'border-primary-200 dark:border-primary-800 bg-primary-50/20 dark:bg-primary-950/20 shadow-sm shadow-primary-500/5 ring-1 ring-primary-50 dark:ring-primary-900/50' 
                         : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:border-slate-200 dark:hover:border-slate-700'
                       }`}
                     >
@@ -282,10 +282,10 @@ export const FAQPage: React.FC<FAQPageProps> = React.memo(({ employees }) => {
                         onClick={() => setOpenIndex(isOpen ? null : index)}
                         className="w-full text-left px-5 py-4.5 flex items-center justify-between gap-4 cursor-pointer"
                       >
-                        <span className={`font-bold text-xs sm:text-sm leading-snug ${isOpen ? 'text-emerald-800 dark:text-emerald-300' : 'text-slate-800 dark:text-slate-100'}`}>
+                        <span className={`font-bold text-xs sm:text-sm leading-snug ${isOpen ? 'text-primary-800 dark:text-primary-300' : 'text-slate-800 dark:text-slate-100'}`}>
                           {item.question}
                         </span>
-                        <span className={`p-1.5 rounded-full shrink-0 transition-colors ${isOpen ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400' : 'bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400'}`}>
+                        <span className={`p-1.5 rounded-full shrink-0 transition-colors ${isOpen ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400' : 'bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400'}`}>
                           {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                         </span>
                       </button>
@@ -336,23 +336,23 @@ export const FAQPage: React.FC<FAQPageProps> = React.memo(({ employees }) => {
                   href={reg.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex gap-3.5 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 hover:border-emerald-200 hover:bg-emerald-50/20 transition-all group cursor-pointer items-start relative"
+                  className="flex gap-3.5 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-primary-50/20 transition-all group cursor-pointer items-start relative"
                 >
-                  <div className="absolute top-3.5 right-3.5 text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 transition-colors opacity-0 group-hover:opacity-100">
+                  <div className="absolute top-3.5 right-3.5 text-slate-400 dark:text-slate-500 group-hover:text-primary-500 transition-colors opacity-0 group-hover:opacity-100">
                     <Download size={14} />
                   </div>
 
-                  <div className="mt-1 p-1 bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800 shrink-0 group-hover:border-emerald-100">
-                    <FileText size={16} className="text-slate-500 dark:text-slate-400 group-hover:text-emerald-500 transition-colors" />
+                  <div className="mt-1 p-1 bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800 shrink-0 group-hover:border-primary-100">
+                    <FileText size={16} className="text-slate-500 dark:text-slate-400 group-hover:text-primary-500 transition-colors" />
                   </div>
                   
                   <div className="pr-4">
-                    <span className="inline-block bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 group-hover:bg-emerald-50 group-hover:text-emerald-700 text-[8px] font-bold px-1.5 py-0.5 rounded font-mono mb-1">
+                    <span className="inline-block bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 group-hover:bg-primary-50 group-hover:text-primary-700 text-[8px] font-bold px-1.5 py-0.5 rounded font-mono mb-1">
                       {reg.code}
                     </span>
-                    <h4 className="font-bold text-slate-800 dark:text-slate-100 text-xs mb-0.5 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 leading-snug flex items-center gap-1">
+                    <h4 className="font-bold text-slate-800 dark:text-slate-100 text-xs mb-0.5 group-hover:text-primary-700 dark:group-hover:text-primary-400 leading-snug flex items-center gap-1">
                       {reg.title}
-                      <ExternalLink size={9} className="text-slate-400 dark:text-slate-500 group-hover:text-emerald-400 shrink-0" />
+                      <ExternalLink size={9} className="text-slate-400 dark:text-slate-500 group-hover:text-primary-400 shrink-0" />
                     </h4>
                     <p className="text-[10px] text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">{reg.desc}</p>
                     <p className="text-[8px] text-slate-500 dark:text-slate-400 font-bold font-mono mt-1.5">{reg.type} &bull; {reg.size}</p>

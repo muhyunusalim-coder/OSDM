@@ -34,7 +34,7 @@ const MonthlyBarChart: React.FC<MonthlyBarChartProps> = ({ data, onMonthClick, s
         <Tooltip 
           contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)', padding: '16px', fontFamily: 'Inter' }}
           cursor={{ fill: '#f8fafc', radius: 8 }}
-          formatter={(value: number) => [<span className="font-bold text-emerald-600">{value}</span>, 'Pegawai']}
+          formatter={(value: number) => [<span className="font-bold text-primary-600">{value}</span>, 'Pegawai']}
           labelStyle={{ color: '#64748b', fontWeight: 600, marginBottom: '0.5rem' }}
         />
         <Bar 

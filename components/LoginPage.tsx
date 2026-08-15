@@ -98,11 +98,11 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                 className="relative z-10 my-auto"
             >
                 <div className="flex items-center gap-4 mb-8 group cursor-default">
-                    <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl group-hover:bg-emerald-500/20 group-hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
-                        <Landmark size={32} className="text-emerald-400" />
+                    <div className="p-3 bg-primary-500/10 border border-primary-500/20 rounded-2xl group-hover:bg-primary-500/20 group-hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
+                        <Landmark size={32} className="text-primary-400" />
                     </div>
                     <div>
-                        <p className="text-xs font-bold text-emerald-400 uppercase tracking-[0.2em] mb-0.5">{t('brand_ministry')}</p>
+                        <p className="text-xs font-bold text-primary-400 uppercase tracking-[0.2em] mb-0.5">{t('brand_ministry')}</p>
                         <p className="text-[10px] text-slate-300 font-medium tracking-wide">{t('brand_country')}</p>
                     </div>
                 </div>
@@ -112,9 +112,9 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                 </h1>
                 
                 <div className="flex items-center gap-3 mb-8">
-                    <div className="h-[2px] w-12 bg-emerald-500"></div>
+                    <div className="h-[2px] w-12 bg-primary-500"></div>
                     <div className="h-[2px] w-2 bg-amber-500"></div>
-                    <div className="h-[2px] w-2 bg-emerald-500"></div>
+                    <div className="h-[2px] w-2 bg-primary-500"></div>
                 </div>
                 
                 <p className="text-slate-200 text-sm lg:text-base leading-relaxed max-w-lg font-normal mb-10">
@@ -124,7 +124,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-lg">
                     <motion.div 
                         whileHover={{ y: -5 }}
-                        className="p-5 bg-slate-900/[0.4] hover:bg-slate-900/[0.7] border border-slate-700/60 hover:border-emerald-500/40 rounded-2xl transition-all duration-300 group"
+                        className="p-5 bg-slate-900/[0.4] hover:bg-slate-900/[0.7] border border-slate-700/60 hover:border-primary-500/40 rounded-2xl transition-all duration-300 group"
                     >
                         <div className="p-2.5 bg-slate-900/60 rounded-xl inline-block mb-3 group-hover:scale-110 group-hover:bg-amber-500/20 transition-all duration-300">
                             <Building size={18} className="text-amber-400" />
@@ -135,7 +135,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
 
                     <motion.div 
                         whileHover={{ y: -5 }}
-                        className="p-5 bg-slate-900/[0.4] hover:bg-slate-900/[0.7] border border-slate-700/60 hover:border-emerald-500/40 rounded-2xl transition-all duration-300 group"
+                        className="p-5 bg-slate-900/[0.4] hover:bg-slate-900/[0.7] border border-slate-700/60 hover:border-primary-500/40 rounded-2xl transition-all duration-300 group"
                     >
                         <div className="p-2.5 bg-slate-900/60 rounded-xl inline-block mb-3 group-hover:scale-110 group-hover:bg-blue-500/20 transition-all duration-300">
                             <FileCheck size={18} className="text-blue-400" />
@@ -146,7 +146,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
 
                     <motion.div 
                         whileHover={{ y: -5 }}
-                        className="p-5 bg-slate-900/[0.4] hover:bg-slate-900/[0.7] border border-slate-700/60 hover:border-emerald-500/40 rounded-2xl transition-all duration-300 group"
+                        className="p-5 bg-slate-900/[0.4] hover:bg-slate-900/[0.7] border border-slate-700/60 hover:border-primary-500/40 rounded-2xl transition-all duration-300 group"
                     >
                         <div className="p-2.5 bg-slate-900/60 rounded-xl inline-block mb-3 group-hover:scale-110 group-hover:bg-rose-500/20 transition-all duration-300">
                             <Clock size={18} className="text-rose-400" />
@@ -164,12 +164,12 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                 className="flex gap-8 text-xs text-slate-300 font-medium relative z-10 pt-6 border-t border-white/10"
             >
                 <span className="flex items-center gap-2.5 bg-slate-900/60 px-3 py-1.5 rounded-full border border-slate-700/60 text-slate-300">
-                    <ShieldCheck size={15} className="text-emerald-400"/> {t('login_security_guarantee')}
+                    <ShieldCheck size={15} className="text-primary-400"/> {t('login_security_guarantee')}
                 </span>
                 <span className="flex items-center gap-2.5 bg-slate-900/60 px-3 py-1.5 rounded-full border border-slate-700/60 text-slate-300">
                     <div className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
                     </div>
                     {t('login_server_online')}
                 </span>
@@ -180,7 +180,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
         <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-3 sm:p-6 md:p-12 lg:p-16 relative my-auto">
             <div className="w-full max-w-md bg-[#0f172a] border border-slate-800 p-5 sm:p-10 rounded-3xl shadow-2xl relative overflow-hidden">
                 {/* Premium Subtle Accent Line */}
-                <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500"></div>
+                <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-primary-500 via-primary-400 to-primary-500"></div>
                 <div className="absolute -top-32 -right-32 w-64 h-64 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.1)_0%,transparent_70%)] pointer-events-none"></div>
                 
                 <div className="mb-6 sm:mb-8 text-center relative z-10">
@@ -192,7 +192,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     <div className="space-y-1.5 sm:space-y-2">
                         <label className="text-[10px] font-bold text-slate-300 uppercase tracking-widest block ml-1">{t('login_username')}</label>
                         <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 transition-colors group-focus-within:text-emerald-400">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 transition-colors group-focus-within:text-primary-400">
                                 <CreditCard size={18} />
                             </div>
                             <input 
@@ -207,7 +207,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                                     const val = e.target.value.replace(/\D/g, '');
                                     setNip(val);
                                 }}
-                                className="w-full pl-12 pr-4 py-3 sm:py-3.5 bg-slate-900/80 border border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 focus:bg-slate-900 transition-all duration-300 text-white placeholder-slate-400 text-sm font-medium shadow-inner"
+                                className="w-full pl-12 pr-4 py-3 sm:py-3.5 bg-slate-900/80 border border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-slate-900 transition-all duration-300 text-white placeholder-slate-400 text-sm font-medium shadow-inner"
                                 placeholder={t('login_username_placeholder')}
                                 autoFocus
                             />
@@ -217,7 +217,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     <div className="space-y-1.5 sm:space-y-2">
                         <label className="text-[10px] font-bold text-slate-300 uppercase tracking-widest block ml-1">{t('login_password')}</label>
                         <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 transition-colors group-focus-within:text-emerald-400">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 transition-colors group-focus-within:text-primary-400">
                                 <Lock size={18} />
                             </div>
                             <input 
@@ -225,7 +225,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                                 value={password}
                                 autoComplete="current-password"
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full pl-12 pr-12 py-3 sm:py-3.5 bg-slate-900/80 border border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 focus:bg-slate-900 transition-all duration-300 text-white placeholder-slate-400 text-sm font-medium shadow-inner"
+                                className="w-full pl-12 pr-12 py-3 sm:py-3.5 bg-slate-900/80 border border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-slate-900 transition-all duration-300 text-white placeholder-slate-400 text-sm font-medium shadow-inner"
                                 placeholder={t('login_password_placeholder')}
                              />
                             <button
@@ -243,21 +243,21 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
                             <label className="text-[10px] font-bold text-slate-300 uppercase tracking-widest flex items-center gap-1.5 ml-1">
-                                <ShieldCheck size={13} className="text-emerald-400" />
+                                <ShieldCheck size={13} className="text-primary-400" />
                                 {t('login_captcha')}
                             </label>
                             <button
                                 type="button"
                                 onClick={generateCaptcha}
-                                className="text-[11px] text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors font-semibold px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-lg touch-manipulation active:scale-95 cursor-pointer"
+                                className="text-[11px] text-primary-400 hover:text-primary-300 flex items-center gap-1.5 transition-colors font-semibold px-2.5 py-1 bg-primary-500/10 hover:bg-primary-500/20 border border-primary-500/20 rounded-lg touch-manipulation active:scale-95 cursor-pointer"
                                 title="Acak ulang pertanyaan verifikasi"
                             >
-                                <RefreshCw size={12} className="text-emerald-400" /> Refresh
+                                <RefreshCw size={12} className="text-primary-400" /> Refresh
                             </button>
                         </div>
                         <div className="flex items-center gap-2.5 sm:gap-3">
-                            <div className="flex-shrink-0 min-w-[100px] sm:min-w-[120px] px-3 py-3 sm:py-3.5 bg-slate-900/80 border border-emerald-500/30 rounded-2xl flex items-center justify-center text-emerald-400 font-bold text-base sm:text-lg select-none shadow-inner tracking-wider relative overflow-hidden">
-                                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/10 to-transparent"></div>
+                            <div className="flex-shrink-0 min-w-[100px] sm:min-w-[120px] px-3 py-3 sm:py-3.5 bg-slate-900/80 border border-primary-500/30 rounded-2xl flex items-center justify-center text-primary-400 font-bold text-base sm:text-lg select-none shadow-inner tracking-wider relative overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/10 to-transparent"></div>
                                 <span className="relative z-10">{captchaNum1} + {captchaNum2} =</span>
                             </div>
                             <input 
@@ -269,7 +269,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                                 autoCapitalize="none"
                                 value={captchaAnswer}
                                 onChange={(e) => setCaptchaAnswer(e.target.value.replace(/\D/g, ''))}
-                                className="flex-1 min-w-0 px-4 py-3 sm:py-3.5 bg-slate-900/80 border border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 focus:bg-slate-900 transition-all duration-300 text-white placeholder-slate-400 text-base font-bold shadow-inner text-center sm:text-left tracking-wider"
+                                className="flex-1 min-w-0 px-4 py-3 sm:py-3.5 bg-slate-900/80 border border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-slate-900 transition-all duration-300 text-white placeholder-slate-400 text-base font-bold shadow-inner text-center sm:text-left tracking-wider"
                                 placeholder={t('login_captcha_placeholder')}
                                 required
                             />
@@ -295,7 +295,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     <button 
                         type="submit" 
                         disabled={loading}
-                        className="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold py-4 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all duration-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-6 relative overflow-hidden text-sm uppercase tracking-wider group cursor-pointer"
+                        className="w-full bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white font-bold py-4 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all duration-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-6 relative overflow-hidden text-sm uppercase tracking-wider group cursor-pointer"
                     >
                         <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
                         <div className="relative z-10 flex items-center justify-center gap-2">

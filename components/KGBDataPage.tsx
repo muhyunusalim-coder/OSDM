@@ -53,8 +53,8 @@ const KGBDataPage: React.FC<Props> = React.memo(({
       </div>
         
       {(selectedMonth || selectedYear) && (
-        <div className="flex items-center justify-between bg-emerald-600 text-white p-4 rounded-xl shadow-md transform transition-all mb-6 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-violet-600"></div>
+        <div className="flex items-center justify-between bg-primary-600 text-white p-4 rounded-xl shadow-md transform transition-all mb-6 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-violet-600"></div>
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 dark:bg-slate-900/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transform translate-z-0"></div>
           
           <div className="flex items-center gap-4 relative z-10">
@@ -67,7 +67,7 @@ const KGBDataPage: React.FC<Props> = React.memo(({
                   ? 'Riwayat Selesai (Sejak Jan 2026)' 
                   : `${selectedMonth || ''} ${selectedYear || ''}`.trim()}
               </p>
-              <p className="text-emerald-100 text-sm font-medium opacity-90">Menampilkan {displayedEmployees.length} pegawai terseleksi</p>
+              <p className="text-primary-100 text-sm font-medium opacity-90">Menampilkan {displayedEmployees.length} pegawai terseleksi</p>
             </div>
           </div>
           <button 
@@ -75,7 +75,7 @@ const KGBDataPage: React.FC<Props> = React.memo(({
               setSelectedMonth(null);
               setSelectedYear(null);
             }}
-            className="relative z-10 px-5 py-2.5 bg-white dark:bg-slate-900 text-emerald-600 rounded-xl text-sm font-bold hover:bg-emerald-50 transition-colors flex items-center gap-2 shadow-sm"
+            className="relative z-10 px-5 py-2.5 bg-white dark:bg-slate-900 text-primary-600 rounded-xl text-sm font-bold hover:bg-primary-50 transition-colors flex items-center gap-2 shadow-sm"
           >
             <X size={16} />
             Reset Filter

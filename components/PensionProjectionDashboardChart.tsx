@@ -303,7 +303,7 @@ const PensionProjectionDashboardChart: React.FC<Props> = React.memo(({ employees
                     </span>
                   </div>
                   <div className="flex justify-between text-[10px] text-slate-600 dark:text-slate-400 font-medium">
-                    <span className="font-mono text-emerald-700 dark:text-emerald-400 font-semibold">{emp.nip}</span>
+                    <span className="font-mono text-primary-700 dark:text-primary-400 font-semibold">{emp.nip}</span>
                     <span className="text-slate-700 dark:text-slate-300 font-semibold">{emp.unitKerja}</span>
                   </div>
                   <div className="text-[10px] text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-700 mt-1.5 pt-1.5 flex items-center justify-between">

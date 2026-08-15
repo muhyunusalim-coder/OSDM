@@ -19,7 +19,7 @@ interface Props {
 const ChartSkeleton = () => (
   <div className="w-full h-full flex items-center justify-center bg-slate-50/50 rounded-xl animate-pulse border border-slate-200/50">
     <div className="relative flex items-center justify-center">
-        <div className="w-32 h-32 border-4 border-slate-100 dark:border-slate-800 border-t-emerald-200 rounded-full animate-spin"></div>
+        <div className="w-32 h-32 border-4 border-slate-100 dark:border-slate-800 border-t-primary-200 rounded-full animate-spin"></div>
         <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full"></div>
         </div>
@@ -113,7 +113,7 @@ const KGBCharts: React.FC<Props> = React.memo(({ employees, title = "Monitoring 
       <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-200/80 dark:border-slate-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center text-primary-600 dark:text-primary-400 shadow-sm">
                     <BarChart3 size={24} />
                 </div>
                 <div>
@@ -122,13 +122,13 @@ const KGBCharts: React.FC<Props> = React.memo(({ employees, title = "Monitoring 
                 </div>
             </div>
             
-            <div className="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 self-start sm:self-auto hover:border-emerald-200 dark:hover:border-emerald-800 transition-colors shadow-sm">
+            <div className="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 self-start sm:self-auto hover:border-primary-200 dark:hover:border-primary-800 transition-colors shadow-sm">
                 <Filter size={14} className="text-slate-500 dark:text-slate-400" />
                 <span className="text-xs text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wide">Tahun:</span>
                 <select 
                     value={filterYear}
                     onChange={(e) => setFilterYear(Number(e.target.value))}
-                    className="bg-transparent text-sm font-bold text-emerald-600 dark:text-emerald-400 focus:outline-none cursor-pointer"
+                    className="bg-transparent text-sm font-bold text-primary-600 dark:text-primary-400 focus:outline-none cursor-pointer"
                 >
                     {availableYears.map(year => (
                         <option key={year} value={year}>{year}</option>
@@ -162,9 +162,9 @@ const KGBCharts: React.FC<Props> = React.memo(({ employees, title = "Monitoring 
             </div>
             
             {/* Average Stats Box */}
-            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-800/40 rounded-2xl p-4 mb-6 text-center">
-                <p className="text-emerald-900 dark:text-emerald-300 font-bold text-2xl">{avgKGBPeriod} <span className="text-sm font-medium">bulan</span></p>
-                <p className="text-xs text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wide">Rata-rata Periode KGB</p>
+            <div className="bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-800/40 rounded-2xl p-4 mb-6 text-center">
+                <p className="text-primary-900 dark:text-primary-300 font-bold text-2xl">{avgKGBPeriod} <span className="text-sm font-medium">bulan</span></p>
+                <p className="text-xs text-primary-700 dark:text-primary-400 font-bold uppercase tracking-wide">Rata-rata Periode KGB</p>
             </div>
 
             <div className="flex-1 min-h-[250px] flex items-center justify-center relative">

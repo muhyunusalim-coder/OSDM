@@ -174,9 +174,9 @@ const ServiceOverviewCharts: React.FC<Props> = React.memo(({ employees, promotio
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
       {/* KGB Card */}
       <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden flex flex-col justify-between group">
-         <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-emerald-400/10 dark:from-emerald-400/5 to-transparent rounded-full blur-[30px] -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-125"></div>
+         <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-primary-400/10 dark:from-primary-400/5 to-transparent rounded-full blur-[30px] -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-125"></div>
          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.02] dark:opacity-[0.05] mix-blend-overlay pointer-events-none"></div>
-         <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-emerald-500 to-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+         <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-primary-500 to-primary-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
 
          <div className="flex justify-between items-start mb-6">
            <h3 className="font-display font-medium text-slate-800 dark:text-slate-100 text-lg tracking-tight relative z-10">{t('chart_kgb_title')}</h3>
@@ -188,7 +188,7 @@ const ServiceOverviewCharts: React.FC<Props> = React.memo(({ employees, promotio
                  <select
                    value={kgbYear}
                    onChange={(e) => setKgbYear(e.target.value)}
-                   className="appearance-none bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold py-1.5 pl-3 pr-8 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 transition-all cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700"
+                   className="appearance-none bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold py-1.5 pl-3 pr-8 rounded-lg outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 transition-all cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700"
                  >
                    <option value="All">{t('chart_kgb_filter_all')}</option>
                    {availableKgbYears.map(year => (
@@ -215,9 +215,9 @@ const ServiceOverviewCharts: React.FC<Props> = React.memo(({ employees, promotio
 
       {/* KP Card */}
       <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden flex flex-col justify-between group">
-         <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-emerald-400/10 dark:from-emerald-400/5 to-transparent rounded-full blur-[30px] -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-125"></div>
+         <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-primary-400/10 dark:from-primary-400/5 to-transparent rounded-full blur-[30px] -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-125"></div>
          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.02] dark:opacity-[0.05] mix-blend-overlay pointer-events-none"></div>
-         <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-emerald-400 to-emerald-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+         <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-primary-400 to-primary-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
          
          <h3 className="font-display font-medium text-slate-800 dark:text-slate-100 text-lg mb-6 tracking-tight relative z-10">{t('chart_kp_title')}</h3>
          <div className="h-[250px] w-full relative z-10">

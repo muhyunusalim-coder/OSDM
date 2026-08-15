@@ -117,8 +117,8 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
         {[
           { label: 'Urgen (≤ 1 Tahun)', value: stats.within1Year.toString(), icon: Clock, color: 'rose' as const, subtext: 'Tindakan Segera Diperlukan' },
           { label: 'Proyeksi 5 Tahun', value: stats.within5Years.toString(), icon: Calendar, color: 'amber' as const, subtext: `${stats.percentage5Y}% dari seluruh SDM` },
-          { label: 'Proyeksi 10 Tahun', value: stats.within10Years.toString(), icon: Users, color: 'emerald' as const, subtext: 'Suksesi SDM Jangka Panjang' },
-          { label: 'Indeks Suksesi', value: 'Kondusif', icon: Award, color: 'emerald' as const, subtext: 'Perencanaan Formasi Aktif' },
+          { label: 'Proyeksi 10 Tahun', value: stats.within10Years.toString(), icon: Users, color: 'primary' as const, subtext: 'Suksesi SDM Jangka Panjang' },
+          { label: 'Indeks Suksesi', value: 'Kondusif', icon: Award, color: 'primary' as const, subtext: 'Perencanaan Formasi Aktif' },
         ].map((stat, i) => {
           const statThemes = {
             rose: {
@@ -133,11 +133,11 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
               borderHover: 'hover:border-amber-300 dark:hover:border-amber-700/60',
               glow: 'group-hover:bg-amber-500/5',
             },
-            emerald: {
-              iconBg: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-800/40 text-emerald-600 dark:text-emerald-400',
-              dot: 'bg-emerald-500 dark:bg-emerald-400',
-              borderHover: 'hover:border-emerald-300 dark:hover:border-emerald-700/60',
-              glow: 'group-hover:bg-emerald-500/5',
+            primary: {
+              iconBg: 'bg-primary-50 dark:bg-primary-500/10 border-primary-100 dark:border-primary-800/40 text-primary-600 dark:text-primary-400',
+              dot: 'bg-primary-500 dark:bg-primary-400',
+              borderHover: 'hover:border-primary-300 dark:hover:border-primary-700/60',
+              glow: 'group-hover:bg-primary-500/5',
             }
           };
           const theme = statThemes[stat.color];

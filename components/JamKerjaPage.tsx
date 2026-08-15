@@ -775,8 +775,8 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
 
   const getDisciplineStatus = (totalDeficiencyMins: number) => {
     const hours = totalDeficiencyMins / 60;
-    if (hours === 0) return { label: t('very_good'), bg: 'bg-emerald-50 border-emerald-100 text-emerald-700' };
-    if (hours <= 10) return { label: t('good'), bg: 'bg-emerald-50 border-emerald-100 text-emerald-700' };
+    if (hours === 0) return { label: t('very_good'), bg: 'bg-primary-50 border-primary-100 text-primary-700' };
+    if (hours <= 10) return { label: t('good'), bg: 'bg-primary-50 border-primary-100 text-primary-700' };
     if (hours <= 30) return { label: t('cukup'), bg: 'bg-amber-50 border-amber-100 text-amber-700' };
     return { label: t('kurang'), bg: 'bg-rose-50 border-rose-100 text-rose-700' };
   };
@@ -1437,7 +1437,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
         <p className="text-slate-500 dark:text-slate-500 text-sm max-w-md mb-6">{error}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold text-xs transition-all shadow-md active:scale-95 cursor-pointer"
+          className="px-5 py-2.5 bg-primary-600 text-white rounded-xl font-semibold text-xs transition-all shadow-md active:scale-95 cursor-pointer"
         >
           {t('error_retry')}
         </button>
@@ -1465,13 +1465,13 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
       </div>
 
       {/* Hero Banner / Rules Overview */}
-      <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 rounded-3xl p-6 md:p-8 text-white relative overflow-hidden shadow-xl border border-emerald-500/10 print:hidden">
+      <div className="bg-gradient-to-r from-slate-900 via-primary-950 to-slate-900 rounded-3xl p-6 md:p-8 text-white relative overflow-hidden shadow-xl border border-primary-500/10 print:hidden">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15)_0%,transparent_70%)] pointer-events-none"></div>
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-primary-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
           <div className="space-y-3 max-w-2xl">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold tracking-widest uppercase border border-emerald-500/30">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-500/20 text-primary-300 text-[10px] font-extrabold tracking-widest uppercase border border-primary-500/30">
               <Clock size={12} /> {t('presence_perf')} & {t('deficiency')}
             </span>
             <h1 className="text-2xl md:text-3xl font-display font-black tracking-tight leading-tight">
@@ -1483,27 +1483,27 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
           </div>
 
           {/* Quick Rules Sheet */}
-          <div className="bg-slate-800/80 backdrop-blur-sm border border-emerald-500/20 rounded-2xl p-4 md:p-5 max-w-md space-y-3.5 shrink-0 text-slate-200 shadow-lg">
+          <div className="bg-slate-800/80 backdrop-blur-sm border border-primary-500/20 rounded-2xl p-4 md:p-5 max-w-md space-y-3.5 shrink-0 text-slate-200 shadow-lg">
             <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider pb-1.5 border-b border-white/10">
-              <HelpCircle size={14} className="text-emerald-400" /> {t('rules_title')}
+              <HelpCircle size={14} className="text-primary-400" /> {t('rules_title')}
             </h3>
             <div className="grid grid-cols-2 gap-3.5 text-[11px]">
               <div className="space-y-1">
                 <span className="block font-bold text-white text-xs">{t('mon_thu')}</span>
-                <span className="block text-emerald-300 font-medium">07:30 – 16:00</span>
+                <span className="block text-primary-300 font-medium">07:30 – 16:00</span>
                 <span className="block text-slate-300 font-medium">{t('break')}: 60 m</span>
                 <span className="block text-slate-300 font-medium">{t('max_checkout')}: 17:00</span>
               </div>
               <div className="space-y-1">
                 <span className="block font-bold text-white text-xs">{t('fri')}</span>
-                <span className="block text-emerald-300 font-medium">07:30 – 16:30</span>
+                <span className="block text-primary-300 font-medium">07:30 – 16:30</span>
                 <span className="block text-slate-300 font-medium">{t('break')}: 90 m</span>
                 <span className="block text-slate-300 font-medium">{t('max_checkout')}: 17:30</span>
               </div>
             </div>
             <div className="text-[10px] text-slate-300 font-medium pt-1.5 border-t border-white/10 space-y-1.5">
               <div>* {t('rule_note_1')}</div>
-              <div className="text-emerald-300 font-semibold">* {t('rule_note_2')}</div>
+              <div className="text-primary-300 font-semibold">* {t('rule_note_2')}</div>
             </div>
           </div>
         </div>
@@ -1512,7 +1512,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
       {/* Loader */}
       {loading ? (
         <div className="w-full py-20 flex flex-col items-center justify-center gap-3">
-          <Loader2 size={36} className="text-emerald-600 animate-spin" />
+          <Loader2 size={36} className="text-primary-600 animate-spin" />
           <span className="text-xs font-medium text-slate-400 dark:text-slate-500 animate-pulse">{t('loader_message')}</span>
         </div>
       ) : (
@@ -1522,7 +1522,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
             <button
               onClick={() => setMainTab('ringkasan')}
               className={`flex-1 min-w-[120px] px-6 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
-                mainTab === 'ringkasan' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20' : 'text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800'
+                mainTab === 'ringkasan' ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20' : 'text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800'
               }`}
             >
               <BarChart3 size={18} /> {t('tab_ringkasan')}
@@ -1530,7 +1530,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
             <button
               onClick={() => setMainTab('triwulan')}
               className={`flex-1 min-w-[120px] px-6 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
-                mainTab === 'triwulan' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20' : 'text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800'
+                mainTab === 'triwulan' ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20' : 'text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800'
               }`}
             >
               <CalendarDays size={18} /> {t('tab_triwulan')}
@@ -1538,7 +1538,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
             <button
               onClick={() => setMainTab('bulanan')}
               className={`flex-1 min-w-[120px] px-6 py-3 rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
-                mainTab === 'bulanan' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20' : 'text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800'
+                mainTab === 'bulanan' ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20' : 'text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800'
               }`}
             >
               <FileSpreadsheet size={18} /> {t('tab_bulanan')}
@@ -1550,7 +1550,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
               {/* Dashboard Metrics Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
-              <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+              <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-xl flex items-center justify-center shrink-0">
                 <Briefcase size={22} />
               </div>
               <div className="min-w-0 flex-1">
@@ -1574,12 +1574,12 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
             </div>
 
             <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
-              <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+              <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-xl flex items-center justify-center shrink-0">
                 <CheckCircle size={22} />
               </div>
               <div className="min-w-0 flex-1">
                 <span className="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-wider block truncate">{t('presence_rate')}</span>
-                <span className="text-xl sm:text-2xl font-bold text-emerald-600 font-display block mt-0.5 truncate">
+                <span className="text-xl sm:text-2xl font-bold text-primary-600 font-display block mt-0.5 truncate">
                   {metrics.overallPresence.toFixed(1)}%
                 </span>
                 <span className="text-[10px] text-slate-500 dark:text-slate-500 font-medium block mt-0.5 truncate">{t('presence_rate_sub')}</span>
@@ -1596,8 +1596,8 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                   {metrics.disciplineLeader.split(',')[0]}
                 </span>
                 <span className="text-[9px] text-slate-500 dark:text-slate-500 font-semibold block mt-1.5 leading-relaxed">
-                  {t('work_time')}: <span className="text-emerald-600 font-bold">{formatMinutesFriendly(metrics.disciplineLeaderActualWorked)}</span><br />
-                  {t('def_time')}: <span className="text-rose-600 font-bold">{formatMinutesFriendly(metrics.disciplineLeaderDeficiency)}</span> | {t('leave_time')}: <span className="text-emerald-600">{metrics.disciplineLeaderLeave} {language === 'en' ? t('days') : 'hari'}</span>
+                  {t('work_time')}: <span className="text-primary-600 font-bold">{formatMinutesFriendly(metrics.disciplineLeaderActualWorked)}</span><br />
+                  {t('def_time')}: <span className="text-rose-600 font-bold">{formatMinutesFriendly(metrics.disciplineLeaderDeficiency)}</span> | {t('leave_time')}: <span className="text-primary-600">{metrics.disciplineLeaderLeave} {language === 'en' ? t('days') : 'hari'}</span>
                 </span>
               </div>
             </div>
@@ -1612,7 +1612,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
               <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-6">
             <div>
               <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                <CalendarDays size={18} className="text-emerald-500" /> {t('quarter_recap')}
+                <CalendarDays size={18} className="text-primary-500" /> {t('quarter_recap')}
               </h2>
               <p className="text-slate-400 dark:text-slate-500 text-xs mt-0.5">{t('quarter_recap_sub')}</p>
             </div>
@@ -1622,7 +1622,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
               {/* Card Q1 */}
               <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.06)_0%,transparent_70%)] pointer-events-none"></div>
-                <span className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-widest block mb-1">{t('quarter_1')}</span>
+                <span className="text-[10px] text-primary-600 font-extrabold uppercase tracking-widest block mb-1">{t('quarter_1')}</span>
                 <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium block">{t('quarter_1_sub')}</span>
                 <div className="mt-4 flex items-baseline gap-1.5">
                   <span className="text-2xl font-black text-rose-600 font-display">
@@ -1636,7 +1636,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
               {/* Card Q2 */}
               <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.06)_0%,transparent_70%)] pointer-events-none"></div>
-                <span className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-widest block mb-1">{t('quarter_2')}</span>
+                <span className="text-[10px] text-primary-600 font-extrabold uppercase tracking-widest block mb-1">{t('quarter_2')}</span>
                 <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium block">{t('quarter_2_sub')}</span>
                 <div className="mt-4 flex items-baseline gap-1.5">
                   <span className="text-2xl font-black text-rose-600 font-display">
@@ -1648,15 +1648,15 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
               </div>
 
               {/* Card Cumulative */}
-              <div className="bg-emerald-950 text-white p-5 rounded-2xl border border-emerald-900/30 relative overflow-hidden">
+              <div className="bg-primary-950 text-white p-5 rounded-2xl border border-primary-900/30 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.25)_0%,transparent_70%)] pointer-events-none"></div>
-                <span className="text-[10px] text-emerald-300 font-extrabold uppercase tracking-widest block mb-1">{t('total_accumulated')}</span>
+                <span className="text-[10px] text-primary-300 font-extrabold uppercase tracking-widest block mb-1">{t('total_accumulated')}</span>
                 <span className="text-[11px] text-slate-300 font-medium block">{t('until_now')}</span>
                 <div className="mt-4 flex items-baseline gap-1.5">
                   <span className="text-2xl font-black text-amber-400 font-display">
                     {formatMinutesFriendly(quarterlyMetrics.officeTotalAccumulatedDeficiency)}
                   </span>
-                  <span className="text-[10px] text-emerald-200 font-bold">{language === 'en' ? 'Office Collective' : 'Kolektif Kantor'}</span>
+                  <span className="text-[10px] text-primary-200 font-bold">{language === 'en' ? 'Office Collective' : 'Kolektif Kantor'}</span>
                 </div>
                 <p className="text-[10px] text-slate-300 mt-2 font-medium">{t('total_accumulated_desc')}</p>
               </div>
@@ -1671,7 +1671,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <div className="flex items-center gap-2 text-[11px]">
-                    <span className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-bold">
+                    <span className="bg-primary-50 text-primary-700 px-3 py-1 rounded-full font-bold">
                       {language === 'en' ? 'Total: ' : 'Total: '} {quarterlyMetrics.employeesSummaryList.length} {language === 'en' ? t('employee') : 'Pegawai'}
                     </span>
                     {filteredQuarterlyEmployees.length !== quarterlyMetrics.employeesSummaryList.length && (
@@ -1684,7 +1684,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                     onClick={handleExportQuarterlyExcel}
                     disabled={isExportingQuarterly || filteredQuarterlyEmployees.length === 0}
                     id="btn-ekspor-excel-akumulasi"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 dark:bg-slate-700 text-white disabled:text-slate-400 dark:text-slate-500 rounded-xl text-[11px] font-bold transition-all shadow-sm hover:shadow active:scale-95 cursor-pointer disabled:cursor-not-allowed border border-emerald-500/10"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 disabled:bg-slate-200 dark:bg-slate-700 text-white disabled:text-slate-400 dark:text-slate-500 rounded-xl text-[11px] font-bold transition-all shadow-sm hover:shadow active:scale-95 cursor-pointer disabled:cursor-not-allowed border border-primary-500/10"
                     title={t('export_accumulation')}
                   >
                     {isExportingQuarterly ? (
@@ -1714,7 +1714,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                     value={quarterSearch}
                     onChange={(e) => setQuarterSearch(e.target.value)}
                     placeholder={t('search_placeholder')}
-                    className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-slate-700 dark:text-slate-200"
+                    className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-slate-700 dark:text-slate-200"
                   />
                   {quarterSearch && (
                     <button
@@ -1737,7 +1737,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                     value={selectedUnitKerja === 'Semua' ? '' : selectedUnitKerja}
                     onChange={(e) => { setSelectedUnitKerja(e.target.value || 'Semua'); setCurrentPage(1); }}
                     placeholder={t('all_units')}
-                    className="w-full pl-9 pr-8 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-slate-700 dark:text-slate-200"
+                    className="w-full pl-9 pr-8 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-slate-700 dark:text-slate-200"
                   />
                   <datalist id="unit-kerja-list-quarter">
                     {uniqueUnitKerjas.map(unit => (
@@ -1759,7 +1759,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                   <select
                     value={quarterStatusFilter}
                     onChange={(e) => setQuarterStatusFilter(e.target.value)}
-                    className="w-full pl-3 pr-8 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-slate-700 dark:text-slate-200 appearance-none cursor-pointer"
+                    className="w-full pl-3 pr-8 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-slate-700 dark:text-slate-200 appearance-none cursor-pointer"
                   >
                     <option value="Semua">{t('all_statuses')}</option>
                     <option value="Sangat Baik">{t('very_good')} (0 {language === 'en' ? 'h' : 'jam'})</option>
@@ -1778,7 +1778,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                   <select
                     value={quarterMinDeficiency}
                     onChange={(e) => setQuarterMinDeficiency(e.target.value)}
-                    className="w-full pl-3 pr-8 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-slate-700 dark:text-slate-200 appearance-none cursor-pointer"
+                    className="w-full pl-3 pr-8 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-slate-700 dark:text-slate-200 appearance-none cursor-pointer"
                   >
                     <option value="Semua">{language === 'en' ? 'All Deficit Levels' : 'Semua Tingkat Kekurangan'}</option>
                     <option value="has_deficiency">{language === 'en' ? 'Only those with deficiencies' : 'Hanya yang memiliki kekurangan'}</option>
@@ -1799,7 +1799,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                       <th className="px-4 py-3">{language === 'en' ? 'Employee Name / NIP' : 'Nama Pegawai / NIP'}</th>
                       <th className="px-4 py-3 text-center">{t('quarter_1')} (Jan-Mar)</th>
                       <th className="px-4 py-3 text-center">{t('quarter_2')} (Apr-Jun)</th>
-                      <th className="px-4 py-3 text-center bg-emerald-50/30 text-emerald-900">{t('total_accumulated')}</th>
+                      <th className="px-4 py-3 text-center bg-primary-50/30 text-primary-900">{t('total_accumulated')}</th>
                       <th className="px-4 py-3 text-center">{language === 'en' ? 'Information' : 'Keterangan'}</th>
                       <th className="px-4 py-3 text-center">{language === 'en' ? 'Accumulation Status' : 'Status Akumulasi'}</th>
                       <th className="px-4 py-3 text-center">{language === 'en' ? 'Download Details' : 'Unduh Rincian'}</th>
@@ -1820,7 +1820,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                         const remainingToTeguran = teguranThresholdMins - emp.totalDeficiency;
                         
                         let statusLabel = t('very_good');
-                        let statusBg = "bg-emerald-50 text-emerald-700";
+                        let statusBg = "bg-primary-50 text-primary-700";
                         if (totalDeficiencyHours > 60) {
                           statusLabel = `${t('heavy_action')} (>60h)`;
                           statusBg = "bg-rose-100 text-rose-700 font-bold animate-pulse";
@@ -1836,7 +1836,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                         }
 
                         return (
-                          <tr key={emp.nip} className="border-l-4 border-l-transparent hover:border-l-emerald-400 dark:hover:border-l-emerald-500 hover:bg-emerald-50/40 dark:hover:bg-slate-800/60 transition-all duration-150 group">
+                          <tr key={emp.nip} className="border-l-4 border-l-transparent hover:border-l-primary-400 dark:hover:border-l-primary-500 hover:bg-primary-50/40 dark:hover:bg-slate-800/60 transition-all duration-150 group">
                             <td className="px-4 py-3.5">
                               <div className="font-bold text-slate-800 dark:text-slate-100">{emp.nama.split(',')[0]}</div>
                               <div className="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">NIP. {emp.nip} • {emp.gol}</div>
@@ -1845,26 +1845,26 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                               {emp.q1Deficiency > 0 ? (
                                 <span className="text-rose-600">{formatMinutesFriendly(emp.q1Deficiency)}</span>
                               ) : (
-                                <span className="text-emerald-600">0m</span>
+                                <span className="text-primary-600">0m</span>
                               )}
                             </td>
                             <td className="px-4 py-3.5 text-center font-semibold text-slate-600 dark:text-slate-500">
                               {emp.q2Deficiency > 0 ? (
                                 <span className="text-rose-600">{formatMinutesFriendly(emp.q2Deficiency)}</span>
                               ) : (
-                                <span className="text-emerald-600">0m</span>
+                                <span className="text-primary-600">0m</span>
                               )}
                             </td>
-                            <td className="px-4 py-3.5 text-center font-bold bg-emerald-50/10 text-emerald-950">
+                            <td className="px-4 py-3.5 text-center font-bold bg-primary-50/10 text-primary-950">
                               {emp.totalDeficiency > 0 ? (
                                 <span className="text-rose-700 font-black">{formatMinutesFriendly(emp.totalDeficiency)}</span>
                               ) : (
-                                <span className="text-emerald-700">0m ({language === 'en' ? 'Perfect' : 'Sempurna'})</span>
+                                <span className="text-primary-700">0m ({language === 'en' ? 'Perfect' : 'Sempurna'})</span>
                               )}
                             </td>
                             <td className="px-4 py-3.5 text-center font-medium text-slate-500 dark:text-slate-500">
                               {emp.totalHadir} {language === 'en' ? 'days present' : 'hari hadir'}<br />
-                              <span className="text-[10px] text-emerald-600">({emp.totalLeave} {language === 'en' ? 'days leave' : 'hari cuti/izin'})</span>
+                              <span className="text-[10px] text-primary-600">({emp.totalLeave} {language === 'en' ? 'days leave' : 'hari cuti/izin'})</span>
                             </td>
                             <td className="px-4 py-3.5 text-center">
                               <div className="flex flex-col items-center justify-center gap-1.5">
@@ -1886,17 +1886,17 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                               <button
                                 onClick={() => handleExportSingleEmployeeExcel(emp)}
                                 disabled={exportingNip !== null}
-                                className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 disabled:bg-slate-50 dark:bg-slate-800/50 text-emerald-700 disabled:text-slate-400 dark:text-slate-500 rounded-lg text-[10px] font-bold transition-all border border-emerald-200/50 hover:border-emerald-300 shadow-sm active:scale-95 cursor-pointer disabled:cursor-not-allowed"
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-primary-50 hover:bg-primary-100 disabled:bg-slate-50 dark:bg-slate-800/50 text-primary-700 disabled:text-slate-400 dark:text-slate-500 rounded-lg text-[10px] font-bold transition-all border border-primary-200/50 hover:border-primary-300 shadow-sm active:scale-95 cursor-pointer disabled:cursor-not-allowed"
                                 title={`Unduh rincian kekurangan jam kerja untuk ${emp.nama}`}
                               >
                                 {exportingNip === emp.nip ? (
                                   <>
-                                    <Loader2 size={12} className="animate-spin text-emerald-700" />
+                                    <Loader2 size={12} className="animate-spin text-primary-700" />
                                     <span>{language === 'en' ? 'Downloading...' : 'Mengunduh...'}</span>
                                   </>
                                 ) : (
                                   <>
-                                    <Download size={12} className="text-emerald-600" />
+                                    <Download size={12} className="text-primary-600" />
                                     <span>{t('download_excel')}</span>
                                   </>
                                 )}
@@ -1921,7 +1921,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                     <select
                       value={quarterItemsPerPage}
                       onChange={(e) => setQuarterItemsPerPage(Number(e.target.value))}
-                      className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-slate-700 dark:text-slate-300"
+                      className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-slate-700 dark:text-slate-300"
                     >
                       <option value={10}>10</option>
                       <option value={20}>20</option>
@@ -1958,7 +1958,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                         max={quarterTotalPages}
                         value={quarterCurrentPage}
                         onChange={(e) => setQuarterCurrentPage(Math.max(1, Math.min(Number(e.target.value), quarterTotalPages)))}
-                        className="w-10 text-center py-0.5 border border-slate-200 dark:border-slate-700 rounded-md text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
+                        className="w-10 text-center py-0.5 border border-slate-200 dark:border-slate-700 rounded-md text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/20 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
                       />
                       <span className="text-xs font-bold text-slate-400 dark:text-slate-500">/ {quarterTotalPages}</span>
                     </div>
@@ -1990,7 +1990,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
               <div>
                 <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                  <BarChart3 size={18} className="text-emerald-500" /> {t('visual_analysis')}
+                  <BarChart3 size={18} className="text-primary-500" /> {t('visual_analysis')}
                 </h2>
                 <p className="text-slate-400 dark:text-slate-500 text-xs mt-0.5">{t('visual_analysis_sub')}</p>
               </div>
@@ -2000,7 +2000,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                 <button
                   onClick={() => setActiveChartTab('performance-summary')}
                   className={`flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                    activeChartTab === 'performance-summary' ? 'bg-white dark:bg-slate-900 text-emerald-600 shadow-sm' : 'text-slate-500 dark:text-slate-500 hover:text-slate-800 dark:text-slate-100'
+                    activeChartTab === 'performance-summary' ? 'bg-white dark:bg-slate-900 text-primary-600 shadow-sm' : 'text-slate-500 dark:text-slate-500 hover:text-slate-800 dark:text-slate-100'
                   }`}
                 >
                   {t('presence_perf')}
@@ -2008,7 +2008,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                 <button
                   onClick={() => setActiveChartTab('daily-trend')}
                   className={`flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                    activeChartTab === 'daily-trend' ? 'bg-white dark:bg-slate-900 text-emerald-600 shadow-sm' : 'text-slate-500 dark:text-slate-500 hover:text-slate-800 dark:text-slate-100'
+                    activeChartTab === 'daily-trend' ? 'bg-white dark:bg-slate-900 text-primary-600 shadow-sm' : 'text-slate-500 dark:text-slate-500 hover:text-slate-800 dark:text-slate-100'
                   }`}
                 >
                   {t('daily_trend')}
@@ -2016,7 +2016,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                 <button
                   onClick={() => setActiveChartTab('top-deficiency')}
                   className={`flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                    activeChartTab === 'top-deficiency' ? 'bg-white dark:bg-slate-900 text-emerald-600 shadow-sm' : 'text-slate-500 dark:text-slate-500 hover:text-slate-800 dark:text-slate-100'
+                    activeChartTab === 'top-deficiency' ? 'bg-white dark:bg-slate-900 text-primary-600 shadow-sm' : 'text-slate-500 dark:text-slate-500 hover:text-slate-800 dark:text-slate-100'
                   }`}
                 >
                   {t('highest_def')}
@@ -2024,7 +2024,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                 <button
                   onClick={() => setActiveChartTab('distribution')}
                   className={`flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                    activeChartTab === 'distribution' ? 'bg-white dark:bg-slate-900 text-emerald-600 shadow-sm' : 'text-slate-500 dark:text-slate-500 hover:text-slate-800 dark:text-slate-100'
+                    activeChartTab === 'distribution' ? 'bg-white dark:bg-slate-900 text-primary-600 shadow-sm' : 'text-slate-500 dark:text-slate-500 hover:text-slate-800 dark:text-slate-100'
                   }`}
                 >
                   {t('status_dist')}
@@ -2210,7 +2210,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                     placeholder={t('search_placeholder')}
                     value={searchTerm}
                     onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                    className="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-medium"
+                    className="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all font-medium"
                   />
                 </div>
 
@@ -2220,7 +2220,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                   <select
                     value={selectedMonth}
                     onChange={(e) => { setSelectedMonth(e.target.value); setCurrentPage(1); }}
-                    className="w-full pl-9 pr-8 py-2 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-semibold text-slate-600 dark:text-slate-500 cursor-pointer appearance-none"
+                    className="w-full pl-9 pr-8 py-2 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all font-semibold text-slate-600 dark:text-slate-500 cursor-pointer appearance-none"
                   >
                     <option value="Semua">{t('all_months')}</option>
                     {uniqueMonths.map(month => (
@@ -2239,7 +2239,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                     value={selectedUnitKerja === 'Semua' ? '' : selectedUnitKerja}
                     onChange={(e) => { setSelectedUnitKerja(e.target.value || 'Semua'); setCurrentPage(1); }}
                     placeholder={t('all_units')}
-                    className="w-full pl-9 pr-8 py-2 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-medium text-slate-700 dark:text-slate-200"
+                    className="w-full pl-9 pr-8 py-2 text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all font-medium text-slate-700 dark:text-slate-200"
                   />
                   <datalist id="unit-kerja-list-month">
                     {uniqueUnitKerjas.map(unit => (
@@ -2260,11 +2260,11 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                 <button
                   onClick={handleExportExcel}
                   disabled={isExporting}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-700 hover:border-emerald-200 hover:bg-emerald-50 text-slate-600 dark:text-slate-500 hover:text-emerald-700 rounded-xl font-semibold text-xs transition-all active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-700 hover:border-primary-200 hover:bg-primary-50 text-slate-600 dark:text-slate-500 hover:text-primary-700 rounded-xl font-semibold text-xs transition-all active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isExporting ? (
                     <>
-                      <Loader2 size={14} className="animate-spin text-emerald-600" />
+                      <Loader2 size={14} className="animate-spin text-primary-600" />
                       {language === 'en' ? 'Exporting...' : 'Mengekspor...'}
                     </>
                   ) : (
@@ -2279,7 +2279,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                 <button
                   onClick={() => window.print()}
                   id="btn-cetak-laporan-utama"
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 border border-emerald-200 hover:border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 rounded-xl font-semibold text-xs transition-all active:scale-95 cursor-pointer shadow-sm"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 border border-primary-200 hover:border-primary-300 bg-primary-50 hover:bg-primary-100 text-primary-700 hover:text-primary-800 rounded-xl font-semibold text-xs transition-all active:scale-95 cursor-pointer shadow-sm"
                   title={t('print_report')}
                 >
                   <Printer size={14} />
@@ -2328,12 +2328,12 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                         <tr 
                           key={`${r.nip}-${r.bulan}`}
                           onClick={() => setSelectedRecord(r)}
-                          className="border-l-4 border-l-transparent hover:border-l-emerald-400 dark:hover:border-l-emerald-500 hover:bg-emerald-50/40 dark:hover:bg-slate-800/60 transition-all duration-150 cursor-pointer group"
+                          className="border-l-4 border-l-transparent hover:border-l-primary-400 dark:hover:border-l-primary-500 hover:bg-primary-50/40 dark:hover:bg-slate-800/60 transition-all duration-150 cursor-pointer group"
                         >
                           <td className="px-5 py-4 font-mono text-xs text-slate-400 dark:text-slate-500">{recordNumber}</td>
                           <td className="px-5 py-4">
                             <div>
-                              <div className="font-display font-bold text-slate-800 dark:text-slate-100 text-xs md:text-sm group-hover:text-emerald-600 transition-colors">{r.nama}</div>
+                              <div className="font-display font-bold text-slate-800 dark:text-slate-100 text-xs md:text-sm group-hover:text-primary-600 transition-colors">{r.nama}</div>
                               <div className="text-slate-400 dark:text-slate-500 text-[10px] font-mono mt-0.5">NIP. {r.nip} • Gol. {r.gol}</div>
                             </div>
                           </td>
@@ -2341,7 +2341,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                           <td className="px-5 py-4 text-slate-600 dark:text-slate-500 text-xs font-semibold">{r.unitKerja}</td>
                           <td className="px-5 py-4 text-center font-mono text-xs font-bold text-slate-700 dark:text-slate-200">{r.totalHadir} hr</td>
                           <td className="px-5 py-4 text-center font-mono text-xs text-slate-500 dark:text-slate-500">{r.totalLeave} hr</td>
-                          <td className="px-5 py-4 text-center font-mono text-xs font-bold text-emerald-600">
+                          <td className="px-5 py-4 text-center font-mono text-xs font-bold text-primary-600">
                             {Math.round(r.totalActualWorked / 60)}j
                           </td>
                           <td className="px-5 py-4 text-center font-mono text-xs font-black text-rose-600">
@@ -2425,7 +2425,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                   <select 
                     value={itemsPerPage}
                     onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-slate-700 dark:text-slate-300"
+                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-slate-700 dark:text-slate-300"
                   >
                     <option value={10}>10</option>
                     <option value={20}>20</option>
@@ -2471,7 +2471,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                         onClick={() => setCurrentPage(pageNum)}
                         className={`w-8 h-8 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                           currentPage === pageNum 
-                            ? 'bg-emerald-600 text-white shadow-sm' 
+                            ? 'bg-primary-600 text-white shadow-sm' 
                             : 'border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:bg-slate-800/50'
                         }`}
                       >
@@ -2530,7 +2530,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                 {/* Header */}
                 <div className="p-6 bg-slate-900 text-white flex items-start justify-between print:hidden">
                   <div>
-                    <span className="text-[9px] font-extrabold text-emerald-400 uppercase tracking-widest leading-none block mb-1.5">
+                    <span className="text-[9px] font-extrabold text-primary-400 uppercase tracking-widest leading-none block mb-1.5">
                       {language === 'en' ? 'ATTENDANCE DETAIL CALENDAR' : 'KALENDER DETAIL KEHADIRAN'}
                     </span>
                     <h3 className="text-lg font-display font-black leading-tight">{selectedRecord.nama}</h3>
@@ -2542,7 +2542,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                     {/* Cetak Rincian Button */}
                     <button 
                       onClick={() => window.print()}
-                      className="p-2 bg-white/10 hover:bg-white/20 text-emerald-400 hover:text-white rounded-xl transition cursor-pointer flex items-center gap-1.5 text-xs font-bold px-3 py-2 print:hidden"
+                      className="p-2 bg-white/10 hover:bg-white/20 text-primary-400 hover:text-white rounded-xl transition cursor-pointer flex items-center gap-1.5 text-xs font-bold px-3 py-2 print:hidden"
                       title={language === 'en' ? 'Print daily details of this employee' : 'Cetak rincian harian pegawai ini'}
                     >
                       <Printer size={15} />
@@ -2599,13 +2599,13 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                     </div>
                     <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
                       <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold block uppercase tracking-wider">{t('leave_time')}</span>
-                      <span className="text-xl font-bold text-emerald-600 font-mono block mt-1">
+                      <span className="text-xl font-bold text-primary-600 font-mono block mt-1">
                         {selectedRecord.totalLeave} {language === 'en' ? t('days') : 'Hari'}
                       </span>
                     </div>
                     <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
                       <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold block uppercase tracking-wider">{t('work_duration')}</span>
-                      <span className="text-xl font-bold text-emerald-600 font-mono block mt-1">
+                      <span className="text-xl font-bold text-primary-600 font-mono block mt-1">
                         {Math.round(selectedRecord.totalActualWorked / 60)} {language === 'en' ? t('hours') : 'Jam'}
                       </span>
                     </div>
@@ -2620,18 +2620,18 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3 border-b border-slate-100 dark:border-slate-800 pb-3">
                       <div>
                         <h4 className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest flex items-center gap-1.5">
-                          <CalendarDays size={14} className="text-emerald-500" /> {t('daily_log')} ({selectedRecord.bulan} 2026)
+                          <CalendarDays size={14} className="text-primary-500" /> {t('daily_log')} ({selectedRecord.bulan} 2026)
                         </h4>
                         <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium mt-0.5">{t('daily_log_sub')}</p>
                       </div>
 
                       {/* Toggle Filter Deficiency */}
-                      <label className="inline-flex items-center gap-2 cursor-pointer select-none bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-emerald-300 px-3 py-1.5 rounded-xl text-[10px] font-bold text-slate-600 dark:text-slate-500 hover:text-emerald-700 transition-all shadow-sm print:hidden">
+                      <label className="inline-flex items-center gap-2 cursor-pointer select-none bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-primary-300 px-3 py-1.5 rounded-xl text-[10px] font-bold text-slate-600 dark:text-slate-500 hover:text-primary-700 transition-all shadow-sm print:hidden">
                         <input 
                           type="checkbox"
                           checked={drawerFilterDeficiencyOnly}
                           onChange={(e) => setDrawerFilterDeficiencyOnly(e.target.checked)}
-                          className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5 cursor-pointer accent-emerald-600"
+                          className="rounded border-slate-300 text-primary-600 focus:ring-primary-500 w-3.5 h-3.5 cursor-pointer accent-primary-600"
                         />
                         <span>{t('only_deficiencies')}</span>
                       </label>
@@ -2640,7 +2640,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                     {/* Legend bar */}
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mb-4 text-[10px] text-slate-500 dark:text-slate-500 font-semibold bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800 print:hidden">
                       <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 bg-emerald-50 border border-emerald-200 rounded inline-block shrink-0"></span>
+                        <span className="w-2.5 h-2.5 bg-primary-50 border border-primary-200 rounded inline-block shrink-0"></span>
                         <span>{t('fulfilled')}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -2648,7 +2648,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                         <span>{language === 'en' ? 'Has Deficit / Absent' : 'Ada Kekurangan / Alfa'}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 bg-emerald-50 border border-emerald-200 rounded inline-block shrink-0"></span>
+                        <span className="w-2.5 h-2.5 bg-primary-50 border border-primary-200 rounded inline-block shrink-0"></span>
                         <span>{language === 'en' ? 'Leave / Business Trip (CT, C, D, DL, TL, T, DK)' : 'Cuti / Dinas Luar (CT, C, D, DL, TL, T, DK)'}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -2681,7 +2681,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                           if (filteredEntries.length === 0) {
                             return (
                               <div className="px-4 py-12 text-center text-slate-400 dark:text-slate-500 text-xs font-semibold bg-white dark:bg-slate-900 flex flex-col items-center justify-center gap-2">
-                                <CheckCircle className="text-emerald-500 animate-pulse" size={24} />
+                                <CheckCircle className="text-primary-500 animate-pulse" size={24} />
                                 <span>
                                   {language === 'en' 
                                     ? 'No working hour deficiency in this month. Perfect!' 
@@ -2719,16 +2719,16 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                               );
                             } else if (att.note !== "Hadir") {
                               // Leave code (C, CT, DL, S)
-                              rowBg = "bg-emerald-50/10 text-slate-600 dark:text-slate-500";
+                              rowBg = "bg-primary-50/10 text-slate-600 dark:text-slate-500";
                               defTextClass = "text-slate-400 dark:text-slate-500";
                               noteBadge = (
-                                <span className="px-1.5 py-0.5 text-[8px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100 rounded">
+                                <span className="px-1.5 py-0.5 text-[8px] font-bold bg-primary-50 text-primary-600 border border-primary-100 rounded">
                                   {att.note}
                                 </span>
                               );
                             } else if (!hasDeficiency) {
                               noteBadge = (
-                                <span className="px-1.5 py-0.5 text-[8px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100 rounded">
+                                <span className="px-1.5 py-0.5 text-[8px] font-bold bg-primary-50 text-primary-600 border border-primary-100 rounded">
                                   {t('fulfilled')}
                                 </span>
                               );

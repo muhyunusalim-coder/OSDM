@@ -27,10 +27,10 @@ const StatCard = React.memo(({
     
     const colorClasses = {
         primary: {
-            iconBg: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-800/40 text-emerald-600 dark:text-emerald-400',
-            dot: 'bg-emerald-500 dark:bg-emerald-400',
-            borderHover: 'hover:border-emerald-300 dark:hover:border-emerald-700/60',
-            glow: 'group-hover:bg-emerald-500/5',
+            iconBg: 'bg-primary-50 dark:bg-primary-500/10 border-primary-100 dark:border-primary-800/40 text-primary-600 dark:text-primary-400',
+            dot: 'bg-primary-500 dark:bg-primary-400',
+            borderHover: 'hover:border-primary-300 dark:hover:border-primary-700/60',
+            glow: 'group-hover:bg-primary-500/5',
         },
         warning: {
             iconBg: 'bg-amber-50 dark:bg-amber-500/10 border-amber-100 dark:border-amber-800/40 text-amber-600 dark:text-amber-400',
@@ -45,10 +45,10 @@ const StatCard = React.memo(({
             glow: 'group-hover:bg-rose-500/5',
         },
         success: {
-            iconBg: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-800/40 text-emerald-600 dark:text-emerald-400',
-            dot: 'bg-emerald-500 dark:bg-emerald-400',
-            borderHover: 'hover:border-emerald-300 dark:hover:border-emerald-700/60',
-            glow: 'group-hover:bg-emerald-500/5',
+            iconBg: 'bg-primary-50 dark:bg-primary-500/10 border-primary-100 dark:border-primary-800/40 text-primary-600 dark:text-primary-400',
+            dot: 'bg-primary-500 dark:bg-primary-400',
+            borderHover: 'hover:border-primary-300 dark:hover:border-primary-700/60',
+            glow: 'group-hover:bg-primary-500/5',
         }
     };
 
@@ -76,7 +76,7 @@ const StatCard = React.memo(({
                                 title="Tren MoM"
                                 className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md border ${
                                     trend.direction === 'up' 
-                                        ? 'text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200/60 dark:border-emerald-800/50' 
+                                        ? 'text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-500/10 border-primary-200/60 dark:border-primary-800/50' 
                                         : 'text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 border-amber-200/60 dark:border-amber-800/50'
                                 }`}
                             >
@@ -98,7 +98,7 @@ const StatCard = React.memo(({
                     <span className="truncate">{subtext}</span>
                 </div>
                 {onClick && (
-                    <div className="text-slate-400 dark:text-slate-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors shrink-0 ml-2">
+                    <div className="text-slate-400 dark:text-slate-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors shrink-0 ml-2">
                         <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform duration-200" />
                     </div>
                 )}

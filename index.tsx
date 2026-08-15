@@ -5,14 +5,24 @@ import App from './App';
 import { registerSW } from 'virtual:pwa-register';
 
 // Register Service Worker for offline capability & faster loading
-const updateSW = registerSW({
-  onNeedRefresh() {
-    console.log('New content available, refreshing...');
-  },
+registerSW({
+  immediate: true,
   onOfflineReady() {
     console.log('App ready to work offline');
   },
 });
+
+// Auto-reload when new version is activated (Fixes cache issue)
+let refreshing = false;
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      console.log('New service worker activated. Reloading page...');
+      window.location.reload();
+    }
+  });
+}
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

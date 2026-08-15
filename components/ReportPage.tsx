@@ -353,13 +353,13 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-4 print:p-0 print:space-y-0 print:bg-white dark:bg-slate-900 print:w-full">
       {/* Header Section (Hidden on Print) */}
-      <div className="bg-gradient-to-br from-slate-800 to-emerald-900 rounded-xl p-6 shadow-md relative overflow-hidden text-white print:hidden">
+      <div className="bg-gradient-to-br from-slate-800 to-primary-900 rounded-xl p-6 shadow-md relative overflow-hidden text-white print:hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 dark:bg-slate-900/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none transform translate-z-0"></div>
-        <div className="absolute bottom-0 left-0 w-40 h-40 bg-emerald-500/30 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none transform translate-z-0"></div>
+        <div className="absolute bottom-0 left-0 w-40 h-40 bg-primary-500/30 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none transform translate-z-0"></div>
         
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
-                <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-3">
+                <div className="flex items-center gap-2 text-primary-300 text-xs font-bold uppercase tracking-wider mb-3">
                     <FileText size={16} />
                     Pusat Laporan
                 </div>
@@ -375,7 +375,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                 <button 
                     onClick={handleExportExcel}
                     disabled={filteredData.length === 0 || isExporting}
-                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-sm transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-bold text-sm transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isExporting ? <Loader2 size={18} className="animate-spin" /> : <FileSpreadsheet size={18} />}
                     {isExporting ? 'Memproses...' : 'Ekspor Excel'}
@@ -390,7 +390,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                 </button>
                 <button 
                     onClick={handlePrint}
-                    className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-100 text-emerald-900 rounded-xl font-bold text-sm transition-all shadow-lg"
+                    className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-100 text-primary-900 rounded-xl font-bold text-sm transition-all shadow-lg"
                 >
                     <Printer size={18} />
                     Cetak
@@ -405,14 +405,14 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
           <div className="flex gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl w-fit mb-6">
               <button 
                 onClick={() => setViewMode('monthly')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'monthly' ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100'}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'monthly' ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100'}`}
               >
                   <ListFilter size={16} />
                   Laporan Bulanan
               </button>
               <button 
                 onClick={() => setViewMode('history')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'history' ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100'}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === 'history' ? 'bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100'}`}
               >
                   <History size={16} />
                   Riwayat Proses
@@ -427,7 +427,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                     <select 
                         value={selectedYear}
                         onChange={(e) => setSelectedYear(Number(e.target.value))}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                     >
                         {[2023, 2024, 2025, 2026, 2027, 2028].map(y => (
                             <option key={y} value={y}>{y}</option>
@@ -440,7 +440,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                     <select 
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                     >
                         <option value="All">Semua Bulan</option>
                         {months.map(m => (
@@ -456,7 +456,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                         placeholder="Cari Nama / NIP..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                     />
                 </div>
              </div>
@@ -469,7 +469,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                         placeholder="Cari Riwayat Nama / NIP..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                     />
                 </div>
             </div>
@@ -482,40 +482,40 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
           {/* KPI Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Total Usulan */}
-            <div className="bg-gradient-to-br from-emerald-50 to-white dark:from-slate-900 dark:to-slate-900/80 border border-emerald-100 dark:border-slate-800 rounded-xl p-5 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-300">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-100/30 dark:bg-emerald-900/20 rounded-full blur-xl pointer-events-none"></div>
+            <div className="bg-gradient-to-br from-primary-50 to-white dark:from-slate-900 dark:to-slate-900/80 border border-primary-100 dark:border-slate-800 rounded-xl p-5 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-300">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary-100/30 dark:bg-primary-900/20 rounded-full blur-xl pointer-events-none"></div>
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
-                  <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest block">Total Usul KP</span>
+                  <span className="text-[10px] font-bold text-primary-700 dark:text-primary-400 uppercase tracking-widest block">Total Usul KP</span>
                   <h3 className="text-3xl font-display font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">{kpStats.total}</h3>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Usulan kenaikan pangkat aktif.</p>
                 </div>
-                <div className="p-3 bg-emerald-600 text-white rounded-2xl shadow-md shadow-emerald-600/10 group-hover:scale-110 transition-transform duration-300">
+                <div className="p-3 bg-primary-600 text-white rounded-2xl shadow-md shadow-primary-600/10 group-hover:scale-110 transition-transform duration-300">
                   <Layers size={20} />
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-emerald-100/40 dark:border-slate-800">
-                <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1">
+              <div className="mt-4 pt-3 border-t border-primary-100/40 dark:border-slate-800">
+                <span className="text-[10px] text-primary-700 dark:text-primary-400 font-bold flex items-center gap-1">
                   <TrendingUp size={12} /> Sinkronisasi SIASN BKN Aktif
                 </span>
               </div>
             </div>
 
             {/* Selesai / Terbit SK */}
-            <div className="bg-gradient-to-br from-emerald-50 to-white dark:from-slate-900 dark:to-slate-900/80 border border-emerald-100 dark:border-slate-800 rounded-xl p-5 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-300">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-100/30 dark:bg-emerald-900/20 rounded-full blur-xl pointer-events-none"></div>
+            <div className="bg-gradient-to-br from-primary-50 to-white dark:from-slate-900 dark:to-slate-900/80 border border-primary-100 dark:border-slate-800 rounded-xl p-5 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-300">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary-100/30 dark:bg-primary-900/20 rounded-full blur-xl pointer-events-none"></div>
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
-                  <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest block">Selesai (Terbit SK)</span>
+                  <span className="text-[10px] font-bold text-primary-700 dark:text-primary-400 uppercase tracking-widest block">Selesai (Terbit SK)</span>
                   <h3 className="text-3xl font-display font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">{kpStats.processed}</h3>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">SK KP sudah terbit & disetujui.</p>
                 </div>
-                <div className="p-3 bg-emerald-500 text-white rounded-2xl shadow-md shadow-emerald-500/10 group-hover:scale-110 transition-transform duration-300">
+                <div className="p-3 bg-primary-500 text-white rounded-2xl shadow-md shadow-primary-500/10 group-hover:scale-110 transition-transform duration-300">
                   <CheckCircle2 size={20} />
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-emerald-100/40 dark:border-slate-800">
-                <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1">
+              <div className="mt-4 pt-3 border-t border-primary-100/40 dark:border-slate-800">
+                <span className="text-[10px] text-primary-700 dark:text-primary-400 font-bold flex items-center gap-1">
                   Persentase Selesai: {kpStats.total > 0 ? ((kpStats.processed / kpStats.total) * 100).toFixed(1) : '0'}%
                 </span>
               </div>
@@ -542,20 +542,20 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
             </div>
 
             {/* Akan Datang (Upcoming) */}
-            <div className="bg-gradient-to-br from-emerald-50 to-white dark:from-slate-900 dark:to-slate-900/80 border border-emerald-100 dark:border-slate-800 rounded-xl p-5 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-300">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-100/30 dark:bg-emerald-900/20 rounded-full blur-xl pointer-events-none"></div>
+            <div className="bg-gradient-to-br from-primary-50 to-white dark:from-slate-900 dark:to-slate-900/80 border border-primary-100 dark:border-slate-800 rounded-xl p-5 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-300">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary-100/30 dark:bg-primary-900/20 rounded-full blur-xl pointer-events-none"></div>
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
-                  <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest block">Akan Datang (Upcoming)</span>
+                  <span className="text-[10px] font-bold text-primary-700 dark:text-primary-400 uppercase tracking-widest block">Akan Datang (Upcoming)</span>
                   <h3 className="text-3xl font-display font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">{kpStats.upcoming}</h3>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Pegawai periode berikutnya.</p>
                 </div>
-                <div className="p-3 bg-emerald-600 text-white rounded-2xl shadow-md shadow-emerald-600/10 group-hover:scale-110 transition-transform duration-300">
+                <div className="p-3 bg-primary-600 text-white rounded-2xl shadow-md shadow-primary-600/10 group-hover:scale-110 transition-transform duration-300">
                   <Award size={20} />
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-emerald-100/40 dark:border-slate-800">
-                <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold">
+              <div className="mt-4 pt-3 border-t border-primary-100/40 dark:border-slate-800">
+                <span className="text-[10px] text-primary-700 dark:text-primary-400 font-bold">
                   Proyeksi Kebutuhan Kenaikan
                 </span>
               </div>
@@ -682,7 +682,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
               <div className="space-y-2 mt-2">
                 <div className="flex items-center justify-between text-[11px]">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-primary-500 shrink-0"></span>
                     <span className="text-slate-600 dark:text-slate-500 font-semibold">Selesai (Terbit SK)</span>
                   </div>
                   <span className="font-bold text-slate-800 dark:text-slate-100 font-mono">{kpStats.processed} ({kpStats.total > 0 ? ((kpStats.processed / kpStats.total) * 100).toFixed(0) : 0}%)</span>
@@ -696,7 +696,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                 </div>
                 <div className="flex items-center justify-between text-[11px]">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-primary-500 shrink-0"></span>
                     <span className="text-slate-600 dark:text-slate-500 font-semibold">Akan Datang</span>
                   </div>
                   <span className="font-bold text-slate-800 dark:text-slate-100 font-mono">{kpStats.upcoming} ({kpStats.total > 0 ? ((kpStats.upcoming / kpStats.total) * 100).toFixed(0) : 0}%)</span>
@@ -834,7 +834,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                   <button 
                       onClick={handleExportExcel}
                       disabled={filteredData.length === 0 || isExporting}
-                      className="flex items-center gap-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                      className="flex items-center gap-2 px-3.5 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-bold text-xs transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
                       {isExporting ? <Loader2 size={14} className="animate-spin" /> : <FileSpreadsheet size={14} />}
                       <span>{isExporting ? 'Memproses...' : 'Ekspor Excel'}</span>
@@ -847,7 +847,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                       {isExportingPdf ? <Loader2 size={14} className="animate-spin" /> : <FileDown size={14} />}
                       <span>{isExportingPdf ? 'Memproses...' : 'Unduh PDF'}</span>
                   </button>
-                  <div className="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-extrabold whitespace-nowrap">
+                  <div className="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-lg text-xs font-extrabold whitespace-nowrap">
                       Total: {filteredData.length} Pegawai
                   </div>
               </div>
@@ -882,7 +882,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                                   </td>
                                   <td className="px-6 py-4 border-r border-slate-100 dark:border-slate-800 print:border print:border-black print:px-2 print:py-2">
                                       <div className="font-bold text-slate-800 dark:text-slate-100 text-xs md:text-sm print:text-black">{emp.nama}</div>
-                                      <div className="text-emerald-700 dark:text-emerald-400 text-xs font-mono font-medium mt-0.5 print:text-black">{emp.nip}</div>
+                                      <div className="text-primary-700 dark:text-primary-400 text-xs font-mono font-medium mt-0.5 print:text-black">{emp.nip}</div>
                                       <div className="text-slate-500 dark:text-slate-400 text-xs mt-0.5 print:hidden">{emp.pangkat}</div>
                                       <div className="hidden print:block text-xs mt-0.5">{emp.pangkat}</div>
                                   </td>
@@ -892,13 +892,13 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                                   {!isKP && <td className="px-6 py-4 text-slate-700 dark:text-slate-300 border-r border-slate-100 dark:border-slate-800 print:border print:border-black print:text-black print:px-2 print:py-2">
                                       {hasAccess ? formatRupiah(emp.gajiLama) : 'Rp ******'}
                                   </td>}
-                                  {!isKP && <td className="px-6 py-4 font-bold text-emerald-600 dark:text-emerald-400 border-r border-slate-100 dark:border-slate-800 print:border print:border-black print:text-black print:font-normal print:px-2 print:py-2">
+                                  {!isKP && <td className="px-6 py-4 font-bold text-primary-600 dark:text-primary-400 border-r border-slate-100 dark:border-slate-800 print:border print:border-black print:text-black print:font-normal print:px-2 print:py-2">
                                       {hasAccess ? formatRupiah(emp.gajiBaru) : 'Rp ******'}
                                   </td>}
                                   {isKP && <td className="px-6 py-4 text-slate-700 dark:text-slate-300 border-r border-slate-100 dark:border-slate-800 print:border print:border-black print:text-black print:px-2 print:py-2">
                                       {emp.pangkatLama || '-'}
                                   </td>}
-                                  {isKP && <td className="px-6 py-4 font-bold text-emerald-600 dark:text-emerald-400 border-r border-slate-100 dark:border-slate-800 print:border print:border-black print:text-black print:font-normal print:px-2 print:py-2">
+                                  {isKP && <td className="px-6 py-4 font-bold text-primary-600 dark:text-primary-400 border-r border-slate-100 dark:border-slate-800 print:border print:border-black print:text-black print:font-normal print:px-2 print:py-2">
                                       {emp.pangkatBaru || emp.pangkat}
                                   </td>}
                                   {!isKP && <td className="px-6 py-4 text-slate-700 dark:text-slate-300 border-r border-slate-100 dark:border-slate-800 print:border print:border-black print:text-black print:px-2 print:py-2">
@@ -908,7 +908,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                                       <div className="flex flex-col gap-1 items-start">
                                           {/* Status Proses Badge */}
                                           {emp.status === 'Processed' && (
-                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 inline-flex items-center gap-1 print:bg-transparent print:border-none print:text-black print:p-0">
+                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/60 inline-flex items-center gap-1 print:bg-transparent print:border-none print:text-black print:p-0">
                                                   Selesai (SK Terbit)
                                               </span>
                                           )}
@@ -918,7 +918,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                                               </span>
                                           )}
                                           {emp.status === 'Upcoming' && (
-                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 inline-flex items-center gap-1 print:bg-transparent print:border-none print:text-black print:p-0">
+                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/60 inline-flex items-center gap-1 print:bg-transparent print:border-none print:text-black print:p-0">
                                                   Akan Datang
                                               </span>
                                           )}
@@ -939,7 +939,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                                   <td className="px-6 py-4 whitespace-nowrap text-center print:border print:border-black print:text-black print:px-2 print:py-2">
                                       <div className={`font-mono font-medium px-2 py-1 rounded border inline-block print:bg-transparent print:border-none print:p-0 ${
                                           viewMode === 'history' && (getTmtDate(emp.tmt)?.getFullYear() || 0) >= 2026 
-                                          ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60' 
+                                          ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-800/60' 
                                           : 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
                                       }`}>
                                           {emp.tmt}
@@ -972,7 +972,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                       <select 
                           value={itemsPerPage}
                           onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-slate-700 dark:text-slate-300"
+                          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-slate-700 dark:text-slate-300"
                       >
                           <option value={10}>10</option>
                           <option value={20}>20</option>
@@ -987,7 +987,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                       <button 
                           onClick={() => handlePageChange(1)}
                           disabled={currentPage === 1}
-                          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                           title="Halaman Pertama"
                       >
                           <ChevronsLeft size={14} />
@@ -995,7 +995,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                       <button 
                           onClick={() => handlePageChange(currentPage - 1)}
                           disabled={currentPage === 1}
-                          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                           title="Halaman Sebelumnya"
                       >
                           <ChevronLeft size={14} />
@@ -1009,7 +1009,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                               max={totalPages}
                               value={currentPage}
                               onChange={(e) => handlePageChange(Number(e.target.value))}
-                              className="w-10 text-center py-0.5 border border-slate-200 dark:border-slate-700 rounded-md text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
+                              className="w-10 text-center py-0.5 border border-slate-200 dark:border-slate-700 rounded-md text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/20 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
                           />
                           <span className="text-xs font-bold text-slate-600 dark:text-slate-300">/ {totalPages}</span>
                       </div>
@@ -1017,7 +1017,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                       <button 
                           onClick={() => handlePageChange(currentPage + 1)}
                           disabled={currentPage === totalPages}
-                          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                           title="Halaman Berikutnya"
                       >
                           <ChevronRight size={14} />
@@ -1025,7 +1025,7 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
                       <button 
                           onClick={() => handlePageChange(totalPages)}
                           disabled={currentPage === totalPages}
-                          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                          className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                           title="Halaman Terakhir"
                       >
                           <ChevronsRight size={14} />

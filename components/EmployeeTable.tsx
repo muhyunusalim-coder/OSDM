@@ -103,7 +103,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
       if (days === null) return { label: '-', class: 'text-slate-300 dark:text-slate-600' };
       if (days <= 0) return { label: 'Sudah Waktunya', class: 'bg-rose-100 text-rose-700 border-rose-200' };
       if (days <= 30) return { label: 'Mendekati', class: 'bg-amber-100 text-amber-700 border-amber-200' };
-      return { label: 'Aman', class: 'bg-emerald-100 text-emerald-700 border-emerald-200' };
+      return { label: 'Aman', class: 'bg-primary-100 text-primary-700 border-primary-200' };
   };
 
   // Helper untuk menghitung siklus 2 tahunan
@@ -374,7 +374,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
             <button 
               onClick={handleExportExcel}
               disabled={isExporting || filtered.length === 0}
-              className="flex items-center justify-center gap-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+              className="flex items-center justify-center gap-2 px-3.5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
             >
                 {isExporting ? (
                   <>
@@ -416,12 +416,12 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
               onClick={() => setIsCompact(!isCompact)}
               className={`flex items-center justify-center gap-2 px-3.5 py-2 border rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap cursor-pointer ${
                 isCompact 
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100/70' 
-                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50'
+                ? 'bg-primary-50 border-primary-200 text-primary-700 hover:bg-primary-100/70' 
+                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-primary-600 hover:border-primary-200 hover:bg-primary-50'
               }`}
               title="Aktifkan Mode Ringkas untuk menampilkan lebih banyak baris"
             >
-              <SlidersHorizontal size={14} className={isCompact ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'} />
+              <SlidersHorizontal size={14} className={isCompact ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'} />
               <span>{isCompact ? 'Mode Normal' : 'Mode Ringkas'}</span>
             </button>
 
@@ -429,26 +429,26 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
               onClick={() => setIsAdvancedFilterOpen(!isAdvancedFilterOpen)}
               className={`flex items-center justify-center gap-2 px-3.5 py-2 border rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap cursor-pointer ${
                 isAdvancedFilterOpen 
-                ? 'bg-emerald-600 border-emerald-600 text-white hover:bg-emerald-700' 
-                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50'
+                ? 'bg-primary-600 border-primary-600 text-white hover:bg-primary-700' 
+                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-primary-600 hover:border-primary-200 hover:bg-primary-50'
               }`}
             >
               <SlidersHorizontal size={14} className={isAdvancedFilterOpen ? 'text-white' : 'text-slate-500 dark:text-slate-400'} />
               <span>Filter Lanjutan</span>
               {(unitFilter !== 'All' || golFilter !== 'All' || masaKerjaFilter !== 'All') && (
-                <span className={`w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-extrabold ${isAdvancedFilterOpen ? 'bg-white dark:bg-slate-900 text-emerald-600' : 'bg-emerald-600 text-white'}`}>
+                <span className={`w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-extrabold ${isAdvancedFilterOpen ? 'bg-white dark:bg-slate-900 text-primary-600' : 'bg-primary-600 text-white'}`}>
                   {(unitFilter !== 'All' ? 1 : 0) + (golFilter !== 'All' ? 1 : 0) + (masaKerjaFilter !== 'All' ? 1 : 0)}
                 </span>
               )}
             </button>
 
             {/* Search */}
-            <div className={`relative flex-grow md:flex-grow-0 group w-full md:w-auto transition-all ${searchTerm !== '' ? 'ring-1 ring-emerald-500 rounded-lg' : ''}`}>
-              <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 transition-colors ${searchTerm !== '' ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'} group-focus-within:text-emerald-500`} size={16} />
+            <div className={`relative flex-grow md:flex-grow-0 group w-full md:w-auto transition-all ${searchTerm !== '' ? 'ring-1 ring-primary-500 rounded-lg' : ''}`}>
+              <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 transition-colors ${searchTerm !== '' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'} group-focus-within:text-primary-500`} size={16} />
               <input 
                 type="text" 
                 placeholder="Cari Nama, NIP..." 
-                className="pl-9 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 text-xs w-full md:w-56 bg-slate-50 dark:bg-slate-800/50 focus:bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 transition-all font-medium"
+                className="pl-9 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 text-xs w-full md:w-56 bg-slate-50 dark:bg-slate-800/50 focus:bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 transition-all font-medium"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -456,10 +456,10 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
 
             <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 no-scrollbar">
                 {/* Status Kepegawaian Filter */}
-                <div className={`relative flex-shrink-0 transition-all ${typeFilter !== 'All' ? 'ring-1 ring-emerald-400 rounded-lg' : ''}`}>
-                  <User className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${typeFilter !== 'All' ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'}`} size={14} />
+                <div className={`relative flex-shrink-0 transition-all ${typeFilter !== 'All' ? 'ring-1 ring-primary-400 rounded-lg' : ''}`}>
+                  <User className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${typeFilter !== 'All' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'}`} size={14} />
                   <select 
-                    className={`pl-9 pr-8 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 ${typeFilter !== 'All' ? 'focus:ring-emerald-100 border-emerald-300' : 'focus:ring-emerald-500/10'} focus:border-emerald-500 text-xs appearance-none ${typeFilter !== 'All' ? 'bg-emerald-50' : 'bg-slate-50 dark:bg-slate-800/50'} hover:bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold cursor-pointer w-full md:w-auto transition-all`}
+                    className={`pl-9 pr-8 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 ${typeFilter !== 'All' ? 'focus:ring-primary-100 border-primary-300' : 'focus:ring-primary-500/10'} focus:border-primary-500 text-xs appearance-none ${typeFilter !== 'All' ? 'bg-primary-50' : 'bg-slate-50 dark:bg-slate-800/50'} hover:bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold cursor-pointer w-full md:w-auto transition-all`}
                     value={typeFilter}
                     onChange={(e) => setTypeFilter(e.target.value)}
                   >
@@ -470,10 +470,10 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                 </div>
                 
                 {/* Tahun Filter */}
-                <div className={`relative flex-shrink-0 transition-all ${yearFilter !== 'All' ? 'ring-1 ring-emerald-400 rounded-lg' : ''}`}>
-                  <Calendar className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${yearFilter !== 'All' ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'}`} size={14} />
+                <div className={`relative flex-shrink-0 transition-all ${yearFilter !== 'All' ? 'ring-1 ring-primary-400 rounded-lg' : ''}`}>
+                  <Calendar className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${yearFilter !== 'All' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'}`} size={14} />
                   <select 
-                    className={`pl-9 pr-8 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 ${yearFilter !== 'All' ? 'focus:ring-emerald-100 border-emerald-300' : 'focus:ring-emerald-500/10'} focus:border-emerald-500 text-xs appearance-none ${yearFilter !== 'All' ? 'bg-emerald-50' : 'bg-slate-50 dark:bg-slate-800/50'} hover:bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold cursor-pointer w-full md:w-auto transition-all`}
+                    className={`pl-9 pr-8 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 ${yearFilter !== 'All' ? 'focus:ring-primary-100 border-primary-300' : 'focus:ring-primary-500/10'} focus:border-primary-500 text-xs appearance-none ${yearFilter !== 'All' ? 'bg-primary-50' : 'bg-slate-50 dark:bg-slate-800/50'} hover:bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold cursor-pointer w-full md:w-auto transition-all`}
                     value={yearFilter}
                     onChange={(e) => setYearFilter(e.target.value)}
                   >
@@ -485,10 +485,10 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                 </div>
 
                 {/* Periode Filter (Bulan) */}
-                <div className={`relative flex-shrink-0 transition-all ${monthFilter !== 'All' ? 'ring-1 ring-emerald-400 rounded-lg' : ''}`}>
-                  <CalendarRange className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${monthFilter !== 'All' ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'}`} size={14} />
+                <div className={`relative flex-shrink-0 transition-all ${monthFilter !== 'All' ? 'ring-1 ring-primary-400 rounded-lg' : ''}`}>
+                  <CalendarRange className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${monthFilter !== 'All' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'}`} size={14} />
                   <select 
-                    className={`pl-9 pr-8 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 ${monthFilter !== 'All' ? 'focus:ring-emerald-100 border-emerald-300' : 'focus:ring-emerald-500/10'} focus:border-emerald-500 text-xs appearance-none ${monthFilter !== 'All' ? 'bg-emerald-50' : 'bg-slate-50 dark:bg-slate-800/50'} hover:bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold cursor-pointer w-full md:w-auto transition-all`}
+                    className={`pl-9 pr-8 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 ${monthFilter !== 'All' ? 'focus:ring-primary-100 border-primary-300' : 'focus:ring-primary-500/10'} focus:border-primary-500 text-xs appearance-none ${monthFilter !== 'All' ? 'bg-primary-50' : 'bg-slate-50 dark:bg-slate-800/50'} hover:bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-bold cursor-pointer w-full md:w-auto transition-all`}
                     value={monthFilter}
                     onChange={(e) => setMonthFilter(e.target.value)}
                   >
@@ -508,11 +508,11 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
             {/* Unit Kerja */}
             <div className="flex flex-col gap-1.5">
               <label className="text-slate-700 dark:text-slate-300 font-extrabold text-[10px] uppercase tracking-wider flex items-center gap-1">
-                <Briefcase size={12} className="text-emerald-500" />
+                <Briefcase size={12} className="text-primary-500" />
                 <span>Unit Kerja</span>
               </label>
               <select
-                className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 cursor-pointer shadow-sm hover:border-slate-300 transition-colors"
+                className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 cursor-pointer shadow-sm hover:border-slate-300 transition-colors"
                 value={unitFilter}
                 onChange={(e) => setUnitFilter(e.target.value)}
               >
@@ -526,11 +526,11 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
             {/* Golongan */}
             <div className="flex flex-col gap-1.5">
               <label className="text-slate-700 dark:text-slate-300 font-extrabold text-[10px] uppercase tracking-wider flex items-center gap-1">
-                <BadgeCheck size={12} className="text-emerald-500" />
+                <BadgeCheck size={12} className="text-primary-500" />
                 <span>Golongan / Pangkat</span>
               </label>
               <select
-                className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 cursor-pointer shadow-sm hover:border-slate-300 transition-colors"
+                className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 cursor-pointer shadow-sm hover:border-slate-300 transition-colors"
                 value={golFilter}
                 onChange={(e) => setGolFilter(e.target.value)}
               >
@@ -544,12 +544,12 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
             {/* Masa Kerja */}
             <div className="flex flex-col gap-1.5">
               <label className="text-slate-700 dark:text-slate-300 font-extrabold text-[10px] uppercase tracking-wider flex items-center gap-1">
-                <Clock size={12} className="text-emerald-500" />
+                <Clock size={12} className="text-primary-500" />
                 <span>Masa Kerja</span>
               </label>
               <div className="flex gap-2">
                 <select
-                  className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 cursor-pointer shadow-sm hover:border-slate-300 transition-colors"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 cursor-pointer shadow-sm hover:border-slate-300 transition-colors"
                   value={masaKerjaFilter}
                   onChange={(e) => setMasaKerjaFilter(e.target.value)}
                 >
@@ -589,11 +589,11 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                     <div className="flex items-center gap-4 text-slate-600 dark:text-slate-300 text-[9px] md:text-[10px] uppercase font-bold tracking-widest">
                         <div className="flex items-center gap-1" onClick={() => requestSort('nama')}>
                             Nama
-                            <ArrowUpDown size={10} className={sortConfig?.key === 'nama' ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'} />
+                            <ArrowUpDown size={10} className={sortConfig?.key === 'nama' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'} />
                         </div>
                         <div className="flex items-center gap-1" onClick={() => requestSort('nip')}>
                             NIP
-                            <ArrowUpDown size={10} className={sortConfig?.key === 'nip' ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'} />
+                            <ArrowUpDown size={10} className={sortConfig?.key === 'nip' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'} />
                         </div>
                     </div>
                 </th>
@@ -607,7 +607,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                 >
                     <div className="flex items-center gap-1">
                         TMT
-                        <ArrowUpDown size={12} className={sortConfig?.key === 'tmtDate' ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400'} />
+                        <ArrowUpDown size={12} className={sortConfig?.key === 'tmtDate' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'} />
                     </div>
                 </th>
                 <th className={`text-center ${isCompact ? 'px-2 py-1.5 md:px-3 md:py-2' : 'px-3 py-2.5 md:px-4 md:py-3'}`}>Hitungan Mundur KGB</th>
@@ -622,8 +622,8 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                     onClick={() => setSelectedEmployee(emp)}
                     className={`transition-all duration-150 group cursor-pointer border-l-4 ${
                       selectedEmployee?.id === emp.id 
-                        ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-l-emerald-500 shadow-[inset_0_1px_3px_rgba(0,0,0,0.02)]' 
-                        : 'border-l-transparent hover:bg-emerald-50/40 dark:hover:bg-slate-800/70 hover:border-l-emerald-400 dark:hover:border-l-emerald-500'
+                        ? 'bg-primary-50/80 dark:bg-primary-950/40 border-l-primary-500 shadow-[inset_0_1px_3px_rgba(0,0,0,0.02)]' 
+                        : 'border-l-transparent hover:bg-primary-50/40 dark:hover:bg-slate-800/70 hover:border-l-primary-400 dark:hover:border-l-primary-500'
                     }`}
                   >
                     <td className={`text-center text-slate-400 dark:text-slate-500 font-medium text-[10px] md:text-xs hidden md:table-cell ${isCompact ? 'px-2 py-1 md:py-1.5' : 'px-2 py-2 md:px-4 md:py-2.5'}`}>
@@ -632,7 +632,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                     <td className={isCompact ? 'px-2 py-1 md:px-3 md:py-1.5' : 'px-3 py-2 md:px-4 md:py-2.5'}>
                       <div className="flex items-center gap-2">
                           <div className="min-w-0">
-                              <div className={`font-bold text-slate-800 dark:text-slate-100 mb-0.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors font-display truncate pr-1 md:pr-2 ${isCompact ? 'text-[11px] md:text-xs' : 'text-xs md:text-sm'}`}>{emp.nama}</div>
+                              <div className={`font-bold text-slate-800 dark:text-slate-100 mb-0.5 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors font-display truncate pr-1 md:pr-2 ${isCompact ? 'text-[11px] md:text-xs' : 'text-xs md:text-sm'}`}>{emp.nama}</div>
                               <div className={`text-slate-500 dark:text-slate-400 font-mono font-medium truncate ${isCompact ? 'text-[9px] md:text-[10px]' : 'text-[10px] md:text-xs'}`}>{emp.nip}</div>
                           </div>
                       </div>
@@ -649,7 +649,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                     
                     <td className={`hidden xl:table-cell ${isCompact ? 'px-2 py-1 md:px-3 md:py-1.5' : 'px-3 py-2 md:px-4 md:py-2.5'}`}>
                       {emp.statusKepegawaian === 'PNS' && (
-                          <span className={`inline-flex items-center gap-1 rounded-full font-bold bg-emerald-100/80 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/60 ${isCompact ? 'px-1.5 py-0.2 text-[8px]' : 'px-2 py-0.5 text-[9px]'}`}>
+                          <span className={`inline-flex items-center gap-1 rounded-full font-bold bg-primary-100/80 text-primary-800 dark:bg-primary-500/20 dark:text-primary-300 border border-primary-200 dark:border-primary-700/60 ${isCompact ? 'px-1.5 py-0.2 text-[8px]' : 'px-2 py-0.5 text-[9px]'}`}>
                               PNS
                           </span>
                       )}
@@ -682,8 +682,8 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                             title={emp.status === 'Processed' ? "Klik untuk ubah status ke Belum Diproses" : "Klik untuk tandai Selesai"}
                           >
                             {emp.status === 'Processed' ? (
-                              <div className={`inline-flex items-center gap-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm transition-all ${isCompact ? 'px-1.5 py-0.5' : 'px-2 py-1'}`}>
-                                <CheckCircle2 size={isCompact ? 10 : 12} className="flex-shrink-0 text-emerald-600" />
+                              <div className={`inline-flex items-center gap-1 rounded-lg bg-primary-50 hover:bg-primary-100 text-primary-700 border border-primary-200 shadow-sm transition-all ${isCompact ? 'px-1.5 py-0.5' : 'px-2 py-1'}`}>
+                                <CheckCircle2 size={isCompact ? 10 : 12} className="flex-shrink-0 text-primary-600" />
                                 <span className="text-[10px] font-bold hidden sm:inline">Selesai</span>
                               </div>
                             ) : (
@@ -703,7 +703,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                           </button>
                         ) : (
                           emp.status === 'Processed' ? (
-                            <div className={`inline-flex items-center gap-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm ${isCompact ? 'px-1.5 py-0.5' : 'px-2 py-1'}`} title="Selesai">
+                            <div className={`inline-flex items-center gap-1 rounded-lg bg-primary-50 text-primary-700 border border-primary-200 shadow-sm ${isCompact ? 'px-1.5 py-0.5' : 'px-2 py-1'}`} title="Selesai">
                               <CheckCircle2 size={isCompact ? 10 : 12} className="flex-shrink-0" />
                               <span className="text-[10px] font-bold hidden sm:inline">Selesai</span>
                             </div>
@@ -756,7 +756,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
               <select 
                 value={itemsPerPage}
                 onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-slate-700 dark:text-slate-200"
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-slate-700 dark:text-slate-200"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -772,7 +772,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
               <button 
                 onClick={() => handlePageChange(1)}
                 disabled={currentPage === 1}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
                 title="Halaman Pertama"
               >
                 <ChevronsLeft size={16} />
@@ -780,7 +780,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
               <button 
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
                 title="Halaman Sebelumnya"
               >
                 <ChevronLeft size={16} />
@@ -794,7 +794,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                   max={totalPages}
                   value={currentPage}
                   onChange={(e) => handlePageChange(Number(e.target.value))}
-                  className="w-12 text-center py-1 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900"
+                  className="w-12 text-center py-1 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900"
                 />
                 <span className="text-xs font-bold text-slate-600 dark:text-slate-300">dari {totalPages}</span>
               </div>
@@ -802,7 +802,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
               <button 
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
                 title="Halaman Berikutnya"
               >
                 <ChevronRight size={16} />
@@ -810,7 +810,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
               <button 
                 onClick={() => handlePageChange(totalPages)}
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
                 title="Halaman Terakhir"
               >
                 <ChevronsRight size={16} />
@@ -833,7 +833,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
             
             {/* Modal Header */}
             <div className="bg-slate-900 p-6 md:p-8 relative overflow-hidden text-white flex-shrink-0 border-b border-slate-800">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
                 
                 <button 
                     onClick={() => setSelectedEmployee(null)}
@@ -843,7 +843,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                 </button>
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 relative z-10 text-center sm:text-left">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-emerald-600 to-emerald-900 border-2 border-emerald-500 text-white font-bold text-lg sm:text-xl shadow-lg shadow-emerald-500/20 flex-shrink-0">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-primary-600 to-primary-900 border-2 border-primary-500 text-white font-bold text-lg sm:text-xl shadow-lg shadow-primary-500/20 flex-shrink-0">
                         {selectedEmployee.nama.slice(0, 2).toUpperCase()}
                     </div>
                     <div className="flex-1">
@@ -854,7 +854,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                             </span>
                             <span className={`px-3 py-1 rounded-lg border flex items-center gap-1.5 ${
                                 selectedEmployee.statusKepegawaian === 'PNS' 
-                                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
+                                ? 'bg-primary-500/20 text-primary-300 border-primary-500/30' 
                                 : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
                             }`}>
                                 <User size={14} /> {selectedEmployee.statusKepegawaian}
@@ -880,15 +880,15 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                     <div className="w-px h-8 bg-slate-200 dark:bg-slate-700 mx-2"></div>
 
                     <div className="flex-1 text-right">
-                        <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider mb-0.5">Gaji Baru</p>
-                        <p className="text-lg sm:text-2xl font-bold text-emerald-700 font-mono">
+                        <p className="text-[10px] font-bold text-primary-500 uppercase tracking-wider mb-0.5">Gaji Baru</p>
+                        <p className="text-lg sm:text-2xl font-bold text-primary-700 font-mono">
                            {(currentUser?.nip === selectedEmployee.nip || currentUser?.nip === ADMIN_NIP) ? formatRupiah(selectedEmployee.gajiBaru) : 'Rp *******'}
                         </p>
                     </div>
                     
                     {(currentUser?.nip === selectedEmployee.nip || currentUser?.nip === ADMIN_NIP) && (
                          <div className="w-full sm:w-auto text-right mt-2 sm:mt-0">
-                             <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+                             <span className="text-[10px] font-bold text-primary-700 bg-primary-50 px-3 py-1 rounded-full border border-primary-100">
                                 +{formatRupiah(selectedEmployee.gajiBaru - selectedEmployee.gajiLama)}
                              </span>
                          </div>
@@ -901,7 +901,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                  {/* Left Column: Employment Info */}
                  <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] p-5 sm:p-6 shadow-sm">
                     <h3 className="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-bold mb-4 text-xs uppercase tracking-wider border-b border-slate-50 pb-3">
-                        <Briefcase size={14} className="text-emerald-500" /> Informasi Kepegawaian
+                        <Briefcase size={14} className="text-primary-500" /> Informasi Kepegawaian
                     </h3>
                     <div className="space-y-4">
                         <div>
@@ -914,7 +914,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                         </div>
                         <div>
                             <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase mb-1">Pangkat / Golongan</p>
-                            <span className="inline-block bg-emerald-50 text-emerald-700 font-bold text-xs px-2 py-1 rounded-md border border-emerald-100">{selectedEmployee.pangkat}</span>
+                            <span className="inline-block bg-primary-50 text-primary-700 font-bold text-xs px-2 py-1 rounded-md border border-primary-100">{selectedEmployee.pangkat}</span>
                         </div>
                         <div>
                             <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase mb-1">Masa Kerja Golongan</p>
@@ -926,7 +926,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                  {/* Right Column: Status & Timeline */}
                  <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.5rem] p-5 sm:p-6 shadow-sm flex flex-col">
                     <h3 className="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-bold mb-4 text-xs uppercase tracking-wider border-b border-slate-50 pb-3">
-                        <TrendingUp size={14} className="text-emerald-500" /> Status & Jadwal
+                        <TrendingUp size={14} className="text-primary-500" /> Status & Jadwal
                     </h3>
 
                     <div className="mb-4 sm:mb-6">
@@ -956,7 +956,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                            className={`w-full px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2 border cursor-pointer ${
                              selectedEmployee.status === 'Processed'
                                ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
-                               : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                               : 'bg-primary-50 text-primary-700 border-primary-200 hover:bg-primary-100'
                            }`}
                          >
                            {selectedEmployee.status === 'Processed' ? (
@@ -988,8 +988,8 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                                     
                                     {/* Item 2 (Active) */}
                                     <div className="relative pl-5 pb-5">
-                                        <div className="absolute -left-[4.5px] top-1 w-2 h-2 rounded-full bg-emerald-500 ring-4 ring-emerald-50"></div>
-                                        <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-wide mb-0.5">TMT Saat Ini</p>
+                                        <div className="absolute -left-[4.5px] top-1 w-2 h-2 rounded-full bg-primary-500 ring-4 ring-primary-50"></div>
+                                        <p className="text-[10px] text-primary-500 font-bold uppercase tracking-wide mb-0.5">TMT Saat Ini</p>
                                         <p className="text-sm font-mono font-bold text-slate-800 dark:text-slate-100">{selectedEmployee.tmt}</p>
                                     </div>
 
@@ -1038,7 +1038,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                   <AlertCircle size={28} className="animate-pulse" />
                 </div>
               ) : (
-                <div className="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center mb-5 shadow-inner">
+                <div className="w-14 h-14 rounded-full bg-primary-50 border border-primary-100 text-primary-600 flex items-center justify-center mb-5 shadow-inner">
                   <CheckCircle2 size={28} />
                 </div>
               )}
@@ -1061,7 +1061,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                     <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase">Aksi:</span>
                     <p className="text-xs font-bold text-slate-700 dark:text-slate-200">
                       Mengubah status KGB ke{' '}
-                      <span className={statusChangeEmployee.status === 'Processed' ? 'text-amber-600 font-extrabold' : 'text-emerald-600 font-extrabold'}>
+                      <span className={statusChangeEmployee.status === 'Processed' ? 'text-amber-600 font-extrabold' : 'text-primary-600 font-extrabold'}>
                         {statusChangeEmployee.status === 'Processed' ? 'Belum Selesai' : 'Selesai'}
                       </span>
                     </p>
@@ -1092,7 +1092,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                   className={`flex-1 py-2.5 px-4 text-white rounded-xl font-bold text-xs transition-all cursor-pointer shadow-sm active:scale-95 ${
                     statusChangeEmployee.status === 'Processed'
                       ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-600/10'
-                      : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/10'
+                      : 'bg-primary-600 hover:bg-primary-700 shadow-primary-600/10'
                   }`}
                 >
                   Ya, Ubah Status
