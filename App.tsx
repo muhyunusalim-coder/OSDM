@@ -683,19 +683,10 @@ function App() {
                   <X size={18} />
                 </button>
             </div>
-            <div className="mt-2.5 flex items-center gap-1.5">
-                <span className="text-[9px] font-semibold tracking-wider uppercase text-emerald-400 bg-emerald-950/70 border border-emerald-800/60 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
-                    <span className="w-1 h-1 rounded-full bg-emerald-400"></span>
-                    Kemenperin RI
-                </span>
-                <span className="text-[9px] font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                    SIASN Ready
-                </span>
-            </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 space-y-1.5 overflow-y-auto py-3 custom-scrollbar relative z-10">
+        <nav className="flex-1 px-3 space-y-1.5 overflow-y-auto py-3 relative z-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div>
                 <button 
                     onClick={() => { 
