@@ -883,10 +883,6 @@ function App() {
                     <LogOut size={15} />
                 </button>
             </div>
-            <div className="flex items-center justify-between px-1 pt-2 text-[9px] font-mono text-slate-400">
-                <span>PORTAL BSKJI</span>
-                <span className="text-primary-400 font-semibold">v2.4 ONLINE</span>
-            </div>
         </div>
       </aside>
 
