@@ -1091,69 +1091,6 @@ function App() {
                 )}
               </AnimatePresence>
             </div>
-
-            {/* Profile Avatar Widget with Dropdown */}
-            <div className="relative border-l border-slate-200/60 dark:border-slate-800 pl-2 sm:pl-3 flex items-center gap-1 sm:gap-2 z-50">
-              <button
-                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                className="flex items-center gap-2 rounded-full p-1 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group text-left outline-none border border-transparent focus-visible:border-slate-300 dark:focus-visible:border-slate-700"
-                title="Menu Profil"
-              >
-                <div className="w-8 h-8 rounded-full border border-primary-200/50 flex items-center justify-center bg-gradient-to-br from-primary-500 to-primary-700 text-white font-extrabold text-xs shadow-sm flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
-                  {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
-                </div>
-                <div className="hidden sm:flex flex-col text-left pr-1">
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-snug truncate max-w-[120px]">
-                    {currentUser ? currentUser.nama.split(' ')[0] : 'Pegawai'}
-                  </span>
-                </div>
-                <ChevronDown size={14} className={`text-slate-500 dark:text-slate-400 transition-transform duration-200 shrink-0 mr-0.5 ${isProfileMenuOpen ? 'rotate-180 text-primary-600 dark:text-primary-500' : ''}`} />
-              </button>
-
-              <AnimatePresence>
-                {isProfileMenuOpen && (
-                  <>
-                    {/* Backdrop to close dropdown on click outside */}
-                    <div className="fixed inset-0 z-40" onClick={() => setIsProfileMenuOpen(false)}></div>
-                    
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.98 }}
-                      transition={{ duration: 0.15, ease: "easeOut" }}
-                      className="absolute right-0 top-full mt-2 w-72 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xl rounded-2xl z-50 p-2 overflow-hidden"
-                    >
-                      <div className="px-3 py-2.5 bg-slate-50/80 dark:bg-slate-800/80 rounded-xl border border-slate-100 dark:border-slate-800 mb-1">
-                        <p className="text-xs font-extrabold text-slate-800 dark:text-slate-200 leading-snug">
-                          {currentUser?.nama || 'Pegawai BSKJI'}
-                        </p>
-                        <p className="text-[10px] font-mono font-semibold text-slate-600 dark:text-slate-400 mt-1">
-                          NIP: {currentUser?.nip || '-'}
-                        </p>
-                        {currentUser?.unitKerja && (
-                          <p className="text-[10px] font-medium text-primary-700 dark:text-primary-400 mt-1.5 bg-primary-50 dark:bg-primary-500/10 px-2 py-0.5 rounded border border-primary-200 dark:border-primary-800 inline-block">
-                            {currentUser.unitKerja}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="border-t border-slate-100 dark:border-slate-800 my-1"></div>
-
-                      <button
-                        onClick={() => {
-                          setIsProfileMenuOpen(false);
-                          handleLogout();
-                        }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-primary-400 dark:text-primary-400 hover:bg-primary-500 dark:hover:bg-primary-500/10 hover:text-primary-400 dark:hover:text-primary-400 rounded-xl transition-colors cursor-pointer border border-primary-500 dark:border-primary-500/50 bg-primary-500/40 dark:bg-primary-500/5"
-                      >
-                        <LogOut size={16} />
-                        <span>Keluar / Log Out</span>
-                      </button>
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
-            </div>
           </div>
         </header>
 
