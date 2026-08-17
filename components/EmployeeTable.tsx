@@ -6,6 +6,7 @@ import { Search, Briefcase, Clock, CheckCircle2, BadgeCheck, User, X, TrendingUp
 import { Employee } from '../types';
 import { useDebounce } from '../hooks/useDebounce';
 import { analyzeEmployeeKGB } from '../services/geminiService';
+import { getTmtDate, getDaysRemaining, getStatusLabel, calculateCycleDates, calculateKPCycleDates, formatRupiah, getMasaKerjaYears, months } from '../utils/employeeUtils';
 
 interface Props {
   employees: Employee[];
@@ -53,21 +54,6 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
     }
     setSortConfig({ key, direction });
   };
-
-  const getTmtDate = (tmt: string) => {
-    // Handle YYYY-MM-DD
-    if (tmt.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        return new Date(tmt);
-    } 
-    // Handle DD-MM-YYYY or DD/MM/YYYY
-    else if (tmt.match(/^\d{1,2}[-/]\d{1,2}[-/]\d{4}$/)) {
-        const parts = tmt.split(/[-/]/);
-        return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-    }
-    return new Date(0);
-  };
-
-  const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
   const years = useMemo(() => {
     const years = new Set(employees.map(e => {
         const d = getTmtDate(e.tmt);
@@ -76,71 +62,6 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
     return Array.from(years).sort().reverse();
   }, [employees]);
    const currentYear = new Date().getFullYear();
-
-  const getDaysRemaining = (tmt: string) => {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-
-    let tmtDate: Date | null = null;
-    
-    // Handle YYYY-MM-DD
-    if (tmt.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        tmtDate = new Date(tmt);
-    } 
-    // Handle DD-MM-YYYY or DD/MM/YYYY
-    else if (tmt.match(/^\d{1,2}[-/]\d{1,2}[-/]\d{4}$/)) {
-        const parts = tmt.split(/[-/]/);
-        tmtDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-    }
-
-    if (!tmtDate || isNaN(tmtDate.getTime())) return null;
-
-    const diffTime = tmtDate.getTime() - now.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  };
-
-  const getStatusLabel = (tmt: string): { label: string; class: string } => {
-      const days = getDaysRemaining(tmt);
-      if (days === null) return { label: '-', class: 'text-slate-300 dark:text-slate-600' };
-      if (days <= 0) return { label: 'Sudah Waktunya', class: 'bg-rose-100 text-rose-700 border-rose-200' };
-      if (days <= 30) return { label: 'Mendekati', class: 'bg-amber-100 text-amber-700 border-amber-200' };
-      return { label: 'Aman', class: 'bg-primary-100 text-primary-700 border-primary-200' };
-  };
-
-  // Helper untuk menghitung siklus 2 tahunan
-  const calculateCycleDates = (tmt: string) => {
-    let tmtDate: Date | null = null;
-    
-    // Parsing logic matches existing getDaysRemaining
-    if (tmt.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        tmtDate = new Date(tmt);
-    } else if (tmt.match(/^\d{1,2}[-/]\d{1,2}[-/]\d{4}$/)) {
-        const parts = tmt.split(/[-/]/);
-        tmtDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-    }
-
-    if (!tmtDate || isNaN(tmtDate.getTime())) return { prev: '-', next: '-' };
-
-    // Previous (-2 years)
-    const prevDate = new Date(tmtDate);
-    prevDate.setFullYear(tmtDate.getFullYear() - 2);
-
-    // Next (+2 years)
-    const nextDate = new Date(tmtDate);
-    nextDate.setFullYear(tmtDate.getFullYear() + 2);
-
-    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
-
-    return {
-        prev: prevDate.toLocaleDateString('id-ID', options),
-        next: nextDate.toLocaleDateString('id-ID', options)
-    };
-  };
-
-  // Helper untuk format rupiah
-  const formatRupiah = (num: number) => {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
-  };
 
   const uniqueUnits = useMemo(() => {
     const units = new Set(employees.map(e => e.unitKerja).filter(Boolean));
@@ -153,13 +74,6 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
   }, [employees]);
 
   const filtered = useMemo(() => {
-    const getMasaKerjaYears = (masaKerjaStr: string) => {
-      if (!masaKerjaStr) return 0;
-      const match = masaKerjaStr.match(/(\d+)\s*(?:Tahun|th)/i);
-      if (match) return parseInt(match[1], 10);
-      const num = parseInt(masaKerjaStr, 10);
-      return isNaN(num) ? 0 : num;
-    };
 
     return employees.filter(emp => {
       const matchesSearch = emp.nama.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) || 

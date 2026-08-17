@@ -7,6 +7,7 @@ import { createPortal } from 'react-dom';
 import { getBirthDateFromNIP, getRetirementAge, calculateTmtPensiun, getPensiunStatus } from '../utils/pensionHelpers';
 import { useDebounce } from '../hooks/useDebounce';
 import { DeferredView } from './DeferredView';
+import { getMasaKerjaYears } from '../utils/employeeUtils';
 const PensiunVisualization = lazy(() => import('./PensiunVisualization').then(m => ({ default: m.PensiunVisualization })));
 
 interface Props {
@@ -85,13 +86,6 @@ const PensiunTable = React.memo(({ employees }: Props) => {
 
       let matchesMasaKerja = true;
       if (masaKerjaFilter !== 'All') {
-        const getMasaKerjaYears = (masaKerjaStr: string) => {
-          if (!masaKerjaStr) return 0;
-          const match = masaKerjaStr.match(/(\d+)\s*(?:Tahun|th)/i);
-          if (match) return parseInt(match[1], 10);
-          const num = parseInt(masaKerjaStr, 10);
-          return isNaN(num) ? 0 : num;
-        };
         const years = getMasaKerjaYears(emp.masaKerja);
         if (masaKerjaFilter === '0-5') matchesMasaKerja = years >= 0 && years <= 5;
         else if (masaKerjaFilter === '6-10') matchesMasaKerja = years >= 6 && years <= 10;

@@ -1,3 +1,4 @@
+import { getTmtDate, months } from "../utils/employeeUtils";
 import React, { useState, useMemo, useEffect } from 'react';
 import { DeferredView } from './DeferredView';
 import { 
@@ -28,49 +29,8 @@ const ReportPage: React.FC<Props> = React.memo(({ employees, currentUser, isKP =
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [isExporting, setIsExporting] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
-
-  const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
   
-  // Helper untuk parsing tanggal
-  const getTmtDate = (tmt: string) => {
-    if (!tmt) return null;
-    if (tmt.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        return new Date(tmt);
-    } 
-    else if (tmt.match(/^\d{1,2}[-/]\d{1,2}[-/]\d{4}$/)) {
-        const parts = tmt.split(/[-/]/);
-        return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-    }
-    
-    // TMT format from CSV e.g "1 April 2026"
-    const monthsIndo = ["januari", "februari", "maret", "april", "mei", "juni", "juli", "agustus", "september", "oktober", "november", "desember"];
-    const tmtLower = tmt.toLowerCase();
-    
-    const parts = tmtLower.split(' ');
-    if (parts.length >= 2) {
-      let day = 1;
-      let monthIndex = -1;
-      let year = new Date().getFullYear();
       
-      for (const part of parts) {
-        if (/^\d{1,2}$/.test(part)) {
-          day = parseInt(part);
-        } else if (/^\d{4}$/.test(part)) {
-          year = parseInt(part);
-        } else {
-          const mIndex = monthsIndo.findIndex(m => part.includes(m));
-          if (mIndex !== -1) {
-            monthIndex = mIndex;
-          }
-        }
-      }
-      
-      if (monthIndex !== -1) {
-        return new Date(year, monthIndex, day);
-      }
-    }
-    return null;
-  };
 
   // Filter Logic
   const filteredData = useMemo(() => {

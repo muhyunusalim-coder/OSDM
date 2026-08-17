@@ -7,6 +7,7 @@ import { useDebounce } from '../hooks/useDebounce';
 import { analyzeEmployeeKP } from '../services/geminiService';
 
 import { Language } from '../utils/translationHelper';
+import { getTmtDate, getDaysRemaining, getStatusLabel, calculateCycleDates, calculateKPCycleDates, formatRupiah, getMasaKerjaYears, months } from '../utils/employeeUtils';
 
 interface Props {
   employees: Employee[];
@@ -59,77 +60,6 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
     setSortConfig({ key, direction });
   };
 
-  const calculateKPCycleDates = (tmt: string) => {
-    let tmtDate: Date | null = null;
-    
-    // Parsing logic matches existing getDaysRemaining
-    if (tmt.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        tmtDate = new Date(tmt);
-    } else if (tmt.match(/^\d{1,2}[-/]\d{1,2}[-/]\d{4}$/)) {
-        const parts = tmt.split(/[-/]/);
-        tmtDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-    }
-
-    if (!tmtDate || isNaN(tmtDate.getTime())) return { prev: '-', next: '-' };
-
-    // Previous (-4 years for KP)
-    const prevDate = new Date(tmtDate);
-    prevDate.setFullYear(tmtDate.getFullYear() - 4);
-    
-    // Next (+4 years for KP)
-    const nextDate = new Date(tmtDate);
-    nextDate.setFullYear(tmtDate.getFullYear() + 4);
-
-    const formatter = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-    
-    return {
-        prev: formatter.format(prevDate),
-        next: formatter.format(nextDate)
-    };
-  };
-
-  const getTmtDate = (tmt: string) => {
-    if (!tmt) return new Date(0);
-    if (tmt.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        return new Date(tmt);
-    } else if (tmt.match(/^\d{1,2}[-/]\d{1,2}[-/]\d{4}$/)) {
-        const parts = tmt.split(/[-/]/);
-        return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-    }
-    
-    // TMT format from CSV e.g "1 April 2026"
-    const monthsIndo = ["januari", "februari", "maret", "april", "mei", "juni", "juli", "agustus", "september", "oktober", "november", "desember"];
-    const tmtLower = tmt.toLowerCase();
-    
-    // Check if it contains an Indonesian month
-    const parts = tmtLower.split(' ');
-    if (parts.length >= 2) {
-      let day = 1;
-      let monthIndex = -1;
-      let year = new Date().getFullYear();
-      
-      for (const part of parts) {
-        if (/^\d{1,2}$/.test(part)) {
-          day = parseInt(part);
-        } else if (/^\d{4}$/.test(part)) {
-          year = parseInt(part);
-        } else {
-          const mIndex = monthsIndo.findIndex(m => part.includes(m));
-          if (mIndex !== -1) {
-            monthIndex = mIndex;
-          }
-        }
-      }
-      
-      if (monthIndex !== -1) {
-        return new Date(year, monthIndex, day);
-      }
-    }
-    
-    return new Date(0);
-  };
-
-  const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
   const stats = useMemo(() => {
     return {
@@ -167,13 +97,6 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
   }, [employees]);
 
   const filteredEmployees = useMemo(() => {
-    const getMasaKerjaYears = (masaKerjaStr: string) => {
-      if (!masaKerjaStr) return 0;
-      const match = masaKerjaStr.match(/(\d+)\s*(?:Tahun|th)/i);
-      if (match) return parseInt(match[1], 10);
-      const num = parseInt(masaKerjaStr, 10);
-      return isNaN(num) ? 0 : num;
-    };
 
     return employees.filter(emp => {
       const matchesSearch = emp.nama.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) || 
