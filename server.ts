@@ -2,13 +2,21 @@ import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import crypto from 'crypto';
 import { createServer as createViteServer } from 'vite';
+import { GoogleGenAI } from '@google/genai';
 
-// Server Configuration
-const app = express();
+// Server Configuration & Environment Validation
 const PORT = 3000;
-const AUTH_SECRET = process.env.AUTH_SECRET || 'bskji_kemperin_secure_jwt_token_secret_2026_@!';
-const SERVER_AUTH_PASSWORD = process.env.AUTH_DEFAULT_PASSWORD || 'bskji';
+const AUTH_SECRET = process.env.AUTH_SECRET || crypto.randomBytes(32).toString('hex');
+const SERVER_AUTH_PASSWORD = process.env.AUTH_PASSWORD || process.env.AUTH_DEFAULT_PASSWORD;
 const ADMIN_NIPS = (process.env.ADMIN_NIPS || '198501012010011001,198203152009021002,198011112005011003,199201012015022001').split(',').map(n => n.trim());
+
+// Environment check notice on startup
+if (!process.env.AUTH_SECRET) {
+  console.warn('⚠️ [SECURITY NOTICE] AUTH_SECRET is not defined in environment. Using ephemeral random secret for this session.');
+}
+if (!SERVER_AUTH_PASSWORD) {
+  console.warn('⚠️ [SECURITY NOTICE] AUTH_DEFAULT_PASSWORD / AUTH_PASSWORD is not set. Please configure in .env for production login.');
+}
 
 // Google Sheets Config (Held securely in server only - NEVER sent to frontend)
 const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID || "1JfQ-DU2LrLhdc89JlGaKcuGuRhw6w2kB_iU6NWurL8U";
@@ -20,9 +28,21 @@ const CSV_URL_KGB = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/e
 const CSV_URL_KP = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv&gid=${GID_KP}`;
 const CSV_URL_MASTER = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_MASTER_PEGAWAI)}`;
 
+// Lazy Gemini API Client Initialization (Backend only)
+let genAIInstance: GoogleGenAI | null = null;
+const getGenAI = (): GoogleGenAI | null => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return null;
+  if (!genAIInstance) {
+    genAIInstance = new GoogleGenAI({ apiKey });
+  }
+  return genAIInstance;
+};
+
 // ==========================================
 // SECURITY HEADERS & MIDDLEWARE
 // ==========================================
+const app = express();
 app.disable('x-powered-by');
 
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -34,7 +54,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://generativelanguage.googleapis.com;"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self';"
   );
   next();
 });
@@ -543,7 +563,7 @@ const getServerMasterPegawai = async (): Promise<any[]> => {
 // API ROUTES
 // ==========================================
 
-// 1. Authentication Login (Backend-controlled auth)
+// 1. Authentication Login (Backend-controlled auth, obfuscated errors)
 app.post('/api/auth/login', rateLimitAuth, async (req: Request, res: Response) => {
   try {
     const { nip, password, captchaNum1, captchaNum2, captchaAnswer } = req.body;
@@ -566,22 +586,28 @@ app.post('/api/auth/login', rateLimitAuth, async (req: Request, res: Response) =
       }
     }
 
-    // Secure Backend Password Verification (Never exposed to frontend)
-    const isValidPassword = password === SERVER_AUTH_PASSWORD || (process.env.AUTH_MASTER_PASSWORD && password === process.env.AUTH_MASTER_PASSWORD);
-    if (!isValidPassword) {
-      return res.status(401).json({ success: false, message: 'Kredensial atau kata sandi akses tidak valid.' });
+    const cleanNip = String(nip).replace(/\D/g, '').trim();
+
+    // Check configured password
+    const configuredPassword = SERVER_AUTH_PASSWORD;
+    if (!configuredPassword) {
+      return res.status(500).json({
+        success: false,
+        message: 'Konfigurasi kata sandi sistem pada server belum disetel. Hubungi Administrator.'
+      });
     }
 
-    // Check Employee existence across KGB and Master databases
-    const cleanNip = String(nip).replace(/\D/g, '').trim();
-    const [kgbEmps, masterEmps] = await Promise.all([getServerEmployees(), getServerMasterPegawai()]);
+    const isValidPassword = password === configuredPassword || (process.env.AUTH_MASTER_PASSWORD && password === process.env.AUTH_MASTER_PASSWORD);
     
-    let matchedEmp = kgbEmps.find((e: any) => e.nip === cleanNip) || masterEmps.find((e: any) => e.nip === cleanNip);
+    // Check Employee existence across KGB and Master databases
+    const [kgbEmps, masterEmps] = await Promise.all([getServerEmployees(), getServerMasterPegawai()]);
+    const matchedEmp = kgbEmps.find((e: any) => e.nip === cleanNip) || masterEmps.find((e: any) => e.nip === cleanNip);
 
-    if (!matchedEmp) {
-      return res.status(404).json({
+    // SECURITY: Obfuscate login errors to prevent NIP enumeration
+    if (!isValidPassword || !matchedEmp) {
+      return res.status(401).json({
         success: false,
-        message: `NIP ${cleanNip} tidak terdaftar dalam pangkalan data resmi kepegawaian BSKJI.`
+        message: 'NIP atau kata sandi yang Anda masukkan tidak valid. Silakan periksa kembali kredensial Anda.'
       });
     }
 
@@ -675,13 +701,12 @@ app.post('/api/auth/logout', requireAuth, (_req: Request, res: Response) => {
   return res.json({ success: true, message: 'Sesi berhasil diakhiri.' });
 });
 
-// 4. Data Endpoints with Role-Based Access Control
+// 4. Data Endpoints with Role-Based Access Control (RBAC)
 app.get('/api/data/employees', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await getServerEmployees();
     const user = req.user!;
 
-    // Role-based data sanitization:
     // Admin & Pimpinan see full salary details.
     // Regular pegawai see non-sensitive listing with their own salary record intact.
     if (user.role === 'admin' || user.role === 'pimpinan') {
@@ -706,19 +731,62 @@ app.get('/api/data/employees', requireAuth, async (req: AuthenticatedRequest, re
   }
 });
 
-app.get('/api/data/promotions', requireAuth, async (_req: AuthenticatedRequest, res: Response) => {
+app.get('/api/data/promotions', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await getServerPromotions();
-    return res.json(data);
+    const user = req.user!;
+
+    // Admin and Pimpinan have full visibility of SIASN tracking and submission numbers
+    if (user.role === 'admin' || user.role === 'pimpinan') {
+      return res.json(data);
+    }
+
+    // Role-based protection for regular pegawai:
+    // Mask sensitive tracking and internal surat usulan numbers for other peers
+    const sanitized = data.map((emp: any) => {
+      if (emp.nip === user.nip) {
+        return emp;
+      }
+      return {
+        ...emp,
+        suratUsulan: '***',
+        inputSiasn: '-',
+        statusSiasn: emp.status === 'Processed' ? 'Terbit SK' : 'Dalam Proses'
+      };
+    });
+
+    return res.json(sanitized);
   } catch (err: any) {
     return res.status(500).json({ error: 'Gagal memuat data layanan Kenaikan Pangkat.' });
   }
 });
 
-app.get('/api/data/master-pegawai', requireAuth, async (_req: AuthenticatedRequest, res: Response) => {
+app.get('/api/data/master-pegawai', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await getServerMasterPegawai();
-    return res.json(data);
+    const user = req.user!;
+
+    // Admin and Pimpinan access complete institutional master data
+    if (user.role === 'admin' || user.role === 'pimpinan') {
+      return res.json(data);
+    }
+
+    // Regular pegawai: Protect sensitive personal data (demographics, training records) of other employees
+    const sanitized = data.map((emp: any) => {
+      if (emp.nip === user.nip) {
+        return emp;
+      }
+      return {
+        ...emp,
+        jenisKelamin: '-',
+        usia: '-',
+        pendidikan: '-',
+        diklatStruktural: '-',
+        masaKerja: '-'
+      };
+    });
+
+    return res.json(sanitized);
   } catch (err: any) {
     return res.status(500).json({ error: 'Gagal memuat data master pegawai BSKJI.' });
   }
@@ -767,6 +835,183 @@ app.post('/api/data/employees/:id/toggle-status', requireAuth, async (req: Authe
 });
 
 // ==========================================
+// 6. SERVER-SIDE GEMINI AI PROXY ENDPOINTS (PROTECTED)
+// ==========================================
+
+app.post('/api/ai/analyze-kgb', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { employee, promptType } = req.body;
+    if (!employee) {
+      return res.status(400).json({ error: 'Data pegawai diperlukan.' });
+    }
+
+    const ai = getGenAI();
+    if (!ai) {
+      return res.status(503).json({ error: 'Gemini AI service is not configured on the server.' });
+    }
+
+    const model = "gemini-2.5-flash";
+    let userPrompt = "";
+    
+    if (promptType === 'draft_sk') {
+      userPrompt = `
+        Buatkan draft surat resmi pemberitahuan Kenaikan Gaji Berkala (KGB) untuk pegawai berikut.
+        Gunakan bahasa Indonesia baku, format surat dinas resmi instansi pemerintah (Kementerian Perindustrian BSKJI). Hindari penggunaan markdown bold (**).
+        
+        Data Pegawai:
+        Nama: ${employee.nama}
+        NIP: ${employee.nip}
+        Pangkat/Golongan: ${employee.pangkat}
+        Jabatan: ${employee.jabatan}
+        Unit Kerja: ${employee.unitKerja}
+        
+        Rincian KGB:
+        Gaji Lama: Rp ${Number(employee.gajiLama || 0).toLocaleString('id-ID')}
+        Gaji Baru: Rp ${Number(employee.gajiBaru || 0).toLocaleString('id-ID')}
+        TMT (Terhitung Mulai Tanggal): ${employee.tmt}
+        
+        Surat ditujukan kepada Kepala ${employee.unitKerja}.
+        Sertakan bagian pembuka dinas, rincian data pegawai, rincian penyesuaian gaji pokok lama dan baru, TMT, serta penutup formal yang ditandatangani Kepala Bagian Kepegawaian dan Umum BSKJI (Dr. Andi Wijaya, M.Si. NIP. 197405121998031002).
+      `;
+    } else {
+      userPrompt = `
+        Analisis data kenaikan gaji untuk pegawai ini:
+        Nama: ${employee.nama}
+        Golongan: ${employee.pangkat}
+        Jabatan: ${employee.jabatan}
+        Unit Kerja: ${employee.unitKerja}
+        Kenaikan: Dari Rp ${Number(employee.gajiLama || 0).toLocaleString('id-ID')} menjadi Rp ${Number(employee.gajiBaru || 0).toLocaleString('id-ID')}
+        TMT: ${employee.tmt}
+        
+        Berikan analisis kepegawaian profesional dan komprehensif dalam Bahasa Indonesia (maksimal 3 paragraf).
+        Sertakan:
+        1. Analisis besaran kenaikan secara finansial dan persentasenya.
+        2. Implikasi motivasi kerja dan produktivitas pegawai di unit kerjanya.
+        3. Rekomendasi langkah administratif kepegawaian selanjutnya.
+        JANGAN gunakan formatting markdown tebal seperti tanda bintang ganda (**). Gunakan spasi paragraf yang rapi dan bahasa yang sangat elegan serta santun.
+      `;
+    }
+
+    const response = await ai.models.generateContent({
+      model,
+      contents: userPrompt,
+    });
+
+    return res.json({ text: response.text || '' });
+  } catch (err: any) {
+    console.error('Server AI analyze KGB error:', err);
+    return res.status(500).json({ error: 'Gagal menghasilkan analisis AI pada server.' });
+  }
+});
+
+app.post('/api/ai/analyze-kp', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { employee, promptType } = req.body;
+    if (!employee) {
+      return res.status(400).json({ error: 'Data pegawai diperlukan.' });
+    }
+
+    const ai = getGenAI();
+    if (!ai) {
+      return res.status(503).json({ error: 'Gemini AI service is not configured on the server.' });
+    }
+
+    const model = "gemini-2.5-flash";
+    let userPrompt = "";
+    
+    if (promptType === 'draft_sk_kp') {
+      userPrompt = `
+        Buatkan draft surat resmi usulan Kenaikan Pangkat (KP) Pegawai Negeri Sipil untuk pegawai berikut.
+        Gunakan bahasa Indonesia baku, format surat dinas resmi instansi pemerintah (Kementerian Perindustrian BSKJI). Hindari penggunaan markdown bold (**).
+        
+        Data Pegawai:
+        Nama: ${employee.nama}
+        NIP: ${employee.nip}
+        Pangkat/Golongan Lama: ${employee.pangkatLama || '-'}
+        Pangkat/Golongan Baru: ${employee.pangkatBaru || employee.pangkat || '-'}
+        Jabatan: ${employee.jabatan}
+        Unit Kerja: ${employee.unitKerja}
+        TMT Kenaikan Pangkat: ${employee.tmt}
+        
+        Surat ditujukan kepada Kepala Biro Organisasi dan Sumber Daya Manusia (OSDM) Kementerian Perindustrian.
+        Sertakan bagian pembuka dinas, rincian data pegawai, penjelasan kelayakan kenaikan pangkat, daftar dokumen lampiran pendukung, serta penutup formal yang ditandatangani Kepala Bagian Kepegawaian dan Umum BSKJI (Dr. Andi Wijaya, M.Si. NIP. 197405121998031002).
+      `;
+    } else {
+      userPrompt = `
+        Analisis usulan kenaikan pangkat untuk pegawai ini:
+        Nama: ${employee.nama}
+        Pangkat/Golongan Lama: ${employee.pangkatLama || '-'}
+        Pangkat/Golongan Baru: ${employee.pangkatBaru || employee.pangkat || '-'}
+        Jabatan: ${employee.jabatan}
+        Unit Kerja: ${employee.unitKerja}
+        TMT Kenaikan Pangkat: ${employee.tmt}
+        
+        Berikan analisis kepegawaian profesional dan komprehensif dalam Bahasa Indonesia (maksimal 3 paragraf).
+        Sertakan:
+        1. Analisis kualifikasi pangkat, kesesuaian masa kerja golongan (MKG), dan jenjang karier pegawai.
+        2. Pengaruh pangkat baru terhadap struktur organisasi dan peningkatan motivasi pegawai di unit kerjanya.
+        3. Rekomendasi langkah administratif kepegawaian (seperti kelengkapan berkas SIASN BKN).
+        JANGAN gunakan formatting markdown tebal seperti tanda bintang ganda (**). Gunakan spasi paragraf yang rapi dan bahasa yang sangat elegan serta santun.
+      `;
+    }
+
+    const response = await ai.models.generateContent({
+      model,
+      contents: userPrompt,
+    });
+
+    return res.json({ text: response.text || '' });
+  } catch (err: any) {
+    console.error('Server AI analyze KP error:', err);
+    return res.status(500).json({ error: 'Gagal menghasilkan analisis KP pada server.' });
+  }
+});
+
+app.post('/api/ai/chat', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { query, employees } = req.body;
+    if (!query) {
+      return res.status(400).json({ error: 'Query chat diperlukan.' });
+    }
+
+    const ai = getGenAI();
+    if (!ai) {
+      return res.status(503).json({ error: 'Gemini AI service is not configured on the server.' });
+    }
+
+    const model = "gemini-2.5-flash";
+    const employeeList = Array.isArray(employees) 
+      ? employees.slice(0, 100).map((e: any) => `${e.nama} (NIP: ${e.nip}, Pangkat: ${e.pangkat}, Jabatan: ${e.jabatan}, Unit: ${e.unitKerja}, TMT: ${e.tmt})`).join('\n')
+      : '';
+
+    const context = `
+      Identitas: Kamu adalah "Kakak KGB", asisten AI pintar yang sangat ramah, hangat, ceria, dan profesional untuk sistem monitoring Kenaikan Gaji Berkala (KGB) dan Kepegawaian di BSKJI Kementerian Perindustrian.
+      
+      Gaya Bahasa:
+      - Sangat hangat, sopan, dan bersahabat.
+      - Gunakan sapaan seperti "Kak", "Bapak", atau "Ibu".
+      - Berikan jawaban yang solutif, menyemangati, dan akurat.
+      - Hindari format markdown bintang ganda (**).
+      
+      Data Sampel Kepegawaian:
+      ${employeeList}
+      
+      Pertanyaan Pengguna: "${query}"
+    `;
+
+    const response = await ai.models.generateContent({
+      model,
+      contents: context,
+    });
+
+    return res.json({ text: response.text || '' });
+  } catch (err: any) {
+    console.error('Server AI chat error:', err);
+    return res.status(500).json({ error: 'Gagal memproses pesan chat pada server.' });
+  }
+});
+
+// ==========================================
 // VITE MIDDLEWARE & STATIC SERVING
 // ==========================================
 async function startServer() {
@@ -790,3 +1035,4 @@ async function startServer() {
 }
 
 startServer();
+

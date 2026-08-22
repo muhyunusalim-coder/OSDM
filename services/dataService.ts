@@ -1,13 +1,16 @@
 import { Employee, AuthUser, LoginResponse } from '../types';
 import { API_ENDPOINTS, MOCK_EMPLOYEES, MOCK_PROMOTION_EMPLOYEES } from '../constants';
 
-// Clean up legacy localStorage artifacts for strict security compliance
+// Clean up legacy localStorage & PWA cache artifacts for strict security compliance
 try {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('kgb_emp_cache_v2');
     localStorage.removeItem('kgb_promo_cache_v2');
     localStorage.removeItem('bskji_master_pegawai_cache_v2');
     localStorage.removeItem('kgb_auth_session');
+    if ('caches' in window) {
+      caches.delete('google-sheets-data-cache').catch(() => {});
+    }
   }
 } catch (e) {
   // Ignore
