@@ -32,18 +32,16 @@ import { Employee, DashboardStats as StatsType } from './types';
 import { getRandomQuote } from './utils/quotesGenerator';
 import { TRANSLATIONS, Language, getGreeting } from './utils/translationHelper';
 import { getBirthDateFromNIP, getRetirementAge, calculateTmtPensiun } from './utils/pensionHelpers';
-import { lazyWithRetry } from './utils/lazyWithRetry';
 
-const DashboardPage = lazyWithRetry(() => import('./components/DashboardPage'));
-
-// Lazy loaded views with resilient retry logic
-const KGBDataPage = lazyWithRetry(() => import('./components/KGBDataPage'));
-const PromotionTable = lazyWithRetry(() => import('./components/PromotionTable'));
-const PensiunTable = lazyWithRetry(() => import('./components/PensiunTable'));
-const KPCalendar = lazyWithRetry(() => import('./components/KPCalendar'));
-const ReportPage = lazyWithRetry(() => import('./components/ReportPage'));
-const FAQPage = lazyWithRetry(() => import('./components/FAQPage'));
-const JamKerjaPage = lazyWithRetry(() => import('./components/JamKerjaPage'));
+// Direct view imports for reliable offline/online instant rendering
+import DashboardPage from './components/DashboardPage';
+import KGBDataPage from './components/KGBDataPage';
+import PromotionTable from './components/PromotionTable';
+import PensiunTable from './components/PensiunTable';
+import KPCalendar from './components/KPCalendar';
+import ReportPage from './components/ReportPage';
+import FAQPage from './components/FAQPage';
+import JamKerjaPage from './components/JamKerjaPage';
 
 // Lightweight Loading Component for Suspense
 const PageLoader = () => (

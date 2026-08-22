@@ -1,11 +1,9 @@
-import React, { useState, useMemo, lazy, Suspense } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Filter, BarChart3, PieChart } from 'lucide-react';
 import { Employee } from '../types';
 import { DeferredView } from './DeferredView';
-
-// Lazy load chart components
-const MonthlyBarChart = lazy(() => import('./charts/MonthlyBarChart'));
-const StaticStatusPieChart = lazy(() => import('./charts/StaticStatusPieChart'));
+import MonthlyBarChart from './charts/MonthlyBarChart';
+import StaticStatusPieChart from './charts/StaticStatusPieChart';
 
 interface Props {
   employees: Employee[];
@@ -135,14 +133,12 @@ const KGBCharts: React.FC<Props> = React.memo(({ employees, title = "Monitoring 
           </div>
 
           <div className="h-80 w-full">
-            <Suspense fallback={<ChartSkeleton />}>
-              <MonthlyBarChart
-                data={monthlyData}
-                onMonthClick={onMonthClick}
-                selectedMonth={selectedMonth}
-                filterYear={filterYear}
-              />
-            </Suspense>
+            <MonthlyBarChart
+              data={monthlyData}
+              onMonthClick={onMonthClick}
+              selectedMonth={selectedMonth}
+              filterYear={filterYear}
+            />
           </div>
         </div>
 
@@ -171,9 +167,7 @@ const KGBCharts: React.FC<Props> = React.memo(({ employees, title = "Monitoring 
               <span className="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase r mt-1">Total</span>
             </div>
 
-            <Suspense fallback={<ChartSkeleton />}>
-              <StaticStatusPieChart data={statusData} totalASN={totalASN} />
-            </Suspense>
+            <StaticStatusPieChart data={statusData} totalASN={totalASN} />
           </div>
         </div>
       </div>

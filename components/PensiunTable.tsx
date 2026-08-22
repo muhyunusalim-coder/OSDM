@@ -28,11 +28,8 @@ import {
 import { useDebounce } from "../hooks/useDebounce";
 import { DeferredView } from "./DeferredView";
 import { getMasaKerjaYears } from "../utils/employeeUtils";
-const PensiunVisualization = lazy(() =>
-  import("./PensiunVisualization").then((m) => ({
-    default: m.PensiunVisualization,
-  })),
-);
+import { PensiunVisualization } from "./PensiunVisualization";
+
 interface Props {
   employees: Employee[];
   language?: Language;
