@@ -425,10 +425,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
         )}
 
         <div className="overflow-x-auto custom-scrollbar touch-pan-x overscroll-x-contain">
-          <div className="h-[600px] print:h-auto print:overflow-visible  shadow-inner bg-white dark:bg-gray-900 rounded-b-2xl border border-gray-200 dark:border-gray-800">
-            
           <table className="w-full text-left border-collapse min-w-[1000px]">
-            
             <thead className="sticky top-0 z-20 shadow-sm">
               <tr className="bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 text-[9px] md:text-[10px] uppercase font-bold st border-b border-gray-200 dark:border-gray-700">
                   <th className={`w-10 text-center hidden md:table-cell ${isCompact ? 'px-2 py-1.5 md:py-2' : 'px-2 py-2.5 md:px-4 md:py-3'}`}>#</th>
@@ -733,7 +730,6 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
               >
                 <option value={10}>10</option>
                 <option value={20}>20</option>
-<option value={25}>25</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
                 <option value={100}>100</option>
@@ -780,7 +776,6 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
               </button>
             </div>
           )}
-        </div>
         </div>
       </div>
       {/* Employee Detail Modal */}
