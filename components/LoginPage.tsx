@@ -224,7 +224,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                       const val = e.target.value.replace(/\D/g, "");
                       setNip(val);
                     }}
-                    className="w-full h-11 sm:h-12 pl-11 pr-4 bg-gray-900/80 border border-gray-700/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-gray-900 transition-all text-white placeholder-gray-500 text-sm font-medium shadow-inner"
+                    className="w-full h-11 sm:h-12 pl-11 pr-4 bg-gray-900/80 border border-gray-700/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-gray-900 transition-all text-white placeholder-gray-500 text-base sm:text-sm font-medium shadow-inner"
                     placeholder={t("login_username_placeholder")}
                     autoFocus
                   />
@@ -245,7 +245,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     value={password}
                     autoComplete="current-password"
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-11 sm:h-12 pl-11 pr-11 bg-gray-900/80 border border-gray-700/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-gray-900 transition-all text-white placeholder-gray-500 text-sm font-medium shadow-inner"
+                    className="w-full h-11 sm:h-12 pl-11 pr-11 bg-gray-900/80 border border-gray-700/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-gray-900 transition-all text-white placeholder-gray-500 text-base sm:text-sm font-medium shadow-inner"
                     placeholder={t("login_password_placeholder")}
                   />
                   <button
@@ -297,7 +297,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     onChange={(e) =>
                       setCaptchaAnswer(e.target.value.replace(/\D/g, ""))
                     }
-                    className="flex-1 min-w-0 h-11 sm:h-12 px-3 bg-gray-900/80 border border-gray-700/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-gray-900 transition-all text-white placeholder-gray-500 text-sm sm:text-base font-bold shadow-inner text-center sm:text-left"
+                    className="flex-1 min-w-0 h-11 sm:h-12 px-3 bg-gray-900/80 border border-gray-700/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-gray-900 transition-all text-white placeholder-gray-500 text-base font-bold shadow-inner text-center sm:text-left"
                     placeholder={t("login_captcha_placeholder")}
                     required
                   />

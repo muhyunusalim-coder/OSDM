@@ -6,8 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "tsc",
-    "preview": "vite preview",
-    "start": "node server.cjs"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@google/genai": "^1.41.0",
