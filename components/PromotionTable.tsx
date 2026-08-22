@@ -51,14 +51,7 @@ interface Props {
   language?: Language;
 }
 
-const KP_DOC_CHECKLIST = [
-  { id: "sk_terakhir", label: "SK Pangkat Terakhir" },
-  { id: "sk_jabatan", label: "SK Jabatan Terakhir (untuk Fungsional)" },
-  { id: "pak", label: "Penetapan Angka Kredit (PAK) Terbaru" },
-  { id: "skp_2_tahun", label: "Penilaian Kinerja (SKP) 2 Tahun Terakhir" },
-  { id: "ijazah", label: "Ijazah & Transkrip Nilai (jika penyesuaian)" },
-  { id: "surat_pengantar", label: "Surat Pengantar / Usulan Unit Kerja" },
-];
+
 
 const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -82,15 +75,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Document checklist state
-  const [checkedDocs, setCheckedDocs] = useState<Record<string, boolean>>({});
-  const toggleDoc = (docId: string) => {
-    if (!selectedEmployee) return;
-    const key = `${selectedEmployee.id}_${docId}`;
-    setCheckedDocs((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
+    
 
   const requestSort = (key: keyof Employee | "tmtDate") => {
     let direction: "asc" | "desc" = "asc";
@@ -802,7 +787,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
         )}
 
         <div className="overflow-x-auto custom-scrollbar touch-pan-x overscroll-x-contain">
-          <div className="h-[600px] print:h-auto print:overflow-visible  shadow-inner bg-white dark:bg-gray-900 rounded-b-2xl">
+          <div className="min-h-[500px] print:h-auto print:overflow-visible  shadow-inner bg-white dark:bg-gray-900 rounded-b-2xl">
             
           <table className="w-full text-left border-collapse min-w-[1000px]">
             
@@ -1180,71 +1165,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                       </div>
                     </div>
 
-                    {/* Kelengkapan Berkas KP */}
-                    <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-[1.5rem] p-5 sm:p-6 shadow-sm">
-                      <h3 className="flex items-center gap-2 text-gray-800 dark:text-gray-100 font-bold mb-4 text-xs uppercase r border-b border-gray-50 pb-3">
-                        <ListTodo size={14} className="text-primary-500" />{" "}
-                        Kelengkapan Dokumen KP
-                      </h3>
-                      {(() => {
-                        const docsForEmp = KP_DOC_CHECKLIST.filter(
-                          (d) => checkedDocs[`${selectedEmployee.id}_${d.id}`]
-                        ).length;
-                        const pct = Math.round(
-                          (docsForEmp / KP_DOC_CHECKLIST.length) * 100
-                        );
-                        return (
-                          <div className="mb-4">
-                            <div className="flex justify-between items-center text-xs font-bold mb-1.5">
-                              <span className="text-gray-400 dark:text-gray-500">
-                                Progres Berkas
-                              </span>
-                              <span className="text-primary-600 font-mono">
-                                {pct}%
-                              </span>
-                            </div>
-                            <div className="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden">
-                              <div
-                                className="bg-primary-50 dark:bg-gray-800 h-full transition-all duration-300"
-                                style={{ width: `${pct}%` }}
-                              ></div>
-                            </div>
-                          </div>
-                        );
-                      })()}
-                      <div className="space-y-2.5">
-                        {KP_DOC_CHECKLIST.map((doc) => {
-                          const isChecked =
-                            !!checkedDocs[`${selectedEmployee.id}_${doc.id}`];
-                          return (
-                            <label
-                              key={doc.id}
-                              className={`flex items-start gap-2.5 p-2 rounded-xl border transition-all cursor-pointer ${
-                                isChecked
-                                  ? "bg-primary-50/50 border-primary-200 text-gray-700 dark:text-gray-200"
-                                  : "bg-gray-50/30 border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-500"
-                              }`}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={isChecked}
-                                onChange={() => toggleDoc(doc.id)}
-                                className="mt-0.5 rounded border-gray-300 text-primary-600 focus:ring-primary-500 h-3.5 w-3.5 cursor-pointer"
-                              />
-                              <div className="flex-1 min-w-0">
-                                <p
-                                  className={`text-[11px] font-semibold leading-tight ${isChecked ? "text-gray-800 dark:text-gray-100 line-through" : "text-gray-600 dark:text-gray-500"}`}
-                                >
-                                  {doc.label}
-                                </p>
-                              </div>
-                            </label>
-                          );
-                        })}
-                      </div>
                     </div>
-                  </div>
-
                   {/* Status KP */}
                   <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-[1.5rem] p-5 sm:p-6 shadow-sm flex flex-col">
                     <h3 className="flex items-center gap-2 text-gray-800 dark:text-gray-100 font-bold mb-4 text-xs uppercase r border-b border-gray-50 pb-3">
