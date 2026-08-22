@@ -98,7 +98,7 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
   const [genderFilter, setGenderFilter] = useState('All');
   const [jabatanFilter, setJabatanFilter] = useState('All');
   const [sortBy, setSortBy] = useState<'no-asc' | 'name-asc' | 'name-desc' | 'age-desc' | 'age-asc' | 'mk-desc' | 'nip-asc'>('no-asc');
-  const [viewMode, setViewMode] = useState<ViewMode>('table');
+  const [viewMode, setViewMode] = useState<ViewMode>('charts');
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   
@@ -420,6 +420,327 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
     window.print();
   };
 
+  // Helper to render the complete interactive Master Table with full pagination, search feedback, and actions
+  const renderMasterTable = (options?: {
+    embedded?: boolean;
+    title?: string;
+    subtitle?: string;
+  }) => {
+    const isEmbedded = options?.embedded ?? false;
+    const customTitle = options?.title;
+    const customSubtitle = options?.subtitle;
+
+    return (
+      <div className="space-y-4">
+        {isEmbedded && (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400">
+                <TableIcon size={18} />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  {customTitle || 'Tabel Rincian Data Pegawai (Sinkron dengan Visualisasi)'}
+                  <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30">
+                    Live Data
+                  </span>
+                </h3>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                  {customSubtitle || `Menampilkan ${filteredEmployees.length.toLocaleString('id-ID')} data pegawai berdasarkan filter aktif pada grafik & panel pencarian`}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setViewMode('table')}
+                className="px-3 py-1.5 text-xs font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 hover:bg-primary-100 dark:bg-primary-950/40 dark:hover:bg-primary-900/50 border border-primary-200 dark:border-primary-800/40 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <span>Buka Tampilan Tabel Penuh</span>
+                <ChevronRight size={14} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-gray-50/90 dark:bg-gray-800/90 text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 uppercase tracking-wider font-semibold text-[11px]">
+                  <th className="py-3.5 px-3 text-center w-12">No.</th>
+                  <th className="py-3.5 px-4 min-w-[220px]">Nama Pegawai & NIP</th>
+                  <th className="py-3.5 px-3 min-w-[110px]">Gender / Usia</th>
+                  <th className="py-3.5 px-3 min-w-[130px]">Pangkat / Gol.</th>
+                  <th className="py-3.5 px-4 min-w-[240px]">Jabatan</th>
+                  <th className="py-3.5 px-3 min-w-[95px]">TMT</th>
+                  <th className="py-3.5 px-3 min-w-[100px]">Masa Kerja</th>
+                  <th className="py-3.5 px-4 min-w-[220px]">Pendidikan Terakhir</th>
+                  <th className="py-3.5 px-4 min-w-[180px]">Diklat Struktural</th>
+                  <th className="py-3.5 px-3 text-center w-16">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-800/60">
+                {paginatedEmployees.length === 0 ? (
+                  <tr>
+                    <td colSpan={10} className="py-12 text-center text-gray-500">
+                      <Users size={36} className="mx-auto mb-2 opacity-40 text-gray-400" />
+                      <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Tidak ada data pegawai yang sesuai dengan filter.</p>
+                      <button
+                        onClick={() => {
+                          setSearchTerm('');
+                          setStatusFilter('All');
+                          setGolonganFilter('All');
+                          setEducationFilter('All');
+                          setGenderFilter('All');
+                          setJabatanFilter('All');
+                        }}
+                        className="mt-3 text-xs text-primary-600 dark:text-primary-400 font-semibold hover:underline cursor-pointer"
+                      >
+                        Reset Semua Filter
+                      </button>
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedEmployees.map((emp, index) => {
+                    const isCurrentUser = currentUser?.nip === emp.nip;
+                    const isPPPK = emp.statusKepegawaian === 'PPPK';
+                    const isFemale = (emp.jenisKelamin || '').toLowerCase().includes('perempuan') || (emp.jenisKelamin || '').toLowerCase().includes('wanita');
+
+                    return (
+                      <tr
+                        key={emp.id || `${emp.nip}-${index}`}
+                        onClick={() => setSelectedEmployee(emp)}
+                        className={`hover:bg-gray-50/80 dark:hover:bg-gray-800/50 transition-colors cursor-pointer group ${
+                          isCurrentUser ? 'bg-primary-50/50 dark:bg-primary-950/20 border-l-2 border-l-primary-500' : ''
+                        }`}
+                      >
+                        {/* No */}
+                        <td className="py-3 px-3 text-center text-gray-500 dark:text-gray-400 font-mono text-[11px]">
+                          {emp.no || ((currentPage - 1) * itemsPerPage + index + 1)}
+                        </td>
+
+                        {/* Nama & NIP */}
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-2.5">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
+                              isPPPK
+                                ? 'bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-700/50'
+                                : isFemale
+                                  ? 'bg-pink-100 dark:bg-pink-900/60 text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-700/50'
+                                  : 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700/50'
+                            }`}>
+                              {(emp.nama || 'A').slice(0, 1).toUpperCase()}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors truncate max-w-[200px]">
+                                {emp.nama}
+                              </div>
+                              <div className="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400 font-mono">
+                                <span>{emp.nip}</span>
+                                <button
+                                  onClick={(e) => handleCopyNip(emp.nip, e)}
+                                  className="text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors p-0.5"
+                                  title="Salin NIP"
+                                >
+                                  {copiedField === emp.nip ? (
+                                    <Check size={11} className="text-emerald-500" />
+                                  ) : (
+                                    <Copy size={11} />
+                                  )}
+                                </button>
+                                {isCurrentUser && (
+                                  <span className="px-1.5 py-0.2 text-[9px] font-bold rounded bg-primary-100 dark:bg-primary-500/20 text-primary-700 dark:text-primary-300">
+                                    Anda
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Gender & Usia */}
+                        <td className="py-3 px-3">
+                          <div className="space-y-0.5">
+                            <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                              isFemale
+                                ? 'bg-pink-50 dark:bg-pink-950/40 text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-800/40'
+                                : 'bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800/40'
+                            }`}>
+                              {emp.jenisKelamin || '-'}
+                            </span>
+                            <div className="text-[11px] text-gray-500 dark:text-gray-400">
+                              {emp.usia ? `${emp.usia} th` : '-'}
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Pangkat / Golongan */}
+                        <td className="py-3 px-3">
+                          <div className="space-y-0.5">
+                            <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold ${
+                              isPPPK
+                                ? 'bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30'
+                                : (emp.pangkat || '').includes('IV')
+                                  ? 'bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30'
+                                  : (emp.pangkat || '').includes('III')
+                                    ? 'bg-blue-50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-500/30'
+                                    : 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30'
+                            }`}>
+                              {emp.pangkat || '-'}
+                            </span>
+                            <div className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">
+                              {isPPPK ? 'PPPK' : 'PNS'}
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Jabatan */}
+                        <td className="py-3 px-4">
+                          <div className="font-medium text-gray-800 dark:text-gray-200 line-clamp-2" title={emp.jabatan}>
+                            {emp.jabatan || '-'}
+                          </div>
+                        </td>
+
+                        {/* TMT */}
+                        <td className="py-3 px-3 text-gray-600 dark:text-gray-300 font-mono text-[11px]">
+                          {emp.tmt || '-'}
+                        </td>
+
+                        {/* Masa Kerja */}
+                        <td className="py-3 px-3 text-gray-600 dark:text-gray-300 text-[11px]">
+                          {emp.masaKerja || '-'}
+                        </td>
+
+                        {/* Pendidikan Terakhir */}
+                        <td className="py-3 px-4">
+                          <div className="text-gray-700 dark:text-gray-300 line-clamp-2 text-[11px]" title={emp.pendidikan}>
+                            {emp.pendidikanTerakhir || emp.pendidikan || '-'}
+                          </div>
+                          {emp.jenjangPendidikan && emp.jenjangPendidikan !== '-' && (
+                            <span className="inline-block mt-0.5 px-1.5 py-0.2 rounded text-[9px] font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                              {emp.jenjangPendidikan}
+                            </span>
+                          )}
+                        </td>
+
+                        {/* Diklat Struktural */}
+                        <td className="py-3 px-4">
+                          <div className="text-gray-500 dark:text-gray-400 line-clamp-2 text-[11px]" title={emp.diklatStruktural}>
+                            {emp.diklatStruktural || '-'}
+                          </div>
+                        </td>
+
+                        {/* Aksi */}
+                        <td className="py-3 px-3 text-center">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedEmployee(emp);
+                            }}
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+                            title="Lihat Profil Lengkap"
+                          >
+                            <Eye size={15} />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 bg-gray-50/80 dark:bg-gray-800/60 border-t border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-2">
+              <span>Baris per halaman:</span>
+              <select
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="py-1 px-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white rounded focus:outline-none focus:border-primary-500"
+              >
+                <option value={20}>20</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+                <option value={250}>250</option>
+                <option value={500}>500</option>
+              </select>
+              <span className="ml-2 text-gray-500 dark:text-gray-400">
+                Halaman <strong className="text-gray-900 dark:text-white">{currentPage}</strong> dari <strong className="text-gray-900 dark:text-white">{totalPages}</strong>
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1}
+                className="px-2.5 py-1 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              >
+                Pertama
+              </button>
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-1 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <ChevronLeft size={16} />
+              </button>
+
+              {/* Page Jump buttons */}
+              <div className="flex items-center gap-1 px-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum = currentPage;
+                  if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  if (pageNum < 1 || pageNum > totalPages) return null;
+
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-7 h-7 rounded text-xs font-semibold transition-colors cursor-pointer ${
+                        currentPage === pageNum
+                          ? 'bg-primary-600 text-white shadow-xs'
+                          : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="p-1 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <ChevronRight size={16} />
+              </button>
+              <button
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage === totalPages}
+                className="px-2.5 py-1 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              >
+                Terakhir
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6 animate-fadeIn pb-12">
       {/* 1. Header Banner & Actions */}
@@ -572,6 +893,21 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 dark:border-gray-800 pb-3">
         <div className="flex flex-wrap items-center gap-1.5 p-1 bg-gray-100/90 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl">
           <button
+            onClick={() => setViewMode('charts')}
+            className={`flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+              viewMode === 'charts'
+                ? 'bg-white dark:bg-primary-600 text-gray-900 dark:text-white shadow-xs'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200/60 dark:hover:bg-gray-800'
+            }`}
+          >
+            <BarChart3 size={14} className="text-primary-600 dark:text-primary-300" />
+            <span>Analisis Grafik & Visualisasi</span>
+            <span className="px-1.5 py-0.2 text-[9px] bg-primary-100 dark:bg-primary-500/20 text-primary-700 dark:text-primary-300 font-bold rounded">
+              Utama
+            </span>
+          </button>
+
+          <button
             onClick={() => setViewMode('table')}
             className={`flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               viewMode === 'table'
@@ -581,18 +917,6 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
           >
             <TableIcon size={14} />
             <span>Tabel Lengkap DSP ({stats.total.toLocaleString('id-ID')})</span>
-          </button>
-
-          <button
-            onClick={() => setViewMode('charts')}
-            className={`flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              viewMode === 'charts'
-                ? 'bg-white dark:bg-primary-600 text-gray-900 dark:text-white shadow-xs'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200/60 dark:hover:bg-gray-800'
-            }`}
-          >
-            <BarChart3 size={14} />
-            <span>Analisis Grafik & Visualisasi</span>
           </button>
 
           <button
@@ -808,283 +1132,11 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
 
       {/* VIEW MODE 1: TABEL LENGKAP DSP (2.593 PEGAWAI) */}
       {viewMode === 'table' && (
-        <div className="space-y-4">
-          <div className="bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr className="bg-gray-50/90 dark:bg-gray-800/90 text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 uppercase tracking-wider font-semibold text-[11px]">
-                    <th className="py-3.5 px-3 text-center w-12">No.</th>
-                    <th className="py-3.5 px-4 min-w-[220px]">Nama Pegawai & NIP</th>
-                    <th className="py-3.5 px-3 min-w-[110px]">Gender / Usia</th>
-                    <th className="py-3.5 px-3 min-w-[130px]">Pangkat / Gol.</th>
-                    <th className="py-3.5 px-4 min-w-[240px]">Jabatan</th>
-                    <th className="py-3.5 px-3 min-w-[95px]">TMT</th>
-                    <th className="py-3.5 px-3 min-w-[100px]">Masa Kerja</th>
-                    <th className="py-3.5 px-4 min-w-[220px]">Pendidikan Terakhir</th>
-                    <th className="py-3.5 px-4 min-w-[180px]">Diklat Struktural</th>
-                    <th className="py-3.5 px-3 text-center w-16">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-800/60">
-                  {paginatedEmployees.length === 0 ? (
-                    <tr>
-                      <td colSpan={10} className="py-12 text-center text-gray-500">
-                        <Users size={36} className="mx-auto mb-2 opacity-40 text-gray-400" />
-                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Tidak ada data pegawai yang sesuai dengan filter.</p>
-                        <button
-                          onClick={() => {
-                            setSearchTerm('');
-                            setStatusFilter('All');
-                            setGolonganFilter('All');
-                            setEducationFilter('All');
-                            setGenderFilter('All');
-                            setJabatanFilter('All');
-                          }}
-                          className="mt-3 text-xs text-primary-600 dark:text-primary-400 font-semibold hover:underline cursor-pointer"
-                        >
-                          Reset Semua Filter
-                        </button>
-                      </td>
-                    </tr>
-                  ) : (
-                    paginatedEmployees.map((emp, index) => {
-                      const isCurrentUser = currentUser?.nip === emp.nip;
-                      const isPPPK = emp.statusKepegawaian === 'PPPK';
-                      const isFemale = (emp.jenisKelamin || '').toLowerCase().includes('perempuan') || (emp.jenisKelamin || '').toLowerCase().includes('wanita');
-
-                      return (
-                        <tr
-                          key={emp.id || `${emp.nip}-${index}`}
-                          onClick={() => setSelectedEmployee(emp)}
-                          className={`hover:bg-gray-50/80 dark:hover:bg-gray-800/50 transition-colors cursor-pointer group ${
-                            isCurrentUser ? 'bg-primary-50/50 dark:bg-primary-950/20 border-l-2 border-l-primary-500' : ''
-                          }`}
-                        >
-                          {/* No */}
-                          <td className="py-3 px-3 text-center text-gray-500 dark:text-gray-400 font-mono text-[11px]">
-                            {emp.no || ((currentPage - 1) * itemsPerPage + index + 1)}
-                          </td>
-
-                          {/* Nama & NIP */}
-                          <td className="py-3 px-4">
-                            <div className="flex items-center gap-2.5">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
-                                isPPPK
-                                  ? 'bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-700/50'
-                                  : isFemale
-                                    ? 'bg-pink-100 dark:bg-pink-900/60 text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-700/50'
-                                    : 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700/50'
-                              }`}>
-                                {(emp.nama || 'A').slice(0, 1).toUpperCase()}
-                              </div>
-                              <div className="min-w-0">
-                                <div className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors truncate max-w-[200px]">
-                                  {emp.nama}
-                                </div>
-                                <div className="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400 font-mono">
-                                  <span>{emp.nip}</span>
-                                  <button
-                                    onClick={(e) => handleCopyNip(emp.nip, e)}
-                                    className="text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors p-0.5"
-                                    title="Salin NIP"
-                                  >
-                                    {copiedField === emp.nip ? (
-                                      <Check size={11} className="text-emerald-500" />
-                                    ) : (
-                                      <Copy size={11} />
-                                    )}
-                                  </button>
-                                  {isCurrentUser && (
-                                    <span className="px-1.5 py-0.2 text-[9px] font-bold rounded bg-primary-100 dark:bg-primary-500/20 text-primary-700 dark:text-primary-300">
-                                      Anda
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-
-                          {/* Gender & Usia */}
-                          <td className="py-3 px-3">
-                            <div className="space-y-0.5">
-                              <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                                isFemale
-                                  ? 'bg-pink-50 dark:bg-pink-950/40 text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-800/40'
-                                  : 'bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800/40'
-                              }`}>
-                                {emp.jenisKelamin || '-'}
-                              </span>
-                              <div className="text-[11px] text-gray-500 dark:text-gray-400">
-                                {emp.usia ? `${emp.usia} th` : '-'}
-                              </div>
-                            </div>
-                          </td>
-
-                          {/* Pangkat / Golongan */}
-                          <td className="py-3 px-3">
-                            <div className="space-y-0.5">
-                              <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold ${
-                                isPPPK
-                                  ? 'bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30'
-                                  : (emp.pangkat || '').includes('IV')
-                                    ? 'bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30'
-                                    : (emp.pangkat || '').includes('III')
-                                      ? 'bg-blue-50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-500/30'
-                                      : 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30'
-                              }`}>
-                                {emp.pangkat || '-'}
-                              </span>
-                              <div className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">
-                                {isPPPK ? 'PPPK' : 'PNS'}
-                              </div>
-                            </div>
-                          </td>
-
-                          {/* Jabatan */}
-                          <td className="py-3 px-4">
-                            <div className="font-medium text-gray-800 dark:text-gray-200 line-clamp-2" title={emp.jabatan}>
-                              {emp.jabatan || '-'}
-                            </div>
-                          </td>
-
-                          {/* TMT */}
-                          <td className="py-3 px-3 text-gray-600 dark:text-gray-300 font-mono text-[11px]">
-                            {emp.tmt || '-'}
-                          </td>
-
-                          {/* Masa Kerja */}
-                          <td className="py-3 px-3 text-gray-600 dark:text-gray-300 text-[11px]">
-                            {emp.masaKerja || '-'}
-                          </td>
-
-                          {/* Pendidikan Terakhir */}
-                          <td className="py-3 px-4">
-                            <div className="text-gray-700 dark:text-gray-300 line-clamp-2 text-[11px]" title={emp.pendidikan}>
-                              {emp.pendidikanTerakhir || emp.pendidikan || '-'}
-                            </div>
-                            {emp.jenjangPendidikan && emp.jenjangPendidikan !== '-' && (
-                              <span className="inline-block mt-0.5 px-1.5 py-0.2 rounded text-[9px] font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
-                                {emp.jenjangPendidikan}
-                              </span>
-                            )}
-                          </td>
-
-                          {/* Diklat Struktural */}
-                          <td className="py-3 px-4">
-                            <div className="text-gray-500 dark:text-gray-400 line-clamp-2 text-[11px]" title={emp.diklatStruktural}>
-                              {emp.diklatStruktural || '-'}
-                            </div>
-                          </td>
-
-                          {/* Aksi */}
-                          <td className="py-3 px-3 text-center">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedEmployee(emp);
-                              }}
-                              className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
-                              title="Lihat Profil Lengkap"
-                            >
-                              <Eye size={15} />
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination Controls */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 bg-gray-50/80 dark:bg-gray-800/60 border-t border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400">
-              <div className="flex items-center gap-2">
-                <span>Baris per halaman:</span>
-                <select
-                  value={itemsPerPage}
-                  onChange={(e) => {
-                    setItemsPerPage(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="py-1 px-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white rounded focus:outline-none focus:border-primary-500"
-                >
-                  <option value={20}>20</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                  <option value={100}>100</option>
-                  <option value={250}>250</option>
-                  <option value={500}>500</option>
-                </select>
-                <span className="ml-2 text-gray-500 dark:text-gray-400">
-                  Halaman <strong className="text-gray-900 dark:text-white">{currentPage}</strong> dari <strong className="text-gray-900 dark:text-white">{totalPages}</strong>
-                </span>
-              </div>
-
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => setCurrentPage(1)}
-                  disabled={currentPage === 1}
-                  className="px-2.5 py-1 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  Pertama
-                </button>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="p-1 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  <ChevronLeft size={16} />
-                </button>
-
-                {/* Page Jump buttons */}
-                <div className="flex items-center gap-1 px-1">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNum = currentPage;
-                    if (currentPage <= 3) {
-                      pageNum = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      pageNum = totalPages - 4 + i;
-                    } else {
-                      pageNum = currentPage - 2 + i;
-                    }
-                    if (pageNum < 1 || pageNum > totalPages) return null;
-
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => setCurrentPage(pageNum)}
-                        className={`w-7 h-7 rounded text-xs font-semibold transition-colors cursor-pointer ${
-                          currentPage === pageNum
-                            ? 'bg-primary-600 text-white shadow-xs'
-                            : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="p-1 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  <ChevronRight size={16} />
-                </button>
-                <button
-                  onClick={() => setCurrentPage(totalPages)}
-                  disabled={currentPage === totalPages}
-                  className="px-2.5 py-1 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  Terakhir
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        renderMasterTable({
+          embedded: false,
+          title: 'Tabel Master Data Lengkap Daftar Susunan Pegawai',
+          subtitle: `Menampilkan seluruh ${filteredEmployees.length.toLocaleString('id-ID')} pegawai terdaftar di lingkungan BSKJI`
+        })
       )}
 
       {/* VIEW MODE: ANALISIS GRAFIK & VISUALISASI LENGKAP */}
@@ -1159,35 +1211,41 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-100 dark:border-gray-800 text-xs">
                 <button
                   onClick={() => {
-                    setStatusFilter('PNS');
-                    setViewMode('table');
+                    setStatusFilter(statusFilter === 'PNS' ? 'All' : 'PNS');
                     setCurrentPage(1);
                   }}
-                  className="p-2 rounded-xl bg-blue-50/70 hover:bg-blue-100 dark:bg-blue-950/30 dark:hover:bg-blue-900/40 border border-blue-200 dark:border-blue-800/40 text-left transition-colors cursor-pointer"
+                  className={`p-2 rounded-xl border text-left transition-colors cursor-pointer ${
+                    statusFilter === 'PNS'
+                      ? 'bg-blue-100 dark:bg-blue-900/50 border-blue-400 dark:border-blue-600 ring-2 ring-blue-400/40'
+                      : 'bg-blue-50/70 hover:bg-blue-100 dark:bg-blue-950/30 dark:hover:bg-blue-900/40 border-blue-200 dark:border-blue-800/40'
+                  }`}
                 >
                   <div className="flex items-center gap-1.5 text-blue-700 dark:text-blue-300 font-semibold">
                     <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" />
                     <span>PNS: {stats.pnsCount.toLocaleString('id-ID')}</span>
                   </div>
                   <div className="text-[10px] text-blue-600/80 dark:text-blue-400 mt-0.5">
-                    {stats.pnsPercent}% (Klik filter)
+                    {stats.pnsPercent}% {statusFilter === 'PNS' ? '(Aktif - Klik reset)' : '(Klik filter)'}
                   </div>
                 </button>
 
                 <button
                   onClick={() => {
-                    setStatusFilter('PPPK');
-                    setViewMode('table');
+                    setStatusFilter(statusFilter === 'PPPK' ? 'All' : 'PPPK');
                     setCurrentPage(1);
                   }}
-                  className="p-2 rounded-xl bg-purple-50/70 hover:bg-purple-100 dark:bg-purple-950/30 dark:hover:bg-purple-900/40 border border-purple-200 dark:border-purple-800/40 text-left transition-colors cursor-pointer"
+                  className={`p-2 rounded-xl border text-left transition-colors cursor-pointer ${
+                    statusFilter === 'PPPK'
+                      ? 'bg-purple-100 dark:bg-purple-900/50 border-purple-400 dark:border-purple-600 ring-2 ring-purple-400/40'
+                      : 'bg-purple-50/70 hover:bg-purple-100 dark:bg-purple-950/30 dark:hover:bg-purple-900/40 border-purple-200 dark:border-purple-800/40'
+                  }`}
                 >
                   <div className="flex items-center gap-1.5 text-purple-700 dark:text-purple-300 font-semibold">
                     <span className="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block" />
                     <span>PPPK: {stats.pppkCount.toLocaleString('id-ID')}</span>
                   </div>
                   <div className="text-[10px] text-purple-600/80 dark:text-purple-400 mt-0.5">
-                    {stats.pppkPercent}% (Klik filter)
+                    {stats.pppkPercent}% {statusFilter === 'PPPK' ? '(Aktif - Klik reset)' : '(Klik filter)'}
                   </div>
                 </button>
               </div>
@@ -1238,35 +1296,41 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-100 dark:border-gray-800 text-xs">
                 <button
                   onClick={() => {
-                    setGenderFilter('Pria');
-                    setViewMode('table');
+                    setGenderFilter(genderFilter === 'Pria' ? 'All' : 'Pria');
                     setCurrentPage(1);
                   }}
-                  className="p-2 rounded-xl bg-cyan-50/70 hover:bg-cyan-100 dark:bg-cyan-950/30 dark:hover:bg-cyan-900/40 border border-cyan-200 dark:border-cyan-800/40 text-left transition-colors cursor-pointer"
+                  className={`p-2 rounded-xl border text-left transition-colors cursor-pointer ${
+                    genderFilter === 'Pria'
+                      ? 'bg-cyan-100 dark:bg-cyan-900/50 border-cyan-400 dark:border-cyan-600 ring-2 ring-cyan-400/40'
+                      : 'bg-cyan-50/70 hover:bg-cyan-100 dark:bg-cyan-950/30 dark:hover:bg-cyan-900/40 border-cyan-200 dark:border-cyan-800/40'
+                  }`}
                 >
                   <div className="flex items-center gap-1.5 text-cyan-700 dark:text-cyan-300 font-semibold">
                     <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block" />
                     <span>Pria: {stats.maleCount.toLocaleString('id-ID')}</span>
                   </div>
                   <div className="text-[10px] text-cyan-600/80 dark:text-cyan-400 mt-0.5">
-                    {stats.malePercent}% (Klik filter)
+                    {stats.malePercent}% {genderFilter === 'Pria' ? '(Aktif - Klik reset)' : '(Klik filter)'}
                   </div>
                 </button>
 
                 <button
                   onClick={() => {
-                    setGenderFilter('Wanita');
-                    setViewMode('table');
+                    setGenderFilter(genderFilter === 'Wanita' ? 'All' : 'Wanita');
                     setCurrentPage(1);
                   }}
-                  className="p-2 rounded-xl bg-pink-50/70 hover:bg-pink-100 dark:bg-pink-950/30 dark:hover:bg-pink-900/40 border border-pink-200 dark:border-pink-800/40 text-left transition-colors cursor-pointer"
+                  className={`p-2 rounded-xl border text-left transition-colors cursor-pointer ${
+                    genderFilter === 'Wanita'
+                      ? 'bg-pink-100 dark:bg-pink-900/50 border-pink-400 dark:border-pink-600 ring-2 ring-pink-400/40'
+                      : 'bg-pink-50/70 hover:bg-pink-100 dark:bg-pink-950/30 dark:hover:bg-pink-900/40 border-pink-200 dark:border-pink-800/40'
+                  }`}
                 >
                   <div className="flex items-center gap-1.5 text-pink-700 dark:text-pink-300 font-semibold">
                     <span className="w-2.5 h-2.5 rounded-full bg-pink-500 inline-block" />
                     <span>Wanita: {stats.femaleCount.toLocaleString('id-ID')}</span>
                   </div>
                   <div className="text-[10px] text-pink-600/80 dark:text-pink-400 mt-0.5">
-                    {stats.femalePercent}% (Klik filter)
+                    {stats.femalePercent}% {genderFilter === 'Wanita' ? '(Aktif - Klik reset)' : '(Klik filter)'}
                   </div>
                 </button>
               </div>
@@ -1373,7 +1437,6 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
                         else if (rawName.includes('S1')) setEducationFilter('S1');
                         else if (rawName.includes('D3')) setEducationFilter('D3');
                         else if (rawName.includes('SMA')) setEducationFilter('SMA');
-                        setViewMode('table');
                         setCurrentPage(1);
                       }}
                     >
@@ -1442,7 +1505,6 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
                         else if (rawName.includes('II')) setGolonganFilter('II');
                         else if (rawName.includes('I')) setGolonganFilter('I');
                         else if (rawName.includes('PPPK')) setGolonganFilter('PPPK');
-                        setViewMode('table');
                         setCurrentPage(1);
                       }}
                     >
@@ -1625,7 +1687,6 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
                       const targetJabatan = entry?.fullName || entry?.payload?.fullName || entry?.name || entry?.payload?.name;
                       if (targetJabatan) {
                         setJabatanFilter(targetJabatan);
-                        setViewMode('table');
                         setCurrentPage(1);
                       }
                     }}
@@ -1638,6 +1699,13 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
               </ResponsiveContainer>
             </div>
           </div>
+
+          {/* TABEL MASTER DATA PEGAWAI SINKRON DENGAN GRAFIK */}
+          {renderMasterTable({
+            embedded: true,
+            title: 'Tabel Rincian Data Pegawai (Sinkron Real-Time dengan Grafik di Atas)',
+            subtitle: `Menampilkan ${filteredEmployees.length.toLocaleString('id-ID')} data pegawai yang otomatis tersaring sesuai klik pada grafik & kolom pencarian`
+          })}
         </div>
       )}
 
@@ -1793,6 +1861,13 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
                 ))}
             </div>
           </div>
+
+          {/* Tabel Terfilter Sesuai Pendidikan */}
+          {renderMasterTable({
+            embedded: true,
+            title: 'Tabel Pegawai Berdasarkan Filter Pendidikan',
+            subtitle: `Menampilkan pegawai dengan kualifikasi pendidikan yang sesuai (${filteredEmployees.length.toLocaleString('id-ID')} data)`
+          })}
         </div>
       )}
 
@@ -1902,6 +1977,13 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
               </div>
             </div>
           </div>
+
+          {/* Tabel Terfilter Sesuai Bezetting Golongan */}
+          {renderMasterTable({
+            embedded: true,
+            title: 'Tabel Pegawai Berdasarkan Filter Pangkat / Golongan',
+            subtitle: `Menampilkan personil sesuai hirarki kepangkatan terpilih (${filteredEmployees.length.toLocaleString('id-ID')} data)`
+          })}
         </div>
       )}
 
@@ -1995,6 +2077,13 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
               </div>
             ))}
           </div>
+
+          {/* Tabel Terfilter Sesuai Jabatan */}
+          {renderMasterTable({
+            embedded: true,
+            title: 'Tabel Pegawai Berdasarkan Rumpun Jabatan',
+            subtitle: `Menampilkan personil pada jabatan terpilih (${filteredEmployees.length.toLocaleString('id-ID')} data)`
+          })}
         </div>
       )}
 
