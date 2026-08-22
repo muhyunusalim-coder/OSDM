@@ -260,7 +260,7 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-4 print:p-0 print:space-y-0 print:bg-white dark:bg-gray-900 print:w-full">
       {/* Header Section (Hidden on Print) */}
       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm relative overflow-hidden text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 print:hidden">
-        <div className="absolute bottom-0 left-0 w-40 h-40 bg-primary-500/10 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none transform trangray-z-0"></div>
+        <div className="absolute bottom-0 left-0 w-40 h-40 bg-primary-500/10 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none transform translate-z-0"></div>
         
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
@@ -311,7 +311,7 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
           {viewMode === 'monthly' ? (
              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="relative group">
-                    <Calendar className="absolute left-3 top-1/2 -trangray-y-1/2 text-gray-500 dark:text-gray-400" size={16} />
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" size={16} />
                     <select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20">
                         {[2023, 2024, 2025, 2026, 2027, 2028].map(y => (
                             <option key={y} value={y}>{y}</option>
@@ -320,7 +320,7 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
                 </div>
 
                 <div className="relative group">
-                    <Filter className="absolute left-3 top-1/2 -trangray-y-1/2 text-gray-500 dark:text-gray-400" size={16} />
+                    <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400" size={16} />
                     <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20">
                         <option value="All">Semua Bulan</option>
                         {months.map(m => (
@@ -330,14 +330,14 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
                 </div>
 
                 <div className="relative group">
-                    <Search className="absolute left-3 top-1/2 -trangray-y-1/2 text-gray-400 dark:text-gray-500" size={16} />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={16} />
                     <input type="text" placeholder="Cari Nama / NIP..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20" />
                 </div>
              </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
                 <div className="relative group">
-                    <Search className="absolute left-3 top-1/2 -trangray-y-1/2 text-gray-400 dark:text-gray-500" size={16} />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={16} />
                     <input type="text" placeholder="Cari Riwayat Nama / NIP..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20" />
                 </div>
             </div>

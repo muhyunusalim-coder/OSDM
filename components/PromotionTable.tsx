@@ -514,138 +514,14 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
             </p>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-2.5 flex-wrap">
-            <button
-              onClick={handleExportExcel}
-              disabled={isExporting || filteredEmployees.length === 0}
-              className="flex items-center justify-center gap-2 px-3.5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
-            >
-              {isExporting ? (
-                <>
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Memproses...
-                </>
-              ) : (
-                <>
-                  <Download size={14} />
-                  Ekspor Excel
-                </>
-              )}
-            </button>
-
-            <button
-              onClick={handleExportPdf}
-              disabled={isExportingPdf || filteredEmployees.length === 0}
-              className="flex items-center justify-center gap-2 px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
-            >
-              {isExportingPdf ? (
-                <>
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Memproses...
-                </>
-              ) : (
-                <>
-                  <FileDown size={14} />
-                  Cetak PDF
-                </>
-              )}
-            </button>
-
-            <button
-              onClick={() => setIsCompact(!isCompact)}
-              className={`flex items-center justify-center gap-2 px-3.5 py-2 border rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap cursor-pointer ${
-                isCompact
-                  ? "bg-primary-50 border-primary-200 text-primary-700 hover:bg-primary-100/70"
-                  : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:text-primary-600 hover:border-primary-200 hover:bg-primary-50"
-              }`}
-              title="Aktifkan Mode Ringkas untuk menampilkan lebih banyak baris"
-            >
-              <SlidersHorizontal
-                size={14}
-                className={
-                  isCompact
-                    ? "text-primary-600"
-                    : "text-gray-500 dark:text-gray-400"
-                }
-              />
-              <span>{isCompact ? "Mode Normal" : "Mode Ringkas"}</span>
-            </button>
-
-            <button
-              onClick={() => setIsAdvancedFilterOpen(!isAdvancedFilterOpen)}
-              className={`flex items-center justify-center gap-2 px-3.5 py-2 border rounded-lg font-semibold text-xs transition-all shadow-sm active:scale-95 whitespace-nowrap cursor-pointer ${
-                isAdvancedFilterOpen
-                  ? "bg-primary-600 border-primary-600 text-white hover:bg-primary-700"
-                  : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:text-primary-600 hover:border-primary-200 hover:bg-primary-50"
-              }`}
-            >
-              <SlidersHorizontal
-                size={14}
-                className={
-                  isAdvancedFilterOpen
-                    ? "text-white"
-                    : "text-gray-500 dark:text-gray-400"
-                }
-              />
-              <span>Filter Lanjutan</span>
-              {(selectedUnit !== "All" ||
-                selectedGol !== "All" ||
-                masaKerjaFilter !== "All") && (
-                <span
-                  className={`w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-extrabold ${isAdvancedFilterOpen ? "bg-white dark:bg-gray-900 text-primary-600" : "bg-primary-600 text-white"}`}
-                >
-                  {(selectedUnit !== "All" ? 1 : 0) +
-                    (selectedGol !== "All" ? 1 : 0) +
-                    (masaKerjaFilter !== "All" ? 1 : 0)}
-                </span>
-              )}
-            </button>
-
+          <div className="flex flex-col md:flex-row gap-2.5 flex-wrap items-center">
             {/* Search */}
             <div
               className={`relative flex-grow md:flex-grow-0 group w-full md:w-auto transition-all ${searchTerm !== "" ? "ring-1 ring-primary-500 rounded-lg" : ""}`}
             >
               <Search
-                className={`absolute left-3 top-1/2 transform -trangray-y-1/2 transition-colors ${searchTerm !== "" ? "text-primary-600" : "text-gray-500 dark:text-gray-400"} group-focus-within:text-primary-500`}
-                size={16}
+                className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${searchTerm !== "" ? "text-primary-600" : "text-gray-400 dark:text-gray-500"} group-focus-within:text-primary-500`}
+                size={15}
               />
               <input
                 type="text"
@@ -656,17 +532,17 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
               />
             </div>
 
-            <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 no-scrollbar">
+            <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 no-scrollbar">
               {/* Tahun */}
               <div
                 className={`relative flex-shrink-0 transition-all ${yearFilter !== "All" ? "ring-1 ring-primary-400 rounded-lg" : ""}`}
               >
                 <Calendar
-                  className={`absolute left-3 top-1/2 transform -trangray-y-1/2 ${yearFilter !== "All" ? "text-primary-600" : "text-gray-500 dark:text-gray-400"}`}
-                  size={14}
+                  className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${yearFilter !== "All" ? "text-primary-600" : "text-gray-400 dark:text-gray-500"}`}
+                  size={15}
                 />
                 <select
-                  className={`pl-9 pr-8 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-primary-500 text-xs appearance-none ${yearFilter !== "All" ? "bg-primary-50" : "bg-gray-50 dark:bg-gray-800/50"} hover:bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 font-bold cursor-pointer w-full md:w-auto`}
+                  className={`pl-9 pr-6 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:border-primary-500 text-xs appearance-none ${yearFilter !== "All" ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300" : "bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-200"} hover:bg-white dark:hover:bg-gray-900 font-bold cursor-pointer w-full md:w-auto`}
                   value={yearFilter}
                   onChange={(e) => setYearFilter(e.target.value)}
                 >
@@ -684,11 +560,11 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                 className={`relative flex-shrink-0 transition-all ${monthFilter !== "All" ? "ring-1 ring-primary-400 rounded-lg" : ""}`}
               >
                 <CalendarRange
-                  className={`absolute left-3 top-1/2 transform -trangray-y-1/2 ${monthFilter !== "All" ? "text-primary-600" : "text-gray-500 dark:text-gray-400"}`}
-                  size={14}
+                  className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${monthFilter !== "All" ? "text-primary-600" : "text-gray-400 dark:text-gray-500"}`}
+                  size={15}
                 />
                 <select
-                  className={`pl-9 pr-8 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-primary-500 text-xs appearance-none ${monthFilter !== "All" ? "bg-primary-50" : "bg-gray-50 dark:bg-gray-800/50"} hover:bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 font-bold cursor-pointer w-full md:w-auto`}
+                  className={`pl-9 pr-6 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:border-primary-500 text-xs appearance-none ${monthFilter !== "All" ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300" : "bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-200"} hover:bg-white dark:hover:bg-gray-900 font-bold cursor-pointer w-full md:w-auto`}
                   value={monthFilter}
                   onChange={(e) => setMonthFilter(e.target.value)}
                 >

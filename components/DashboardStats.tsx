@@ -111,7 +111,7 @@ const StatCard = React.memo(
             <div className="text-gray-400 dark:text-gray-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors shrink-0 ml-2">
               <ArrowRight
                 size={14}
-                className="group-hover:trangray-x-1 transition-transform duration-200"
+                className="group-hover:translate-x-1 transition-transform duration-200"
               />
             </div>
           )}

@@ -245,7 +245,7 @@ const ServiceOverviewCharts: React.FC<Props> = React.memo(
                   </select>
                   <ChevronDown
                     size={14}
-                    className="absolute right-2.5 top-1/2 -trangray-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none"
                   />
                 </div>
               </div>

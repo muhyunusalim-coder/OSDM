@@ -59,10 +59,10 @@ const DashboardSkeleton = () => (
     {/* Hero & Status Skeleton */}
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
       <div className="xl:col-span-2 h-[280px] sm:h-[320px] bg-gray-200 dark:bg-gray-700/50 rounded-[2rem] relative overflow-hidden">
-        <div className="absolute inset-0 from-transparent via-white/50 to-transparent -trangray-x-full animate-pulse"></div>
+        <div className="absolute inset-0 from-transparent via-white/50 to-transparent -translate-x-full animate-pulse"></div>
       </div>
       <div className="h-[280px] sm:h-[320px] bg-gray-200 dark:bg-gray-700/50 rounded-[2rem] relative overflow-hidden">
-        <div className="absolute inset-0 from-transparent via-white/50 to-transparent -trangray-x-full animate-pulse"></div>
+        <div className="absolute inset-0 from-transparent via-white/50 to-transparent -translate-x-full animate-pulse"></div>
       </div>
     </div>
 
@@ -70,14 +70,14 @@ const DashboardSkeleton = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
       {[1, 2, 3, 4].map((i) => (
         <div key={i} className="h-[250px] bg-gray-200 dark:bg-gray-700/50 rounded-xl relative overflow-hidden">
-          <div className="absolute inset-0 from-transparent via-white/50 to-transparent -trangray-x-full animate-pulse"></div>
+          <div className="absolute inset-0 from-transparent via-white/50 to-transparent -translate-x-full animate-pulse"></div>
         </div>
       ))}
     </div>
 
     {/* Chart Skeleton */}
     <div className="h-[400px] bg-gray-200 dark:bg-gray-700/50 rounded-2xl relative overflow-hidden mt-6">
-      <div className="absolute inset-0 from-transparent via-white/50 to-transparent -trangray-x-full animate-pulse"></div>
+      <div className="absolute inset-0 from-transparent via-white/50 to-transparent -translate-x-full animate-pulse"></div>
     </div>
   </div>
 );
@@ -586,7 +586,7 @@ function App() {
       )}
 
       {/* Modern Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-gray-300 transform transition-transform duration-300 ease-in-out md:trangray-x-0 md:static flex flex-col border-r border-gray-800 ${mobileMenuOpen ? 'trangray-x-0' : '-trangray-x-full'} print:hidden`}>
+      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-gray-300 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static flex flex-col border-r border-gray-800 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} print:hidden`}>
         {/* Brand Area */}
         <div className="px-5 py-4 border-b border-gray-800 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => { setCurrentView('dashboard'); setMobileMenuOpen(false); }}>

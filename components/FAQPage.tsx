@@ -272,7 +272,7 @@ export const FAQPage: React.FC<FAQPageProps> = React.memo(({ employees }) => {
               {/* Inline Search Input */}
               <div className="relative">
                 <Search
-                  className="absolute left-3.5 top-1/2 -trangray-y-1/2 text-gray-500 dark:text-gray-400"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
                   size={14}
                 />
                 <input

@@ -431,7 +431,7 @@ const PensiunTable = React.memo(({ employees }: Props) => {
               className={`relative flex-grow md:flex-grow-0 group w-full md:w-auto transition-all ${searchTerm !== "" ? "ring-1 ring-rose-500 rounded-lg" : ""}`}
             >
               <Search
-                className={`absolute left-3 top-1/2 transform -trangray-y-1/2 transition-colors ${searchTerm !== "" ? "text-rose-600 dark:text-rose-400" : "text-gray-500 dark:text-gray-400"} group-focus-within:text-rose-500 dark:group-focus-within:text-rose-400`}
+                className={`absolute left-3 top-1/2 transform -translate-y-1/2 transition-colors ${searchTerm !== "" ? "text-rose-600 dark:text-rose-400" : "text-gray-500 dark:text-gray-400"} group-focus-within:text-rose-500 dark:group-focus-within:text-rose-400`}
                 size={16}
               />
               <input

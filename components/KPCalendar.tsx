@@ -69,7 +69,7 @@ export const KPCalendar: React.FC<Props> = React.memo(() => {
             </select>
             <ChevronDown
               size={16}
-              className="absolute right-3.5 top-1/2 -trangray-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none"
             />
           </div>
         </div>
@@ -96,7 +96,7 @@ export const KPCalendar: React.FC<Props> = React.memo(() => {
                     </div>
 
                     {/* Card */}
-                    <div className="flex-1 p-4 md:p-5 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm transition-all duration-300 group-hover/item:-trangray-y-0.5 group-hover/item:shadow-md group-hover/item:border-primary-200 dark:group-hover/item:border-primary-800 relative overflow-hidden">
+                    <div className="flex-1 p-4 md:p-5 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm transition-all duration-300 group-hover/item:-translate-y-0.5 group-hover/item:shadow-md group-hover/item:border-primary-200 dark:group-hover/item:border-primary-800 relative overflow-hidden">
                       {/* Subtle Left Border Highlight */}
                       <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-50 dark:bg-gray-800 scale-y-0 group-hover/item:scale-y-100 transition-transform duration-300 origin-top"></div>
 
