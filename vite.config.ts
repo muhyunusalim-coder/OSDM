@@ -30,7 +30,19 @@ export default defineConfig(({ mode }) => {
         },
         VitePWA({
           registerType: 'autoUpdate',
-          includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'mask-icon.svg', 'preview.png'],
+          includeAssets: [
+            'favicon.svg',
+            'favicon-32x32.png',
+            'favicon-16x16.png',
+            'apple-touch-icon.png',
+            'apple-touch-icon-precomposed.png',
+            'apple-touch-icon-180x180.png',
+            'apple-touch-icon-180x180-precomposed.png',
+            'apple-touch-icon-167x167.png',
+            'apple-touch-icon-152x152.png',
+            'apple-touch-icon-120x120.png',
+            'preview.png'
+          ],
           manifest: {
             name: 'Monitoring Layanan Kepegawaian BSKJI',
             short_name: 'Kepegawaian BSKJI',
@@ -54,6 +66,11 @@ export default defineConfig(({ mode }) => {
                 sizes: '512x512',
                 type: 'image/png',
                 purpose: 'maskable'
+              },
+              {
+                src: 'apple-touch-icon-180x180.png',
+                sizes: '180x180',
+                type: 'image/png'
               },
               {
                 src: 'apple-touch-icon.png',
