@@ -30,8 +30,28 @@ import {
   ChevronLeft,
   ChevronRight,
   TrendingUp,
-  Info
+  Info,
+  BarChart3,
+  PieChart as PieChartIcon,
+  Activity,
+  Zap,
+  Target
 } from 'lucide-react';
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  AreaChart,
+  Area
+} from 'recharts';
 import { Employee } from '../types';
 import { getBirthDateFromNIP, getRetirementAge, calculateTmtPensiun } from '../utils/pensionHelpers';
 
@@ -40,7 +60,35 @@ interface Props {
   currentUser: Employee | null;
 }
 
-type ViewMode = 'table' | 'education' | 'golongan' | 'jabatan';
+type ViewMode = 'table' | 'charts' | 'education' | 'golongan' | 'jabatan';
+
+// Custom Tooltip for Charts
+const CustomChartTooltip = ({ active, payload, label, unit = 'orang' }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0];
+    const percentage = data.payload?.percent != null ? data.payload.percent : null;
+    return (
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-3 rounded-xl shadow-lg text-xs space-y-1 z-50">
+        <p className="font-bold text-gray-900 dark:text-white">{label || data.name}</p>
+        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+          <span
+            className="w-2.5 h-2.5 rounded-full inline-block"
+            style={{ backgroundColor: data.fill || data.color || '#3b82f6' }}
+          />
+          <span>
+            Jumlah: <strong className="text-gray-900 dark:text-white font-bold">{data.value?.toLocaleString('id-ID')} {unit}</strong>
+          </span>
+        </div>
+        {percentage !== null && (
+          <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">
+            Proporsi: <strong className="text-primary-600 dark:text-primary-400">{percentage}%</strong> dari total
+          </p>
+        )}
+      </div>
+    );
+  }
+  return null;
+};
 
 export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUser }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -91,6 +139,20 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
     let golI = 0;
     let golPPPK = 0;
 
+    // Age groups
+    let ageUnder30 = 0;
+    let age30to39 = 0;
+    let age40to49 = 0;
+    let age50to57 = 0;
+    let age58Plus = 0;
+
+    // Masa Kerja groups
+    let mkUnder5 = 0;
+    let mk5to10 = 0;
+    let mk11to20 = 0;
+    let mk21to30 = 0;
+    let mk30Plus = 0;
+
     employees.forEach(emp => {
       // Status Kepegawaian
       if (emp.statusKepegawaian === 'PPPK') {
@@ -122,6 +184,25 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
       else if (p.includes('II') || p.startsWith('2')) golII++;
       else if (p.includes('I/') || p.startsWith('1')) golI++;
       else if (p.includes('PPPK') || ['5', '7', '9', 'V', 'VII', 'IX'].includes(emp.golonganRaw || '')) golPPPK++;
+
+      // Age Distribution
+      const ageNum = typeof emp.usia === 'number' ? emp.usia : parseInt(String(emp.usia || '0'), 10);
+      if (ageNum > 0) {
+        if (ageNum < 30) ageUnder30++;
+        else if (ageNum <= 39) age30to39++;
+        else if (ageNum <= 49) age40to49++;
+        else if (ageNum <= 57) age50to57++;
+        else age58Plus++;
+      }
+
+      // Masa Kerja Distribution
+      const mkMatch = (emp.masaKerja || '').match(/(\d+)\s*th/);
+      const mkYears = mkMatch ? parseInt(mkMatch[1], 10) : 0;
+      if (mkYears < 5) mkUnder5++;
+      else if (mkYears <= 10) mk5to10++;
+      else if (mkYears <= 20) mk11to20++;
+      else if (mkYears <= 30) mk21to30++;
+      else mk30Plus++;
     });
 
     return {
@@ -135,9 +216,64 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
       malePercent: total > 0 ? ((maleCount / total) * 100).toFixed(1) : '0',
       femalePercent: total > 0 ? ((femaleCount / total) * 100).toFixed(1) : '0',
       education: { s3Count, s2Count, s1Count, d3Count, smaCount },
-      golongan: { golIV, golIII, golII, golI, golPPPK }
+      golongan: { golIV, golIII, golII, golI, golPPPK },
+      ageDistribution: { ageUnder30, age30to39, age40to49, age50to57, age58Plus },
+      mkDistribution: { mkUnder5, mk5to10, mk11to20, mk21to30, mk30Plus }
     };
   }, [employees]);
+
+  // Chart Datasets
+  const educationChartData = useMemo(() => [
+    { name: 'S3 (Doktor)', count: stats.education.s3Count, percent: ((stats.education.s3Count / (stats.total || 1)) * 100).toFixed(1), fill: '#8b5cf6' },
+    { name: 'S2 (Magister)', count: stats.education.s2Count, percent: ((stats.education.s2Count / (stats.total || 1)) * 100).toFixed(1), fill: '#3b82f6' },
+    { name: 'S1 / D4 (Sarjana)', count: stats.education.s1Count, percent: ((stats.education.s1Count / (stats.total || 1)) * 100).toFixed(1), fill: '#10b981' },
+    { name: 'D3 (Diploma)', count: stats.education.d3Count, percent: ((stats.education.d3Count / (stats.total || 1)) * 100).toFixed(1), fill: '#f59e0b' },
+    { name: 'SMA / SMK', count: stats.education.smaCount, percent: ((stats.education.smaCount / (stats.total || 1)) * 100).toFixed(1), fill: '#f43f5e' }
+  ], [stats]);
+
+  const golonganChartData = useMemo(() => [
+    { name: 'Gol. IV (Pembina)', count: stats.golongan.golIV, percent: ((stats.golongan.golIV / (stats.total || 1)) * 100).toFixed(1), fill: '#f59e0b' },
+    { name: 'Gol. III (Penata)', count: stats.golongan.golIII, percent: ((stats.golongan.golIII / (stats.total || 1)) * 100).toFixed(1), fill: '#3b82f6' },
+    { name: 'Gol. II (Pengatur)', count: stats.golongan.golII, percent: ((stats.golongan.golII / (stats.total || 1)) * 100).toFixed(1), fill: '#10b981' },
+    { name: 'Gol. I (Juru)', count: stats.golongan.golI, percent: ((stats.golongan.golI / (stats.total || 1)) * 100).toFixed(1), fill: '#6b7280' },
+    { name: 'PPPK (IX, VII, V)', count: stats.golongan.golPPPK, percent: ((stats.golongan.golPPPK / (stats.total || 1)) * 100).toFixed(1), fill: '#8b5cf6' }
+  ], [stats]);
+
+  const statusDonutData = useMemo(() => [
+    { name: 'PNS', value: stats.pnsCount, percent: stats.pnsPercent, fill: '#3b82f6' },
+    { name: 'PPPK', value: stats.pppkCount, percent: stats.pppkPercent, fill: '#8b5cf6' }
+  ], [stats]);
+
+  const genderDonutData = useMemo(() => [
+    { name: 'Pria', value: stats.maleCount, percent: stats.malePercent, fill: '#06b6d4' },
+    { name: 'Wanita', value: stats.femaleCount, percent: stats.femalePercent, fill: '#ec4899' }
+  ], [stats]);
+
+  const ageChartData = useMemo(() => [
+    { name: '< 30 Th (Gen Z)', count: stats.ageDistribution.ageUnder30, percent: ((stats.ageDistribution.ageUnder30 / (stats.total || 1)) * 100).toFixed(1), fill: '#06b6d4' },
+    { name: '30 - 39 Th (Millennial)', count: stats.ageDistribution.age30to39, percent: ((stats.ageDistribution.age30to39 / (stats.total || 1)) * 100).toFixed(1), fill: '#3b82f6' },
+    { name: '40 - 49 Th (Senior)', count: stats.ageDistribution.age40to49, percent: ((stats.ageDistribution.age40to49 / (stats.total || 1)) * 100).toFixed(1), fill: '#10b981' },
+    { name: '50 - 57 Th (Pra-Pensiun)', count: stats.ageDistribution.age50to57, percent: ((stats.ageDistribution.age50to57 / (stats.total || 1)) * 100).toFixed(1), fill: '#f59e0b' },
+    { name: '≥ 58 Th (Masa Pensiun)', count: stats.ageDistribution.age58Plus, percent: ((stats.ageDistribution.age58Plus / (stats.total || 1)) * 100).toFixed(1), fill: '#ef4444' }
+  ], [stats]);
+
+  const mkChartData = useMemo(() => [
+    { name: '< 5 Th', count: stats.mkDistribution.mkUnder5, percent: ((stats.mkDistribution.mkUnder5 / (stats.total || 1)) * 100).toFixed(1), fill: '#06b6d4' },
+    { name: '5 - 10 Th', count: stats.mkDistribution.mk5to10, percent: ((stats.mkDistribution.mk5to10 / (stats.total || 1)) * 100).toFixed(1), fill: '#3b82f6' },
+    { name: '11 - 20 Th', count: stats.mkDistribution.mk11to20, percent: ((stats.mkDistribution.mk11to20 / (stats.total || 1)) * 100).toFixed(1), fill: '#10b981' },
+    { name: '21 - 30 Th', count: stats.mkDistribution.mk21to30, percent: ((stats.mkDistribution.mk21to30 / (stats.total || 1)) * 100).toFixed(1), fill: '#f59e0b' },
+    { name: '> 30 Th', count: stats.mkDistribution.mk30Plus, percent: ((stats.mkDistribution.mk30Plus / (stats.total || 1)) * 100).toFixed(1), fill: '#8b5cf6' }
+  ], [stats]);
+
+  const topJabatanChartData = useMemo(() => {
+    return topJabatans.slice(0, 8).map((j, idx) => ({
+      name: j.jabatan.length > 28 ? j.jabatan.substring(0, 26) + '...' : j.jabatan,
+      fullName: j.jabatan,
+      count: j.count,
+      percent: ((j.count / (stats.total || 1)) * 100).toFixed(1),
+      fill: ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#06b6d4', '#ec4899', '#6366f1', '#14b8a6'][idx % 8]
+    }));
+  }, [topJabatans, stats.total]);
 
   // Filter and Sort employees
   const filteredEmployees = useMemo(() => {
@@ -434,7 +570,7 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
 
       {/* 3. Navigation View Mode Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 dark:border-gray-800 pb-3">
-        <div className="flex items-center gap-1.5 p-1 bg-gray-100/90 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl">
+        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-gray-100/90 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl">
           <button
             onClick={() => setViewMode('table')}
             className={`flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
@@ -445,6 +581,18 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
           >
             <TableIcon size={14} />
             <span>Tabel Lengkap DSP ({stats.total.toLocaleString('id-ID')})</span>
+          </button>
+
+          <button
+            onClick={() => setViewMode('charts')}
+            className={`flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+              viewMode === 'charts'
+                ? 'bg-white dark:bg-primary-600 text-gray-900 dark:text-white shadow-xs'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200/60 dark:hover:bg-gray-800'
+            }`}
+          >
+            <BarChart3 size={14} />
+            <span>Analisis Grafik & Visualisasi</span>
           </button>
 
           <button
@@ -939,9 +1087,600 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
         </div>
       )}
 
+      {/* VIEW MODE: ANALISIS GRAFIK & VISUALISASI LENGKAP */}
+      {viewMode === 'charts' && (
+        <div className="space-y-6">
+          {/* Header Insight Banner */}
+          <div className="p-4 bg-linear-to-r from-primary-50 via-blue-50 to-indigo-50 dark:from-gray-800 dark:via-gray-800/80 dark:to-gray-900 border border-primary-100 dark:border-gray-700 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-primary-600 text-white rounded-xl shadow-xs">
+                <BarChart3 size={20} />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold text-gray-900 dark:text-white">
+                  Dashboard Analisis Visual & Demografi Pegawai BSKJI
+                </h2>
+                <p className="text-xs text-gray-600 dark:text-gray-300">
+                  Visualisasi komprehensif data susunan personil: status ASN, jenjang pendidikan, bezetting kepangkatan, rentang usia, dan masa kerja.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 self-end md:self-auto text-xs">
+              <span className="px-3 py-1 bg-white dark:bg-gray-900 font-semibold text-gray-800 dark:text-gray-200 rounded-xl border border-gray-200 dark:border-gray-700 shadow-2xs">
+                Total: <strong className="text-primary-600 dark:text-primary-400">{stats.total.toLocaleString('id-ID')} Pegawai</strong>
+              </span>
+            </div>
+          </div>
+
+          {/* Row 1: Status ASN (PNS vs PPPK) & Gender Demographics (Donut Charts) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            {/* Donut 1: Status ASN */}
+            <div className="p-5 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <UserCheck size={16} className="text-blue-600 dark:text-blue-400" />
+                    Status Kepegawaian (ASN)
+                  </h3>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400">Komposisi Pegawai Negeri Sipil vs PPPK</p>
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-500/30">
+                  2 Kategori
+                </span>
+              </div>
+
+              <div className="h-56 w-full relative flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={statusDonutData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={55}
+                      outerRadius={80}
+                      paddingAngle={4}
+                      dataKey="value"
+                    >
+                      {statusDonutData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomChartTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+                {/* Center text */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-xl font-extrabold text-gray-900 dark:text-white">{stats.total.toLocaleString('id-ID')}</span>
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">Pegawai</span>
+                </div>
+              </div>
+
+              {/* Legend with interactive buttons */}
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-100 dark:border-gray-800 text-xs">
+                <button
+                  onClick={() => {
+                    setStatusFilter('PNS');
+                    setViewMode('table');
+                    setCurrentPage(1);
+                  }}
+                  className="p-2 rounded-xl bg-blue-50/70 hover:bg-blue-100 dark:bg-blue-950/30 dark:hover:bg-blue-900/40 border border-blue-200 dark:border-blue-800/40 text-left transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-1.5 text-blue-700 dark:text-blue-300 font-semibold">
+                    <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" />
+                    <span>PNS: {stats.pnsCount.toLocaleString('id-ID')}</span>
+                  </div>
+                  <div className="text-[10px] text-blue-600/80 dark:text-blue-400 mt-0.5">
+                    {stats.pnsPercent}% (Klik filter)
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setStatusFilter('PPPK');
+                    setViewMode('table');
+                    setCurrentPage(1);
+                  }}
+                  className="p-2 rounded-xl bg-purple-50/70 hover:bg-purple-100 dark:bg-purple-950/30 dark:hover:bg-purple-900/40 border border-purple-200 dark:border-purple-800/40 text-left transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-1.5 text-purple-700 dark:text-purple-300 font-semibold">
+                    <span className="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block" />
+                    <span>PPPK: {stats.pppkCount.toLocaleString('id-ID')}</span>
+                  </div>
+                  <div className="text-[10px] text-purple-600/80 dark:text-purple-400 mt-0.5">
+                    {stats.pppkPercent}% (Klik filter)
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Donut 2: Gender Demographics */}
+            <div className="p-5 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <User size={16} className="text-cyan-600 dark:text-cyan-400" />
+                    Demografi Gender
+                  </h3>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400">Proporsi Karyawan Pria dan Wanita</p>
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-cyan-50 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/30">
+                  Rasio Gender
+                </span>
+              </div>
+
+              <div className="h-56 w-full relative flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={genderDonutData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={55}
+                      outerRadius={80}
+                      paddingAngle={4}
+                      dataKey="value"
+                    >
+                      {genderDonutData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomChartTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+                {/* Center text */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">Rasio</span>
+                  <span className="text-sm font-bold text-gray-900 dark:text-white">{stats.malePercent}% : {stats.femalePercent}%</span>
+                </div>
+              </div>
+
+              {/* Legend with interactive buttons */}
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-100 dark:border-gray-800 text-xs">
+                <button
+                  onClick={() => {
+                    setGenderFilter('Pria');
+                    setViewMode('table');
+                    setCurrentPage(1);
+                  }}
+                  className="p-2 rounded-xl bg-cyan-50/70 hover:bg-cyan-100 dark:bg-cyan-950/30 dark:hover:bg-cyan-900/40 border border-cyan-200 dark:border-cyan-800/40 text-left transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-1.5 text-cyan-700 dark:text-cyan-300 font-semibold">
+                    <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block" />
+                    <span>Pria: {stats.maleCount.toLocaleString('id-ID')}</span>
+                  </div>
+                  <div className="text-[10px] text-cyan-600/80 dark:text-cyan-400 mt-0.5">
+                    {stats.malePercent}% (Klik filter)
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setGenderFilter('Wanita');
+                    setViewMode('table');
+                    setCurrentPage(1);
+                  }}
+                  className="p-2 rounded-xl bg-pink-50/70 hover:bg-pink-100 dark:bg-pink-950/30 dark:hover:bg-pink-900/40 border border-pink-200 dark:border-pink-800/40 text-left transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-1.5 text-pink-700 dark:text-pink-300 font-semibold">
+                    <span className="w-2.5 h-2.5 rounded-full bg-pink-500 inline-block" />
+                    <span>Wanita: {stats.femaleCount.toLocaleString('id-ID')}</span>
+                  </div>
+                  <div className="text-[10px] text-pink-600/80 dark:text-pink-400 mt-0.5">
+                    {stats.femalePercent}% (Klik filter)
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Quick KPI Metric Highlights */}
+            <div className="p-5 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl shadow-sm flex flex-col justify-between space-y-4">
+              <div>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <Sparkles size={16} className="text-amber-500" />
+                  Ringkasan Rasio Kunci DSP
+                </h3>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">Indikator penting struktur kepegawaian BSKJI</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5 text-xs">
+                <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200/70 dark:border-gray-700/60 space-y-1">
+                  <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase">Pendidikan Tinggi</span>
+                  <div className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">
+                    {((stats.education.s3Count + stats.education.s2Count + stats.education.s1Count) / (stats.total || 1) * 100).toFixed(1)}%
+                  </div>
+                  <p className="text-[10px] text-gray-500">S1, S2, & S3 Sarjana/Pasca</p>
+                </div>
+
+                <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200/70 dark:border-gray-700/60 space-y-1">
+                  <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase">Doktor & Magister</span>
+                  <div className="text-lg font-extrabold text-purple-600 dark:text-purple-400">
+                    {(stats.education.s3Count + stats.education.s2Count).toLocaleString('id-ID')}
+                  </div>
+                  <p className="text-[10px] text-gray-500">S3: {stats.education.s3Count} | S2: {stats.education.s2Count}</p>
+                </div>
+
+                <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200/70 dark:border-gray-700/60 space-y-1">
+                  <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase">Bezetting Gol. IV</span>
+                  <div className="text-lg font-extrabold text-amber-600 dark:text-amber-400">
+                    {stats.golongan.golIV.toLocaleString('id-ID')}
+                  </div>
+                  <p className="text-[10px] text-gray-500">Jenjang Pembina ({((stats.golongan.golIV / (stats.total || 1)) * 100).toFixed(1)}%)</p>
+                </div>
+
+                <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200/70 dark:border-gray-700/60 space-y-1">
+                  <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase">Generasi Millennial</span>
+                  <div className="text-lg font-extrabold text-blue-600 dark:text-blue-400">
+                    {((stats.ageDistribution.age30to39 / (stats.total || 1)) * 100).toFixed(1)}%
+                  </div>
+                  <p className="text-[10px] text-gray-500">Usia 30 - 39 Tahun</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-primary-50/60 dark:bg-primary-950/20 border border-primary-100 dark:border-primary-800/40 rounded-xl text-[11px] text-primary-800 dark:text-primary-300 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <ShieldCheck size={14} className="text-primary-600" />
+                  Seluruh personil terintegrasi dalam database BSKJI
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Row 2: Bar Chart Pendidikan & Bar Chart Bezetting Golongan */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {/* Chart: Jenjang Pendidikan */}
+            <div className="p-5 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <GraduationCap size={16} className="text-emerald-600 dark:text-emerald-400" />
+                    Distribusi Jenjang Pendidikan Pegawai
+                  </h3>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400">Kualifikasi akademik personil BSKJI</p>
+                </div>
+                <button
+                  onClick={() => setViewMode('education')}
+                  className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer"
+                >
+                  Lihat Detail →
+                </button>
+              </div>
+
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={educationChartData}
+                    margin={{ top: 15, right: 10, left: -20, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.3} />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 11, fill: '#64748b' }}
+                      interval={0}
+                      angle={-15}
+                      textAnchor="end"
+                      height={40}
+                    />
+                    <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
+                    <Tooltip content={<CustomChartTooltip />} />
+                    <Bar
+                      dataKey="count"
+                      radius={[6, 6, 0, 0]}
+                      cursor="pointer"
+                      onClick={(entry: any) => {
+                        const rawName = String(entry?.name || entry?.payload?.name || '');
+                        if (rawName.includes('S3')) setEducationFilter('S3');
+                        else if (rawName.includes('S2')) setEducationFilter('S2');
+                        else if (rawName.includes('S1')) setEducationFilter('S1');
+                        else if (rawName.includes('D3')) setEducationFilter('D3');
+                        else if (rawName.includes('SMA')) setEducationFilter('SMA');
+                        setViewMode('table');
+                        setCurrentPage(1);
+                      }}
+                    >
+                      {educationChartData.map((entry, index) => (
+                        <Cell key={`cell-edu-${index}`} fill={entry.fill} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="grid grid-cols-5 gap-1.5 pt-2 border-t border-gray-100 dark:border-gray-800 text-center">
+                {educationChartData.map(item => (
+                  <div key={item.name} className="p-1.5 bg-gray-50 dark:bg-gray-800/40 rounded-lg">
+                    <span className="text-[10px] text-gray-500 block truncate">{item.name.split(' ')[0]}</span>
+                    <strong className="text-xs font-bold text-gray-900 dark:text-white block">{item.count}</strong>
+                    <span className="text-[9px] text-gray-400">{item.percent}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Chart: Bezetting Golongan */}
+            <div className="p-5 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <Award size={16} className="text-amber-600 dark:text-amber-400" />
+                    Distribusi Bezetting Pangkat / Golongan
+                  </h3>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400">Komposisi hirarki kepangkatan ASN BSKJI</p>
+                </div>
+                <button
+                  onClick={() => setViewMode('golongan')}
+                  className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer"
+                >
+                  Lihat Detail →
+                </button>
+              </div>
+
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={golonganChartData}
+                    margin={{ top: 15, right: 10, left: -20, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.3} />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 11, fill: '#64748b' }}
+                      interval={0}
+                      angle={-15}
+                      textAnchor="end"
+                      height={40}
+                    />
+                    <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
+                    <Tooltip content={<CustomChartTooltip />} />
+                    <Bar
+                      dataKey="count"
+                      radius={[6, 6, 0, 0]}
+                      cursor="pointer"
+                      onClick={(entry: any) => {
+                        const rawName = String(entry?.name || entry?.payload?.name || '');
+                        if (rawName.includes('IV')) setGolonganFilter('IV');
+                        else if (rawName.includes('III')) setGolonganFilter('III');
+                        else if (rawName.includes('II')) setGolonganFilter('II');
+                        else if (rawName.includes('I')) setGolonganFilter('I');
+                        else if (rawName.includes('PPPK')) setGolonganFilter('PPPK');
+                        setViewMode('table');
+                        setCurrentPage(1);
+                      }}
+                    >
+                      {golonganChartData.map((entry, index) => (
+                        <Cell key={`cell-gol-${index}`} fill={entry.fill} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="grid grid-cols-5 gap-1.5 pt-2 border-t border-gray-100 dark:border-gray-800 text-center">
+                {golonganChartData.map(item => (
+                  <div key={item.name} className="p-1.5 bg-gray-50 dark:bg-gray-800/40 rounded-lg">
+                    <span className="text-[10px] text-gray-500 block truncate">{item.name.split(' ')[0]}</span>
+                    <strong className="text-xs font-bold text-gray-900 dark:text-white block">{item.count}</strong>
+                    <span className="text-[9px] text-gray-400">{item.percent}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Row 3: Distribusi Kelompok Usia & Masa Kerja Pegawai */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {/* Chart: Demografi Kelompok Usia */}
+            <div className="p-5 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <Clock size={16} className="text-cyan-600 dark:text-cyan-400" />
+                    Distribusi Kelompok Usia Pegawai
+                  </h3>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400">Peta generasi & perencanaan suksesi/pensiun BSKJI</p>
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-cyan-50 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/30">
+                  5 Rentang Usia
+                </span>
+              </div>
+
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart
+                    data={ageChartData}
+                    margin={{ top: 15, right: 10, left: -20, bottom: 20 }}
+                  >
+                    <defs>
+                      <linearGradient id="colorAge" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.6}/>
+                        <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.05}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.3} />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 11, fill: '#64748b' }}
+                      interval={0}
+                      angle={-15}
+                      textAnchor="end"
+                      height={40}
+                    />
+                    <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
+                    <Tooltip content={<CustomChartTooltip />} />
+                    <Area
+                      type="monotone"
+                      dataKey="count"
+                      stroke="#0891b2"
+                      strokeWidth={2.5}
+                      fillOpacity={1}
+                      fill="url(#colorAge)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="grid grid-cols-5 gap-1.5 pt-2 border-t border-gray-100 dark:border-gray-800 text-center">
+                {ageChartData.map(item => (
+                  <div key={item.name} className="p-1.5 bg-gray-50 dark:bg-gray-800/40 rounded-lg">
+                    <span className="text-[9px] text-gray-500 block truncate">{item.name.split(' ')[0]}</span>
+                    <strong className="text-xs font-bold text-gray-900 dark:text-white block">{item.count}</strong>
+                    <span className="text-[9px] text-gray-400">{item.percent}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Chart: Distribusi Masa Kerja Pegawai */}
+            <div className="p-5 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <Activity size={16} className="text-purple-600 dark:text-purple-400" />
+                    Distribusi Masa Kerja (Pengabdian)
+                  </h3>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400">Pengalaman dan dedikasi personil</p>
+                </div>
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
+                  5 Kelompok MK
+                </span>
+              </div>
+
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={mkChartData}
+                    margin={{ top: 15, right: 10, left: -20, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.3} />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 11, fill: '#64748b' }}
+                    />
+                    <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
+                    <Tooltip content={<CustomChartTooltip />} />
+                    <Bar
+                      dataKey="count"
+                      radius={[6, 6, 0, 0]}
+                    >
+                      {mkChartData.map((entry, index) => (
+                        <Cell key={`cell-mk-${index}`} fill={entry.fill} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="grid grid-cols-5 gap-1.5 pt-2 border-t border-gray-100 dark:border-gray-800 text-center">
+                {mkChartData.map(item => (
+                  <div key={item.name} className="p-1.5 bg-gray-50 dark:bg-gray-800/40 rounded-lg">
+                    <span className="text-[10px] text-gray-500 block truncate">{item.name}</span>
+                    <strong className="text-xs font-bold text-gray-900 dark:text-white block">{item.count}</strong>
+                    <span className="text-[9px] text-gray-400">{item.percent}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Row 4: Top 8 Rumpun Jabatan Terbanyak di BSKJI */}
+          <div className="p-5 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <Briefcase size={16} className="text-primary-600 dark:text-primary-400" />
+                  Top Rumpun Jabatan Terbanyak di BSKJI
+                </h3>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                  Konsentrasi personil pada rumpun fungsional standardisasi, pengujian, dan kebijakan industri
+                </p>
+              </div>
+              <button
+                onClick={() => setViewMode('jabatan')}
+                className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline cursor-pointer"
+              >
+                Lihat Semua ({topJabatans.length} Jabatan) →
+              </button>
+            </div>
+
+            <div className="h-80 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={topJabatanChartData}
+                  layout="vertical"
+                  margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} opacity={0.3} />
+                  <XAxis type="number" tick={{ fontSize: 11, fill: '#64748b' }} />
+                  <YAxis
+                    dataKey="name"
+                    type="category"
+                    tick={{ fontSize: 11, fill: '#475569' }}
+                    width={180}
+                  />
+                  <Tooltip content={<CustomChartTooltip />} />
+                  <Bar
+                    dataKey="count"
+                    radius={[0, 6, 6, 0]}
+                    cursor="pointer"
+                    onClick={(entry: any) => {
+                      const targetJabatan = entry?.fullName || entry?.payload?.fullName || entry?.name || entry?.payload?.name;
+                      if (targetJabatan) {
+                        setJabatanFilter(targetJabatan);
+                        setViewMode('table');
+                        setCurrentPage(1);
+                      }
+                    }}
+                  >
+                    {topJabatanChartData.map((entry, index) => (
+                      <Cell key={`cell-top-jab-${index}`} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* VIEW MODE 2: TINGKAT PENDIDIKAN */}
       {viewMode === 'education' && (
         <div className="space-y-6">
+          {/* Visual Chart Header for Education */}
+          <div className="p-5 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <GraduationCap size={16} className="text-purple-600 dark:text-purple-400" />
+                  Grafik Sebaran Kualifikasi Akademik
+                </h3>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                  Proporsi jenjang pendidikan S3 Doktor, S2 Magister, S1 Sarjana, D3 Diploma, dan SMA/SMK
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                {((stats.education.s3Count + stats.education.s2Count + stats.education.s1Count) / (stats.total || 1) * 100).toFixed(1)}% Sarjana & Pascasarjana
+              </span>
+            </div>
+
+            <div className="h-60 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={educationChartData}
+                  margin={{ top: 10, right: 15, left: -20, bottom: 10 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.3} />
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} />
+                  <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
+                  <Tooltip content={<CustomChartTooltip />} />
+                  <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                    {educationChartData.map((entry, index) => (
+                      <Cell key={`cell-edu-tab-${index}`} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
             {/* S3 Doktor */}
             <div className="p-4.5 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl space-y-2 shadow-sm">
@@ -1060,6 +1799,43 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
       {/* VIEW MODE 3: BEZETTING GOLONGAN */}
       {viewMode === 'golongan' && (
         <div className="space-y-6">
+          {/* Visual Chart Header for Golongan */}
+          <div className="p-5 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <Award size={16} className="text-amber-600 dark:text-amber-400" />
+                  Grafik Komposisi Bezetting Golongan Ruang
+                </h3>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                  Sebaran personil PNS Golongan IV, III, II, I dan PPPK di lingkungan BSKJI
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+                PNS: {stats.pnsCount} | PPPK: {stats.pppkCount}
+              </span>
+            </div>
+
+            <div className="h-60 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={golonganChartData}
+                  margin={{ top: 10, right: 15, left: -20, bottom: 10 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.3} />
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} />
+                  <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
+                  <Tooltip content={<CustomChartTooltip />} />
+                  <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                    {golonganChartData.map((entry, index) => (
+                      <Cell key={`cell-gol-tab-${index}`} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Golongan IV */}
             <div className="p-5 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl space-y-2 shadow-sm">
@@ -1131,7 +1907,62 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
 
       {/* VIEW MODE 4: RUMPUN JABATAN */}
       {viewMode === 'jabatan' && (
-        <div className="space-y-4">
+        <div className="space-y-6">
+          {/* Horizontal Bar Chart for Top Jabatans */}
+          <div className="p-5 bg-white dark:bg-gray-900 border border-gray-200/90 dark:border-gray-800 rounded-2xl shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <Briefcase size={16} className="text-primary-600 dark:text-primary-400" />
+                  Grafik Sebaran Rumpun Jabatan Terbesar
+                </h3>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                  Visualisasi 8 kelompok jabatan dengan jumlah personil terbanyak di BSKJI
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-primary-600 dark:text-primary-400">
+                Total: {topJabatans.length} Jenis Jabatan
+              </span>
+            </div>
+
+            <div className="h-72 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={topJabatanChartData}
+                  layout="vertical"
+                  margin={{ top: 10, right: 30, left: 10, bottom: 10 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} opacity={0.3} />
+                  <XAxis type="number" tick={{ fontSize: 11, fill: '#64748b' }} />
+                  <YAxis
+                    dataKey="name"
+                    type="category"
+                    tick={{ fontSize: 11, fill: '#475569' }}
+                    width={180}
+                  />
+                  <Tooltip content={<CustomChartTooltip />} />
+                  <Bar
+                    dataKey="count"
+                    radius={[0, 6, 6, 0]}
+                    cursor="pointer"
+                    onClick={(entry: any) => {
+                      const targetJabatan = entry?.fullName || entry?.payload?.fullName || entry?.name || entry?.payload?.name;
+                      if (targetJabatan) {
+                        setJabatanFilter(targetJabatan);
+                        setViewMode('table');
+                        setCurrentPage(1);
+                      }
+                    }}
+                  >
+                    {topJabatanChartData.map((entry, index) => (
+                      <Cell key={`cell-top-jab-tab-${index}`} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {topJabatans.map((item) => (
               <div
