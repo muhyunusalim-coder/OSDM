@@ -62,30 +62,30 @@ const StatCard = React.memo(
     return (
       <button
         onClick={onClick}
-        className={`group relative text-left w-full bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-200/90 dark:border-gray-800 shadow-sm ${theme.borderHover} hover:shadow-md transition-all duration-300 overflow-hidden ${onClick ? "cursor-pointer" : "cursor-default"}`}
+        className={`group relative text-left w-full bg-white dark:bg-gray-900 rounded-2xl p-3.5 sm:p-5 border border-gray-200/90 dark:border-gray-800 shadow-sm ${theme.borderHover} hover:shadow-md transition-all duration-300 overflow-hidden ${onClick ? "cursor-pointer active:scale-[0.98]" : "cursor-default"}`}
       >
-        <div className="relative z-10 flex items-start justify-between gap-3 mb-3">
-          <div>
-            <span className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase r block truncate">
+        <div className="relative z-10 flex items-start justify-between gap-2 sm:gap-3 mb-2 sm:mb-3">
+          <div className="min-w-0 flex-1">
+            <span className="text-[10px] sm:text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase r block truncate">
               {title}
             </span>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-3xl font-normal text-gray-900 dark:text-gray-100 leading-none">
+            <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2 mt-0.5 sm:mt-1">
+              <span className="text-xl sm:text-2xl lg:text-3xl font-normal text-gray-900 dark:text-gray-100 leading-none">
                 {value}
               </span>
               {trend && (
                 <span
                   title="Tren MoM"
-                  className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-md border ${
+                  className={`inline-flex items-center gap-0.5 text-[9px] sm:text-[10px] font-bold px-1 sm:px-1.5 py-0.5 rounded border ${
                     trend.direction === "up"
                       ? "text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-500/10 border-primary-200/60 dark:border-primary-800/50"
                       : "text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 border-amber-200/60 dark:border-amber-800/50"
                   }`}
                 >
                   {trend.direction === "up" ? (
-                    <TrendingUp size={10} strokeWidth={2.5} />
+                    <TrendingUp size={9} strokeWidth={2.5} />
                   ) : (
-                    <TrendingDown size={10} strokeWidth={2.5} />
+                    <TrendingDown size={9} strokeWidth={2.5} />
                   )}
                   {trend.value}
                 </span>
@@ -94,24 +94,24 @@ const StatCard = React.memo(
           </div>
 
           <div
-            className={`p-3 rounded-xl border ${theme.iconBg} shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm`}
+            className={`p-2 sm:p-3 rounded-xl border ${theme.iconBg} shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm`}
           >
-            <Icon size={20} strokeWidth={2} />
+            <Icon size={16} className="sm:w-5 sm:h-5" strokeWidth={2} />
           </div>
         </div>
 
-        <div className="relative z-10 flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-800 text-xs font-medium text-gray-600 dark:text-gray-300">
-          <div className="flex items-center gap-2 truncate">
+        <div className="relative z-10 flex items-center justify-between pt-2 sm:pt-3 border-t border-gray-100 dark:border-gray-800 text-[10px] sm:text-xs font-medium text-gray-600 dark:text-gray-300">
+          <div className="flex items-center gap-1.5 sm:gap-2 truncate">
             <span
-              className={`w-2 h-2 rounded-full ${theme.dot} shrink-0`}
+              className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${theme.dot} shrink-0`}
             ></span>
             <span className="truncate">{subtext}</span>
           </div>
           {onClick && (
-            <div className="text-gray-400 dark:text-gray-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors shrink-0 ml-2">
+            <div className="text-gray-400 dark:text-gray-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors shrink-0 ml-1 sm:ml-2">
               <ArrowRight
-                size={14}
-                className="group-hover:translate-x-1 transition-transform duration-200"
+                size={12}
+                className="sm:w-3.5 sm:h-3.5 group-hover:translate-x-1 transition-transform duration-200"
               />
             </div>
           )}
@@ -125,7 +125,7 @@ const DashboardStats: React.FC<
 > = React.memo(({ stats, onCardClick }) => {
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4.5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         <StatCard
           title="Total Pegawai"
           value={stats.totalEmployees.toString()}

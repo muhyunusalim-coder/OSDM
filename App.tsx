@@ -811,12 +811,12 @@ function App() {
         </>
         
         {/* Top Header */}
-        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 md:px-6 py-4 flex items-center justify-between sticky top-0 z-30 w-full shrink-0 print:hidden">
-          <div className="flex items-center gap-4 min-w-0">
-            <button onClick={() => setMobileMenuOpen(true)} className="md:hidden p-2 -ml-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 rounded-lg transition-colors shrink-0">
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-3.5 sm:px-6 py-3 sm:py-4 flex items-center justify-between sticky top-0 z-30 w-full shrink-0 print:hidden">
+          <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
+            <button onClick={() => setMobileMenuOpen(true)} className="md:hidden p-2 -ml-1 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 rounded-xl transition-colors shrink-0 active:scale-95 cursor-pointer">
               <Menu size={20} />
             </button>
-            <div>
+            <div className="min-w-0">
               <button
                 type="button"
                 onClick={() => {
@@ -826,23 +826,23 @@ function App() {
                   setIsPensiunExpanded(false);
                   setIsJamKerjaExpanded(false);
                 }}
-                className="text-xs font-semibold text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 uppercase r hidden sm:block mb-0.5 transition-colors cursor-pointer text-left"
+                className="text-[11px] sm:text-xs font-semibold text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 uppercase r hidden sm:block mb-0.5 transition-colors cursor-pointer text-left"
                 title="Ke Beranda"
               >
                 Sistem Informasi Kepegawaian BSKJI
               </button>
-              <h2 className="font-bold text-gray-900 dark:text-white text-xl sm:text-2xl truncate">
+              <h2 className="font-bold text-gray-900 dark:text-white text-lg sm:text-2xl truncate">
                 {viewTitle}
               </h2>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
             <HeaderClock />
             
             {/* Notification Center Trigger */}
             <div className="relative z-50">
-              <button id="notification-bell" onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative">
+              <button id="notification-bell" onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative cursor-pointer active:scale-95">
                 {systemAlerts.length > 0 ? (
                   <>
                     <BellRing size={20} className="text-primary-600 dark:text-primary-400" />
@@ -856,13 +856,13 @@ function App() {
               {/* Notification Overlay Panel */}
               {isNotificationsOpen && (
                 <>
-                  <div className="fixed inset-0 z-40" onClick={() => setIsNotificationsOpen(false)}></div>
-                  <div className="absolute right-0 mt-2 w-80 md:w-96 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-lg rounded-xl z-50 overflow-hidden">
+                  <div className="fixed inset-0 z-40 bg-black/20 sm:bg-transparent backdrop-blur-[1px] sm:backdrop-blur-none" onClick={() => setIsNotificationsOpen(false)}></div>
+                  <div className="fixed sm:absolute right-2 sm:right-0 top-16 sm:top-auto mt-0 sm:mt-2 w-[calc(100vw-1rem)] sm:w-80 md:w-96 max-w-sm bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-2xl rounded-2xl z-50 overflow-hidden">
                     <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50 dark:bg-gray-800/50">
                       <h3 className="font-semibold text-sm text-gray-900 dark:text-white">Notifikasi</h3>
                       {systemAlerts.length > 0 && (
                         <div className="flex gap-3 items-center">
-                          <button onClick={() => setDismissedAlertIds(prev => [...prev, ...systemAlerts.map(a => a.id)])} className="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                          <button onClick={() => setDismissedAlertIds(prev => [...prev, ...systemAlerts.map(a => a.id)])} className="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer">
                             Tandai Dibaca
                           </button>
                           <span className="px-2 py-0.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-semibold">

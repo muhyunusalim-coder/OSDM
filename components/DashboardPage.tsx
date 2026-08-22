@@ -231,31 +231,31 @@ const DashboardPage: React.FC<Props> = React.memo(
       <>
         {/* Hero Section */}
         <div className="w-full">
-          <div className="relative overflow-hidden rounded-3xl bg-white dark:bg-gray-900 p-6 sm:p-10 flex flex-col justify-between min-h-0 sm:min-h-[300px] group border border-gray-200/60 dark:border-gray-800/60 shadow-sm dark:shadow-sm">
+          <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-white dark:bg-gray-900 p-4 sm:p-8 lg:p-10 flex flex-col justify-between min-h-0 sm:min-h-[300px] group border border-gray-200/60 dark:border-gray-800/60 shadow-sm dark:shadow-sm">
             {/* Subtle Decorative Background Elements */}
-            <div className="relative z-10 flex flex-col justify-between h-full w-full gap-8">
-              <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 py-2">
+            <div className="relative z-10 flex flex-col justify-between h-full w-full gap-5 sm:gap-8">
+              <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 sm:gap-8 py-1 sm:py-2">
                 <div className="flex-1 flex flex-col justify-center">
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-[1.15] mb-3 sm:mb-5 text-gray-900 dark:text-gray-50">
+                  <h1 className="text-2xl sm:text-4xl lg:text-5xl font-semibold leading-tight sm:leading-[1.15] mb-2 sm:mb-5 text-gray-900 dark:text-gray-50">
                     {greeting},<br />
-                    <span className="text-primary-600 dark:text-primary-400 ">
+                    <span className="text-primary-600 dark:text-primary-400">
                       {currentUser
                         ? currentUser.nama.split(",")[0]
                         : "Pegawai BSKJI"}
                     </span>
                   </h1>
 
-                  <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-xl font-medium leading-relaxed mb-6 sm:mb-8">
+                  <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-base max-w-xl font-medium leading-relaxed mb-4 sm:mb-8">
                     {t("hero_subtitle")}
                   </p>
 
-                  <div className="grid grid-cols-4 gap-2 sm:gap-3 w-full">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full">
                     <button
                       onClick={() => handleQuickNavigate("data-kgb")}
-                      className="px-2 sm:px-4 py-2.5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/90 dark:hover:bg-gray-700/90 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 text-[11px] sm:text-xs md:text-sm font-semibold rounded-2xl shadow-sm transition-all active:scale-95 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1.5 sm:gap-2.5 text-center sm:text-left group cursor-pointer whitespace-nowrap overflow-hidden"
+                      className="px-3 py-2.5 sm:py-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/90 dark:hover:bg-gray-700/90 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 text-xs sm:text-sm font-semibold rounded-xl sm:rounded-2xl shadow-sm transition-all active:scale-95 flex items-center justify-start gap-2.5 text-left group cursor-pointer overflow-hidden min-h-[44px]"
                     >
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-primary-100/80 dark:bg-primary-500/20 border border-primary-200 dark:border-primary-800/60 flex items-center justify-center shrink-0 text-primary-700 dark:text-primary-300 group-hover:scale-110 transition-transform">
-                        <Banknote size={14} className="sm:w-3.5 sm:h-3.5" />
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary-100/80 dark:bg-primary-500/20 border border-primary-200 dark:border-primary-800/60 flex items-center justify-center shrink-0 text-primary-700 dark:text-primary-300 group-hover:scale-110 transition-transform">
+                        <Banknote size={15} />
                       </div>
                       <span className="truncate text-gray-800 dark:text-gray-100 font-semibold">
                         Data KGB
@@ -263,10 +263,10 @@ const DashboardPage: React.FC<Props> = React.memo(
                     </button>
                     <button
                       onClick={() => handleQuickNavigate("kenaikan-pangkat")}
-                      className="px-2 sm:px-4 py-2.5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/90 dark:hover:bg-gray-700/90 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 text-[11px] sm:text-xs md:text-sm font-semibold rounded-2xl shadow-sm transition-all active:scale-95 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1.5 sm:gap-2.5 text-center sm:text-left group cursor-pointer whitespace-nowrap overflow-hidden"
+                      className="px-3 py-2.5 sm:py-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/90 dark:hover:bg-gray-700/90 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 text-xs sm:text-sm font-semibold rounded-xl sm:rounded-2xl shadow-sm transition-all active:scale-95 flex items-center justify-start gap-2.5 text-left group cursor-pointer overflow-hidden min-h-[44px]"
                     >
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-100/80 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-800/60 flex items-center justify-center shrink-0 text-blue-700 dark:text-blue-300 group-hover:scale-110 transition-transform">
-                        <Award size={14} className="sm:w-3.5 sm:h-3.5" />
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-100/80 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-800/60 flex items-center justify-center shrink-0 text-blue-700 dark:text-blue-300 group-hover:scale-110 transition-transform">
+                        <Award size={15} />
                       </div>
                       <span className="truncate text-gray-800 dark:text-gray-100 font-semibold">
                         Kenaikan Pangkat
@@ -274,10 +274,10 @@ const DashboardPage: React.FC<Props> = React.memo(
                     </button>
                     <button
                       onClick={() => handleQuickNavigate("pensiun")}
-                      className="px-2 sm:px-4 py-2.5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/90 dark:hover:bg-gray-700/90 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 text-[11px] sm:text-xs md:text-sm font-semibold rounded-2xl shadow-sm transition-all active:scale-95 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1.5 sm:gap-2.5 text-center sm:text-left group cursor-pointer whitespace-nowrap overflow-hidden"
+                      className="px-3 py-2.5 sm:py-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/90 dark:hover:bg-gray-700/90 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 text-xs sm:text-sm font-semibold rounded-xl sm:rounded-2xl shadow-sm transition-all active:scale-95 flex items-center justify-start gap-2.5 text-left group cursor-pointer overflow-hidden min-h-[44px]"
                     >
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-rose-100/80 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-800/60 flex items-center justify-center shrink-0 text-rose-700 dark:text-rose-300 group-hover:scale-110 transition-transform">
-                        <Archive size={14} className="sm:w-3.5 sm:h-3.5" />
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-rose-100/80 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-800/60 flex items-center justify-center shrink-0 text-rose-700 dark:text-rose-300 group-hover:scale-110 transition-transform">
+                        <Archive size={15} />
                       </div>
                       <span className="truncate text-gray-800 dark:text-gray-100 font-semibold">
                         Pensiun
@@ -285,10 +285,10 @@ const DashboardPage: React.FC<Props> = React.memo(
                     </button>
                     <button
                       onClick={() => handleQuickNavigate("jam-kerja")}
-                      className="px-2 sm:px-4 py-2.5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/90 dark:hover:bg-gray-700/90 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 text-[11px] sm:text-xs md:text-sm font-semibold rounded-2xl shadow-sm transition-all active:scale-95 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1.5 sm:gap-2.5 text-center sm:text-left group cursor-pointer whitespace-nowrap overflow-hidden"
+                      className="px-3 py-2.5 sm:py-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/90 dark:hover:bg-gray-700/90 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 text-xs sm:text-sm font-semibold rounded-xl sm:rounded-2xl shadow-sm transition-all active:scale-95 flex items-center justify-start gap-2.5 text-left group cursor-pointer overflow-hidden min-h-[44px]"
                     >
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-100/80 dark:bg-amber-500/20 border border-amber-200 dark:border-amber-800/60 flex items-center justify-center shrink-0 text-amber-700 dark:text-amber-300 group-hover:scale-110 transition-transform">
-                        <Clock size={14} className="sm:w-3.5 sm:h-3.5" />
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-100/80 dark:bg-amber-500/20 border border-amber-200 dark:border-amber-800/60 flex items-center justify-center shrink-0 text-amber-700 dark:text-amber-300 group-hover:scale-110 transition-transform">
+                        <Clock size={15} />
                       </div>
                       <span className="truncate text-gray-800 dark:text-gray-100 font-semibold">
                         Jam Kerja
@@ -299,7 +299,7 @@ const DashboardPage: React.FC<Props> = React.memo(
 
                 {/* Minimalist Announcement Banner */}
                 <div
-                  className="w-full lg:max-w-[420px] relative overflow-hidden rounded-2xl bg-gray-50 dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700 p-5 hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-sm transition-all duration-300 self-stretch flex flex-col justify-center"
+                  className="w-full lg:max-w-[420px] relative overflow-hidden rounded-xl sm:rounded-2xl bg-gray-50 dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700 p-4 sm:p-5 hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-sm transition-all duration-300 self-stretch flex flex-col justify-center"
                   title="Monitoring Terintegrasi BSKJI"
                 >
                   <div className="relative z-10 flex items-start gap-4">
