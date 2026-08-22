@@ -37,6 +37,13 @@ export const setAuthToken = (token: string | null): void => {
   }
 };
 
+// Helper to extract CSRF Token from Document Cookies (Double Submit Cookie Defense)
+export const getCsrfToken = (): string | null => {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(new RegExp('(^|;\\s*)XSRF-TOKEN=([^;]*)'));
+  return match ? decodeURIComponent(match[2]) : null;
+};
+
 // In-Memory Runtime Cache (Zero persistence to localStorage for employee privacy)
 let inMemoryEmployees: { data: Employee[]; timestamp: number } | null = null;
 let inMemoryPromotions: { data: Employee[]; timestamp: number } | null = null;
@@ -61,6 +68,7 @@ export const loginWithBackend = async (
   try {
     const res = await fetch(API_ENDPOINTS.AUTH_LOGIN, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -90,13 +98,16 @@ export const loginWithBackend = async (
 
 export const verifyBackendSession = async (): Promise<AuthUser | null> => {
   const token = getAuthToken();
-  if (!token) return null;
 
   try {
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const res = await fetch(API_ENDPOINTS.AUTH_ME, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+      credentials: 'include',
+      headers,
     });
 
     if (!res.ok) {
@@ -113,20 +124,22 @@ export const verifyBackendSession = async (): Promise<AuthUser | null> => {
 
 export const logoutFromBackend = async (): Promise<void> => {
   const token = getAuthToken();
+  const csrf = getCsrfToken();
   clearDataCache();
   setAuthToken(null);
 
-  if (token) {
-    try {
-      await fetch(API_ENDPOINTS.AUTH_LOGOUT, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-    } catch {
-      // Ignore network errors during logout
-    }
+  try {
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    if (csrf) headers['X-XSRF-TOKEN'] = csrf;
+
+    await fetch(API_ENDPOINTS.AUTH_LOGOUT, {
+      method: 'POST',
+      credentials: 'include',
+      headers,
+    });
+  } catch {
+    // Ignore network errors during logout
   }
 };
 
@@ -136,11 +149,15 @@ export const logoutFromBackend = async (): Promise<void> => {
 
 const getAuthHeaders = (): Record<string, string> => {
   const token = getAuthToken();
+  const csrf = getCsrfToken();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+  }
+  if (csrf) {
+    headers['X-XSRF-TOKEN'] = csrf;
   }
   return headers;
 };
@@ -152,6 +169,7 @@ export const fetchEmployeeData = async (): Promise<Employee[]> => {
 
   try {
     const response = await fetch(API_ENDPOINTS.EMPLOYEES, {
+      credentials: 'include',
       headers: getAuthHeaders(),
     });
 
@@ -199,6 +217,7 @@ export const fetchPromotionData = async (): Promise<Employee[]> => {
 
   try {
     const response = await fetch(API_ENDPOINTS.PROMOTIONS, {
+      credentials: 'include',
       headers: getAuthHeaders(),
     });
 
@@ -246,6 +265,7 @@ export const fetchMasterPegawaiData = async (): Promise<Employee[]> => {
 
   try {
     const response = await fetch(API_ENDPOINTS.MASTER_PEGAWAI, {
+      credentials: 'include',
       headers: getAuthHeaders(),
     });
 
@@ -265,6 +285,7 @@ export const fetchMasterPegawaiData = async (): Promise<Employee[]> => {
 export const toggleEmployeeStatusBackend = async (id: string): Promise<Employee> => {
   const response = await fetch(API_ENDPOINTS.TOGGLE_STATUS(id), {
     method: 'POST',
+    credentials: 'include',
     headers: getAuthHeaders(),
   });
 
