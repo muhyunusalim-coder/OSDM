@@ -13,8 +13,10 @@ import {
   EyeOff,
   RefreshCw,
 } from "lucide-react";
-import { fetchEmployeeData } from "../services/dataService";
+import { loginWithBackend } from "../services/dataService";
 import { TRANSLATIONS } from "../utils/translationHelper";
+import { AuthUser } from "../types";
+
 const GovtBackground = () => {
   return (
     <div className="absolute inset-0 overflow-hidden bg-[#020817]">
@@ -30,7 +32,7 @@ const GovtBackground = () => {
   );
 };
 interface Props {
-  onLogin: (nip: string) => void;
+  onLogin: (user: AuthUser, token?: string) => void;
 }
 const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
   const [nip, setNip] = useState("");
@@ -58,6 +60,12 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
     setError("");
     setLoading(true);
     try {
+      if (!nip.trim()) {
+        throw new Error("Nomor Induk Pegawai (NIP) wajib diisi.");
+      }
+      if (!password) {
+        throw new Error("Kata sandi akses wajib diisi.");
+      }
       if (
         !captchaAnswer.trim() ||
         parseInt(captchaAnswer.trim(), 10) !== captchaNum1 + captchaNum2
@@ -67,21 +75,24 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
           "Jawaban verifikasi keamanan (CAPTCHA) salah. Silakan coba lagi.",
         );
       }
-      if (password !== "bskji") {
-        throw new Error("Kata sandi akses tidak valid.");
-      }
-      const employees = await fetchEmployeeData();
-      const foundEmployee = employees.find((emp) => emp.nip === nip.trim());
-      if (foundEmployee) {
-        onLogin(foundEmployee.nip);
+
+      const res = await loginWithBackend(nip.trim(), password, {
+        num1: captchaNum1,
+        num2: captchaNum2,
+        answer: captchaAnswer.trim(),
+      });
+
+      if (res.success && res.user) {
+        onLogin(res.user, res.token);
       } else {
-        throw new Error("NIP tidak terdaftar dalam database layanan BSKJI.");
+        throw new Error(res.message || "Autentikasi gagal.");
       }
     } catch (err: any) {
       setError(
         err.message ||
           "Gagal masuk. Silakan periksa koneksi atau data input Anda.",
       );
+      generateCaptcha();
     } finally {
       setLoading(false);
     }

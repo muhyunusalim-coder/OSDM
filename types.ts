@@ -51,3 +51,23 @@ export interface ChartData {
   name: string;
   value: number;
 }
+
+export type UserRole = 'admin' | 'pimpinan' | 'pegawai';
+
+export interface AuthUser {
+  nip: string;
+  nama: string;
+  role: UserRole;
+  jabatan?: string;
+  unitKerja?: string;
+  pangkat?: string;
+  statusKepegawaian?: 'PNS' | 'PPPK' | '-';
+  permissions: string[];
+}
+
+export interface LoginResponse {
+  success: boolean;
+  token?: string;
+  user?: AuthUser;
+  message?: string;
+}

@@ -1,8 +1,5 @@
-import { GOOGLE_SHEET_ID } from '../constants';
 import * as XLSX from 'xlsx';
-
-export const GID_JAM_KERJA = "2054085814";
-export const CSV_EXPORT_URL_JAM_KERJA = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv&gid=${GID_JAM_KERJA}`;
+import { getAuthToken } from '../services/dataService';
 
 export interface DailyAttendance {
   raw: string;
@@ -586,10 +583,15 @@ export function generateMockJamKerjaRecords(): JamKerjaRecord[] {
 
 export const fetchJamKerjaData = async (): Promise<JamKerjaRecord[]> => {
   try {
-    const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=xlsx`;
-    const response = await fetch(url, { credentials: 'omit' });
+    const token = getAuthToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch('/api/data/jam-kerja', { headers });
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error('Gagal mengambil data jam kerja dari server.');
     }
     const arrayBuffer = await response.arrayBuffer();
     const data = new Uint8Array(arrayBuffer);
@@ -614,7 +616,7 @@ export const fetchJamKerjaData = async (): Promise<JamKerjaRecord[]> => {
     
     return allRecords;
   } catch (error) {
-    console.warn("Failed to fetch live Jam Kerja data from Google Sheets XLSX. Loading mock Jam Kerja data.", error);
+    console.warn("Backend Jam Kerja fetch fallback to mock records:", error);
     return generateMockJamKerjaRecords();
   }
 };

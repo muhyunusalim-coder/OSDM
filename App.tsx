@@ -22,14 +22,13 @@ import {
   BellRing,
   CheckCircle,
   Sun,
-  Moon,
-  Users
+  Moon
 } from 'lucide-react';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import LoginPage from './components/LoginPage';
-import { fetchEmployeeData, fetchPromotionData, fetchMasterPegawaiData } from './services/dataService';
-import { Employee, DashboardStats as StatsType } from './types';
+import { fetchEmployeeData, fetchPromotionData, fetchMasterPegawaiData, verifyBackendSession, toggleEmployeeStatusBackend } from './services/dataService';
+import { Employee, DashboardStats as StatsType, AuthUser } from './types';
 import { getRandomQuote } from './utils/quotesGenerator';
 import { TRANSLATIONS, Language, getGreeting } from './utils/translationHelper';
 import { getBirthDateFromNIP, getRetirementAge, calculateTmtPensiun } from './utils/pensionHelpers';
@@ -43,7 +42,6 @@ import KPCalendar from './components/KPCalendar';
 import ReportPage from './components/ReportPage';
 import FAQPage from './components/FAQPage';
 import JamKerjaPage from './components/JamKerjaPage';
-import DaftarSusunanPegawaiPage from './components/DaftarSusunanPegawaiPage';
 
 // Lightweight Loading Component for Suspense
 const PageLoader = () => (
@@ -172,7 +170,7 @@ const getTmtDate = (tmt: string) => {
 };
 
 function App() {
-  const { isAuthenticated, login, logout, userNip } = useAppStore();
+  const { isAuthenticated, user, userRole, login, logout, setUser } = useAppStore();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [promotionEmployees, setPromotionEmployees] = useState<Employee[]>([]);
   const [masterEmployees, setMasterEmployees] = useState<Employee[]>([]);
@@ -186,6 +184,23 @@ function App() {
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [quote, setQuote] = useState(getRandomQuote());
 
+  // Verify backend session on mount
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const sessionUser = await verifyBackendSession();
+        if (sessionUser) {
+          setUser(sessionUser);
+        } else if (isAuthenticated) {
+          logout();
+        }
+      } catch (e) {
+        console.warn('Session verification failed:', e);
+      }
+    };
+    checkSession();
+  }, []);
+
   useEffect(() => {
     if (!isAuthenticated) return;
     const interval = setInterval(() => {
@@ -197,7 +212,7 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<'dashboard' | 'data-kgb' | 'kenaikan-pangkat' | 'faq' | 'report' | 'report-kp' | 'pensiun' | 'kalender-kp' | 'jam-kerja' | 'susunan-pegawai'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'data-kgb' | 'kenaikan-pangkat' | 'faq' | 'report' | 'report-kp' | 'pensiun' | 'kalender-kp' | 'jam-kerja'>('dashboard');
   const [isLayananKgbExpanded, setIsLayananKgbExpanded] = useState(false);
   const [isKenaikanPangkatExpanded, setIsKenaikanPangkatExpanded] = useState(false);
   const [isPensiunExpanded, setIsPensiunExpanded] = useState(false);
@@ -332,19 +347,39 @@ function App() {
         setEmployees(data);
         setPromotionEmployees(promotionData);
         setMasterEmployees(masterData);
-        const savedNip = localStorage.getItem('kgb_user_nip') || sessionStorage.getItem('kgb_user_nip');
-        if (savedNip) {
-          const user = data.find(e => e.nip === savedNip) || masterData.find(e => e.nip === savedNip);
-          if (user) setCurrentUser(user);
+        
+        const effectiveNip = user?.nip || sessionStorage.getItem('kgb_user_nip');
+        if (effectiveNip) {
+          const matchedUser = data.find(e => e.nip === effectiveNip) || masterData.find(e => e.nip === effectiveNip);
+          if (matchedUser) {
+            setCurrentUser(matchedUser);
+          } else if (user) {
+            setCurrentUser({
+              id: `user-${user.nip}`,
+              no: '1',
+              nama: user.nama,
+              nip: user.nip,
+              jabatan: user.jabatan || 'Pegawai',
+              pangkat: user.pangkat || '-',
+              statusKepegawaian: user.statusKepegawaian || 'PNS',
+              masaKerja: '-',
+              gajiLama: 0,
+              gajiBaru: 0,
+              tmt: '-',
+              unitKerja: user.unitKerja || 'BSKJI',
+              status: 'Processed'
+            });
+          }
         }
-      } catch (e) {
+      } catch (e: any) {
         console.error("Failed to load data", e);
+        setNotification(e.message || 'Gagal memuat data dari server.');
       } finally {
         setLoading(false);
       }
     };
     loadData();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user?.nip]);
 
   // Prefetch all route chunks on idle for instant zero-delay navigation
   useEffect(() => {
@@ -366,17 +401,20 @@ function App() {
     }
   }, [isAuthenticated]);
 
-  const handleLogin = React.useCallback((nip: string) => {
-    login(nip);
+  const handleLogin = React.useCallback((authUser: AuthUser, token?: string) => {
+    login(authUser, token);
     setQuote(getRandomQuote());
     setCurrentView('dashboard');
+    setNotification(`Selamat datang kembali, ${authUser.nama.split(' ')[0]}! (${authUser.role.toUpperCase()})`);
   }, [login]);
 
   const handleLogout = React.useCallback(() => {
     logout();
     setEmployees([]);
+    setPromotionEmployees([]);
+    setMasterEmployees([]);
     setCurrentUser(null);
-    setNotification('Anda telah berhasil keluar.');
+    setNotification('Anda telah berhasil keluar dari sesi.');
   }, [logout]);
 
   const handleNewQuote = React.useCallback(() => {
@@ -387,26 +425,22 @@ function App() {
     setQuote(newQuote);
   }, [quote]);
 
-  const handleStatusToggle = React.useCallback((id: string) => {
-    setEmployees(currentEmployees =>
-      currentEmployees.map(emp => {
-        if (emp.id === id) {
-          const newStatus: 'Processed' | 'Upcoming' = emp.status === 'Processed' ? 'Upcoming' : 'Processed';
-          const updatedEmp: Employee = { ...emp, status: newStatus };
-          if (newStatus === 'Processed') {
-            const historyEntry = {
-              date: new Date().toISOString().split('T')[0],
-              amount: emp.gajiBaru,
-              description: `KGB ${new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}`
-            };
-            updatedEmp.salaryHistory = [...(emp.salaryHistory || []), historyEntry];
-          }
-          return updatedEmp;
-        }
-        return emp;
-      })
-    );
-  }, []);
+  const handleStatusToggle = React.useCallback(async (id: string) => {
+    if (userRole !== 'admin') {
+      setNotification('Akses ditolak: Hanya Administrator yang berwenang mengubah status berkas KGB.');
+      return;
+    }
+
+    try {
+      const updated = await toggleEmployeeStatusBackend(id);
+      setEmployees(currentEmployees =>
+        currentEmployees.map(emp => emp.id === id ? { ...emp, status: updated.status } : emp)
+      );
+      setNotification(`Status berkas berhasil diubah menjadi ${updated.status}.`);
+    } catch (err: any) {
+      setNotification(err.message || 'Gagal memutakhirkan status berkas.');
+    }
+  }, [userRole]);
 
   const getMonthName = (tmt: string) => {
     const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
@@ -536,7 +570,6 @@ function App() {
   const viewTitle = useMemo(() => {
     switch (currentView) {
       case 'dashboard': return 'Beranda';
-      case 'susunan-pegawai': return 'Daftar Susunan Pegawai (DSP)';
       case 'data-kgb': return 'Data Layanan KGB';
       case 'kenaikan-pangkat': return 'Data Layanan Kenaikan Pangkat';
       case 'kalender-kp': return 'Kalender Kenaikan Pangkat';
@@ -645,29 +678,6 @@ function App() {
           >
             <LayoutDashboard size={18} strokeWidth={currentView === 'dashboard' ? 2.5 : 2} />
             <span className="text-sm flex-1 text-left">{t('sidebar_dashboard')}</span>
-          </button>
-
-          {/* Menu Daftar Susunan Pegawai */}
-          <button
-            onClick={() => {
-              setCurrentView('susunan-pegawai');
-              setMobileMenuOpen(false);
-              setIsKenaikanPangkatExpanded(false);
-              setIsLayananKgbExpanded(false);
-              setIsPensiunExpanded(false);
-              setIsJamKerjaExpanded(false);
-            }}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-colors ${
-              currentView === 'susunan-pegawai' 
-                ? 'bg-primary-500/10 text-primary-400 font-semibold' 
-                : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'
-            }`}
-          >
-            <Users size={18} strokeWidth={currentView === 'susunan-pegawai' ? 2.5 : 2} />
-            <span className="text-sm flex-1 text-left">Daftar Susunan Pegawai</span>
-            <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-primary-500/20 text-primary-400">
-              {masterEmployees.length > 0 ? masterEmployees.length.toLocaleString('id-ID') : '2.593'}
-            </span>
           </button>
 
           <div className="pt-4 pb-2">
@@ -818,18 +828,29 @@ function App() {
         {/* Sidebar Footer User Card */}
         <div className="p-4 border-t border-gray-800 bg-gray-900/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gray-800 text-gray-300 font-semibold text-sm flex items-center justify-center shrink-0">
-              {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
+            <div className="w-10 h-10 rounded-full bg-gray-800 text-gray-300 font-semibold text-sm flex items-center justify-center shrink-0 border border-gray-700">
+              {(currentUser?.nama || user?.nama || 'A').slice(0, 1).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-100 truncate">
-                {currentUser ? currentUser.nama.split(' ')[0] : 'Pegawai'}
-              </p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-sm font-semibold text-gray-100 truncate">
+                  {currentUser?.nama ? currentUser.nama.split(' ')[0] : user?.nama ? user.nama.split(' ')[0] : 'Pegawai'}
+                </p>
+                <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded tracking-wider uppercase shrink-0 ${
+                  userRole === 'admin'
+                    ? 'bg-purple-900/80 text-purple-300 border border-purple-700/50'
+                    : userRole === 'pimpinan'
+                      ? 'bg-amber-900/80 text-amber-300 border border-amber-700/50'
+                      : 'bg-emerald-900/80 text-emerald-300 border border-emerald-700/50'
+                }`}>
+                  {userRole === 'admin' ? 'Admin' : userRole === 'pimpinan' ? 'Pimpinan' : 'ASN'}
+                </span>
+              </div>
               <p className="text-xs text-gray-400 truncate">
-                {currentUser?.nip || 'BSKJI ASN'}
+                {currentUser?.nip || user?.nip || 'BSKJI ASN'}
               </p>
             </div>
-            <button onClick={handleLogout} title="Keluar / Log Out" className="p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800 rounded-lg transition-colors shrink-0">
+            <button onClick={handleLogout} title="Keluar / Log Out" className="p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800 rounded-lg transition-colors shrink-0 cursor-pointer">
               <LogOut size={18} />
             </button>
           </div>
@@ -992,7 +1013,6 @@ function App() {
                 <Suspense fallback={<PageLoader />}>
                   <>
                     <div key={currentView} className="w-full">
-                      {currentView === 'susunan-pegawai' && <DaftarSusunanPegawaiPage employees={masterEmployees.length > 0 ? masterEmployees : employees} currentUser={currentUser} />}
                       {currentView === 'kenaikan-pangkat' && <PromotionTable employees={promotionEmployees} language={language} />}
                       {currentView === 'kalender-kp' && <KPCalendar language={language} />}
                       {currentView === 'report' && <ReportPage employees={employees} currentUser={currentUser} language={language} />}

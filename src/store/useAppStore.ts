@@ -1,35 +1,74 @@
 import { create } from 'zustand';
+import { AuthUser, UserRole } from '../../types';
+import { getAuthToken, setAuthToken, logoutFromBackend } from '../../services/dataService';
+
+// Ensure legacy localStorage keys are permanently removed
+try {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('kgb_auth_session');
+    localStorage.removeItem('kgb_user_nip');
+  }
+} catch (e) {
+  // Ignore
+}
 
 interface AppState {
   isAuthenticated: boolean;
+  user: AuthUser | null;
   userNip: string | null;
-  login: (nip: string) => void;
+  userRole: UserRole;
+  token: string | null;
+  login: (user: AuthUser, token?: string) => void;
   logout: () => void;
+  setUser: (user: AuthUser | null) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  isAuthenticated: localStorage.getItem('kgb_auth_session') === 'true' || sessionStorage.getItem('kgb_auth_session') === 'true',
-  userNip: localStorage.getItem('kgb_user_nip') || sessionStorage.getItem('kgb_user_nip') || null,
-  login: (nip: string) => {
-    try {
-      localStorage.setItem('kgb_auth_session', 'true');
-      localStorage.setItem('kgb_user_nip', nip);
-      sessionStorage.setItem('kgb_auth_session', 'true');
-      sessionStorage.setItem('kgb_user_nip', nip);
-    } catch (e) {
-      console.warn('Error saving login session:', e);
+  isAuthenticated: !!getAuthToken(),
+  user: null,
+  userNip: null,
+  userRole: 'pegawai',
+  token: getAuthToken(),
+
+  login: (user: AuthUser, token?: string) => {
+    if (token) {
+      setAuthToken(token);
     }
-    set({ isAuthenticated: true, userNip: nip });
+    set({
+      isAuthenticated: true,
+      user,
+      userNip: user.nip,
+      userRole: user.role,
+      token: token || getAuthToken(),
+    });
   },
+
   logout: () => {
-    try {
-      localStorage.removeItem('kgb_auth_session');
-      localStorage.removeItem('kgb_user_nip');
-      sessionStorage.removeItem('kgb_auth_session');
-      sessionStorage.removeItem('kgb_user_nip');
-    } catch (e) {
-      console.warn('Error clearing login session:', e);
+    logoutFromBackend();
+    set({
+      isAuthenticated: false,
+      user: null,
+      userNip: null,
+      userRole: 'pegawai',
+      token: null,
+    });
+  },
+
+  setUser: (user: AuthUser | null) => {
+    if (user) {
+      set({
+        isAuthenticated: true,
+        user,
+        userNip: user.nip,
+        userRole: user.role,
+      });
+    } else {
+      set({
+        isAuthenticated: false,
+        user: null,
+        userNip: null,
+        userRole: 'pegawai',
+      });
     }
-    set({ isAuthenticated: false, userNip: null });
   },
 }));

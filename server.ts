@@ -1,0 +1,792 @@
+import express, { Request, Response, NextFunction } from 'express';
+import path from 'path';
+import crypto from 'crypto';
+import { createServer as createViteServer } from 'vite';
+
+// Server Configuration
+const app = express();
+const PORT = 3000;
+const AUTH_SECRET = process.env.AUTH_SECRET || 'bskji_kemperin_secure_jwt_token_secret_2026_@!';
+const SERVER_AUTH_PASSWORD = process.env.AUTH_DEFAULT_PASSWORD || 'bskji';
+const ADMIN_NIPS = (process.env.ADMIN_NIPS || '198501012010011001,198203152009021002,198011112005011003,199201012015022001').split(',').map(n => n.trim());
+
+// Google Sheets Config (Held securely in server only - NEVER sent to frontend)
+const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID || "1JfQ-DU2LrLhdc89JlGaKcuGuRhw6w2kB_iU6NWurL8U";
+const GID_KGB = process.env.GID_KGB || "102066519";
+const GID_KP = process.env.GID_KP || "451178497";
+const SHEET_MASTER_PEGAWAI = process.env.SHEET_MASTER_PEGAWAI || "Data Pegawai BSKJI";
+
+const CSV_URL_KGB = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv&gid=${GID_KGB}`;
+const CSV_URL_KP = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv&gid=${GID_KP}`;
+const CSV_URL_MASTER = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_MASTER_PEGAWAI)}`;
+
+// ==========================================
+// SECURITY HEADERS & MIDDLEWARE
+// ==========================================
+app.disable('x-powered-by');
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  // Strict Security Headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://generativelanguage.googleapis.com;"
+  );
+  next();
+});
+
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
+// Rate Limiting for Auth Endpoint (In-Memory IP Bucket)
+interface RateLimitRecord {
+  count: number;
+  resetTime: number;
+}
+const authRateLimits = new Map<string, RateLimitRecord>();
+
+const rateLimitAuth = (req: Request, res: Response, next: NextFunction) => {
+  const ip = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000; // 15 minutes
+  const maxAttempts = 20;
+
+  const record = authRateLimits.get(ip) || { count: 0, resetTime: now + windowMs };
+  if (now > record.resetTime) {
+    record.count = 1;
+    record.resetTime = now + windowMs;
+  } else {
+    record.count += 1;
+  }
+  authRateLimits.set(ip, record);
+
+  if (record.count > maxAttempts) {
+    return res.status(429).json({
+      success: false,
+      message: 'Terlalu banyak percobaan masuk. Silakan tunggu beberapa saat lagi demi alasan keamanan.'
+    });
+  }
+  next();
+};
+
+// ==========================================
+// TOKEN CRYPTOGRAPHY (Node.js HMAC-SHA256)
+// ==========================================
+interface TokenPayload {
+  nip: string;
+  nama: string;
+  role: 'admin' | 'pimpinan' | 'pegawai';
+  exp: number;
+}
+
+const generateAuthToken = (payload: Omit<TokenPayload, 'exp'>): string => {
+  const exp = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
+  const fullPayload: TokenPayload = { ...payload, exp };
+  const data = Buffer.from(JSON.stringify(fullPayload)).toString('base64url');
+  const signature = crypto.createHmac('sha256', AUTH_SECRET).update(data).digest('base64url');
+  return `${data}.${signature}`;
+};
+
+const verifyAuthToken = (token: string): TokenPayload | null => {
+  try {
+    if (!token || !token.includes('.')) return null;
+    const [data, signature] = token.split('.');
+    const expectedSig = crypto.createHmac('sha256', AUTH_SECRET).update(data).digest('base64url');
+    if (signature !== expectedSig) return null;
+    
+    const payload: TokenPayload = JSON.parse(Buffer.from(data, 'base64url').toString('utf8'));
+    if (Date.now() > payload.exp) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+};
+
+// Auth Middleware
+export interface AuthenticatedRequest extends Request {
+  user?: TokenPayload;
+}
+
+const requireAuth = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  const authHeader = req.headers['authorization'];
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, message: 'Akses tidak diizinkan. Token otentikasi diperlukan.' });
+  }
+  const token = authHeader.substring(7);
+  const payload = verifyAuthToken(token);
+  if (!payload) {
+    return res.status(401).json({ success: false, message: 'Sesi telah berakhir atau token tidak valid. Silakan masuk kembali.' });
+  }
+  req.user = payload;
+  next();
+};
+
+// ==========================================
+// SERVER-SIDE DATA CACHE & PARSERS
+// ==========================================
+let serverCachedEmployees: { data: any[]; timestamp: number } | null = null;
+let serverCachedPromotions: { data: any[]; timestamp: number } | null = null;
+let serverCachedMaster: { data: any[]; timestamp: number } | null = null;
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+// CSV Parsers
+const determineStatusKepegawaian = (pangkat: string): 'PNS' | 'PPPK' | '-' => {
+  const p = (pangkat || '').toUpperCase();
+  const pppkRegex = /(^|[\s(\/])(V|VI|VII|VIII|IX|X|XI|XII)($|[\s)\/])/;
+  const pnsRegex = /(^|[\s(\/])(I|II|III|IV)($|[\s)\/])/;
+  if (pppkRegex.test(p)) return 'PPPK';
+  if (pnsRegex.test(p)) return 'PNS';
+  return '-';
+};
+
+const parseKgbCSV = (csvText: string): any[] => {
+  const lines = csvText.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
+  
+  const getColIndex = (keywords: string[]) => {
+    for (const kw of keywords) {
+      const idx = headers.findIndex(h => h.includes(kw));
+      if (idx !== -1) return idx;
+    }
+    return -1;
+  };
+
+  const idxNama = getColIndex(['nama', 'name', 'pegawai']);
+  const idxNip = getColIndex(['nip', 'nomor induk']);
+  const idxJabatan = getColIndex(['jabatan', 'pekerjaan', 'role', 'position']); 
+  const idxPangkat = getColIndex(['pangkat', 'gol', 'golongan']);
+  const idxGajiLama = getColIndex(['gaji lama', 'lama', 'old']);
+  const idxGajiBaru = getColIndex(['gaji baru', 'baru', 'new']);
+  const idxMkThn = getColIndex(['masa kerja tahun', 'mk tahun', 'mk thn', 'mkg tahun', 'mk_thn', 'tahun']);
+  const idxMkBln = getColIndex(['masa kerja bulan', 'mk bulan', 'mk bln', 'mkg bulan', 'mk_bln', 'bulan']);
+  const idxMasaKerja = getColIndex(['masa kerja', 'mkg', 'mk', 'years', 'working']); 
+  const idxTmt = getColIndex(['tmt kgb baru', 'tmt baru', 'tmt', 'tanggal', 'date']);
+  const idxTmtCpns = getColIndex(['tmt cpns', 'cpns', 'pengangkatan']);
+  const idxMkgLama = getColIndex(['mkg lama', 'masa kerja golongan (mkg) lama', 'mkg_lama']);
+  const idxMkgBaru = getColIndex(['mkg baru', 'masa kerja golongan (mkg) baru', 'mkg_baru']);
+  const idxTmtKgbTerakhir = getColIndex(['tmt kgb terakhir', 'kgb terakhir', 'tmt lama']);
+  const idxUnit = getColIndex(['unit satker', 'unit kerja', 'unit', 'kerja', 'skpd']);
+  const idxNo = getColIndex(['no.', 'no', 'nomor']);
+  const idxStatus = getColIndex(['status kgb', 'status', 'keterangan', 'ket']);
+
+  return lines.slice(1).map((line, index) => {
+    const values: string[] = [];
+    let current = '';
+    let inQuote = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') inQuote = !inQuote;
+      else if (char === ',' && !inQuote) {
+        values.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    values.push(current.trim());
+    const clean = (v: string) => v ? v.replace(/"/g, '').trim() : '';
+    const parseMoney = (v: string) => {
+      if (!v) return 0;
+      return parseInt(v.replace(/[^0-9]/g, '') || '0', 10);
+    };
+
+    const tmtStr = clean(values[idxTmt] || '');
+    const rawStatus = clean(values[idxStatus] || '');
+    const normalizedStatus = rawStatus.toLowerCase();
+    const pangkatStr = clean(values[idxPangkat] || '-');
+
+    let appStatus: 'Pending' | 'Processed' | 'Upcoming' = 'Upcoming';
+    if (normalizedStatus.match(/sudah|selesai|terbit|sk|ok|done/)) {
+      appStatus = 'Processed';
+    } else {
+      appStatus = 'Upcoming';
+    }
+
+    let mkFinal = '-';
+    if (idxMkThn !== -1 && idxMkBln !== -1) {
+      const thn = clean(values[idxMkThn]);
+      const bln = clean(values[idxMkBln]);
+      if (thn || bln) mkFinal = `${thn || '0'} Tahun ${bln || '0'} Bulan`;
+    } 
+    if (mkFinal === '-' && idxMasaKerja !== -1) {
+      mkFinal = clean(values[idxMasaKerja] || '-');
+    }
+
+    const salaryHistory = [
+      { date: '2022-03-01', amount: parseMoney(clean(values[idxGajiLama])) - 100000, description: 'KGB 2022' },
+      { date: '2024-03-01', amount: parseMoney(clean(values[idxGajiLama])), description: 'KGB 2024' }
+    ];
+
+    return {
+      id: `emp-${clean(values[idxNip]) || 'empty'}-${index}`,
+      no: clean(values[idxNo] || (index + 1).toString()),
+      nama: clean(values[idxNama] || 'Tanpa Nama'),
+      nip: clean(values[idxNip] || '-'),
+      jabatan: clean(values[idxJabatan] || '-'),
+      pangkat: pangkatStr,
+      statusKepegawaian: determineStatusKepegawaian(pangkatStr),
+      masaKerja: mkFinal, 
+      gajiLama: parseMoney(clean(values[idxGajiLama])),
+      gajiBaru: parseMoney(clean(values[idxGajiBaru])),
+      tmt: tmtStr || '-',
+      tmtCpns: idxTmtCpns !== -1 ? clean(values[idxTmtCpns]) : undefined,
+      mkgLama: idxMkgLama !== -1 ? clean(values[idxMkgLama]) : undefined,
+      mkgBaru: idxMkgBaru !== -1 ? clean(values[idxMkgBaru]) : undefined,
+      tmtKgbTerakhir: idxTmtKgbTerakhir !== -1 ? clean(values[idxTmtKgbTerakhir]) : undefined,
+      unitKerja: clean(values[idxUnit] || '-'),
+      status: appStatus,
+      statusKeterangan: rawStatus,
+      salaryHistory: salaryHistory
+    };
+  });
+};
+
+const parsePromotionCSV = (csvText: string): any[] => {
+  const lines = csvText.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
+  
+  const getColIndex = (keywords: string[]) => {
+    for (const kw of keywords) {
+      const idx = headers.findIndex(h => h.includes(kw));
+      if (idx !== -1) return idx;
+    }
+    return -1;
+  };
+
+  const idxNo = getColIndex(['no']);
+  const idxNama = getColIndex(['nama']);
+  const idxNip = getColIndex(['nip']);
+  const idxPangkatLama = getColIndex(['pangkat lama']);
+  const idxPangkatBaru = getColIndex(['pangkat baru']);
+  const idxUnit = getColIndex(['unit']);
+  const idxTmt = getColIndex(['tmt']);
+  const idxSuratUsulan = getColIndex(['surat usulan', 'usulan']);
+  const idxInputSiasn = getColIndex(['input siasn', 'siasn']);
+  const idxStatusSiasn = getColIndex(['status siasn', 'status']);
+
+  return lines.slice(1).map((line, index) => {
+    const values: string[] = [];
+    let current = '';
+    let inQuote = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') inQuote = !inQuote;
+      else if (char === ',' && !inQuote) {
+        values.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    values.push(current.trim());
+    const clean = (v: string) => v ? v.replace(/"/g, '').trim() : '';
+
+    const pangkatBaruStr = clean(values[idxPangkatBaru] || '-');
+    const rawStatus = clean(values[idxStatusSiasn] || '');
+    const normalizedStatus = rawStatus.toLowerCase();
+
+    let appStatus: 'Pending' | 'Processed' | 'Upcoming' = 'Upcoming';
+    if (normalizedStatus.match(/sudah|selesai|terbit|sk|ok|done/)) {
+      appStatus = 'Processed';
+    } else if (normalizedStatus.match(/batal|tolak/)) {
+      appStatus = 'Pending';
+    }
+
+    return {
+      id: `promo-${clean(values[idxNip]) || 'empty'}-${index}`,
+      no: clean(values[idxNo] || (index + 1).toString()),
+      nama: clean(values[idxNama] || 'Tanpa Nama'),
+      nip: clean(values[idxNip] || '-'),
+      jabatan: '-',
+      pangkat: pangkatBaruStr,
+      pangkatLama: clean(values[idxPangkatLama] || '-'),
+      pangkatBaru: pangkatBaruStr,
+      suratUsulan: clean(values[idxSuratUsulan] || '-'),
+      inputSiasn: clean(values[idxInputSiasn] || '-'),
+      statusSiasn: rawStatus,
+      statusKepegawaian: determineStatusKepegawaian(pangkatBaruStr),
+      masaKerja: '-',
+      gajiLama: 0,
+      gajiBaru: 0,
+      tmt: clean(values[idxTmt] || '-'),
+      unitKerja: clean(values[idxUnit] || '-'),
+      status: appStatus,
+      statusKeterangan: rawStatus
+    };
+  });
+};
+
+const formatPangkatGolongan = (raw: string): string => {
+  const r = (raw || '').trim().toLowerCase();
+  const map: { [key: string]: string } = {
+    '4e': 'IV/e (Pembina Utama)',
+    '4d': 'IV/d (Pembina Utama Madya)',
+    '4c': 'IV/c (Pembina Utama Muda)',
+    '4b': 'IV/b (Pembina Tk. I)',
+    '4a': 'IV/a (Pembina)',
+    '3d': 'III/d (Penata Tk. I)',
+    '3c': 'III/c (Penata)',
+    '3b': 'III/b (Penata Muda Tk. I)',
+    '3a': 'III/a (Penata Muda)',
+    '2d': 'II/d (Pengatur Tk. I)',
+    '2c': 'II/c (Pengatur)',
+    '2b': 'II/b (Pengatur Muda Tk. I)',
+    '2a': 'II/a (Pengatur Muda)',
+    '1d': 'I/d (Juru Tk. I)',
+    '1c': 'I/c (Juru)',
+    '1b': 'I/b (Juru Muda Tk. I)',
+    '1a': 'I/a (Juru Muda)',
+    '5': 'Golongan V (PPPK)',
+    '7': 'Golongan VII (PPPK)',
+    '9': 'Golongan IX (PPPK)',
+    'ix': 'Golongan IX (PPPK)',
+    'vii': 'Golongan VII (PPPK)',
+    'v': 'Golongan V (PPPK)',
+  };
+  return map[r] || (raw ? `Golongan ${raw}` : '-');
+};
+
+const determineJenjangPendidikan = (pend: string): string => {
+  const p = (pend || '').toUpperCase();
+  if (p.includes('S3') || p.includes('S-3') || p.includes('DOKTOR')) return 'S3 (Doktor)';
+  if (p.includes('S2') || p.includes('S-2') || p.includes('MAGISTER')) return 'S2 (Magister)';
+  if (p.includes('S1') || p.includes('S-1') || p.includes('SARJANA') || p.includes('D4') || p.includes('D-IV')) return 'S1 / D4 (Sarjana)';
+  if (p.includes('D3') || p.includes('D-III') || p.includes('DIPLOMA')) return 'D3 (Diploma)';
+  if (p.includes('SMA') || p.includes('SMK') || p.includes('SLTA') || p.includes('STM') || p.includes('MADRASAH ALIYAH')) return 'SMA / SMK';
+  if (p.includes('SMP') || p.includes('SLTP')) return 'SMP';
+  if (p.includes('SD')) return 'SD';
+  return '-';
+};
+
+const parseMasterPegawaiCSV = (csvText: string): any[] => {
+  const rows: string[][] = [];
+  let currentRow: string[] = [];
+  let currentField = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < csvText.length; i++) {
+    const char = csvText[i];
+    const nextChar = csvText[i + 1];
+    
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        currentField += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      currentRow.push(currentField.trim());
+      currentField = '';
+    } else if ((char === '\r' || char === '\n') && !inQuotes) {
+      if (char === '\r' && nextChar === '\n') i++;
+      currentRow.push(currentField.trim());
+      if (currentRow.some(f => f.length > 0)) rows.push(currentRow);
+      currentRow = [];
+      currentField = '';
+    } else {
+      currentField += char;
+    }
+  }
+  if (currentField || currentRow.length) {
+    currentRow.push(currentField.trim());
+    if (currentRow.some(f => f.length > 0)) rows.push(currentRow);
+  }
+
+  if (rows.length < 2) return [];
+
+  const headers = rows[0].map(h => h.toLowerCase().replace(/[^a-z0-9]/g, ''));
+  const getColIndex = (keywords: string[]) => {
+    for (const kw of keywords) {
+      const idx = headers.findIndex(h => h.includes(kw));
+      if (idx !== -1) return idx;
+    }
+    return -1;
+  };
+
+  const idxNo = getColIndex(['no']);
+  const idxNama = getColIndex(['nama']);
+  const idxNip = getColIndex(['nip']);
+  const idxGenderUsia = getColIndex(['jeniskelamin', 'usia', 'gender']);
+  const idxPangkat = getColIndex(['pangkat', 'gol', 'ruang']);
+  const idxJabatan = getColIndex(['jabatan', 'posisi', 'role']);
+  const idxTmt = getColIndex(['tmt']);
+  const idxMasaKerja = getColIndex(['masakerja', 'mk']);
+  const idxPendidikan = getColIndex(['pendidikan']);
+  const idxDiklat = getColIndex(['diklat']);
+
+  const clean = (val?: string) => (val || '').replace(/^["']|["']$/g, '').trim();
+
+  return rows.slice(1).map((values, index) => {
+    const rawNo = idxNo !== -1 ? clean(values[idxNo]) : (index + 1).toString();
+    const rawNama = idxNama !== -1 ? clean(values[idxNama]) : 'Tanpa Nama';
+    const rawNip = idxNip !== -1 ? clean(values[idxNip]) : '-';
+    const rawGenderUsia = idxGenderUsia !== -1 ? clean(values[idxGenderUsia]) : '';
+    const rawPangkat = idxPangkat !== -1 ? clean(values[idxPangkat]) : '';
+    const rawJabatan = idxJabatan !== -1 ? clean(values[idxJabatan]) : '-';
+    const rawTmt = idxTmt !== -1 ? clean(values[idxTmt]) : '-';
+    const rawMasaKerja = idxMasaKerja !== -1 ? clean(values[idxMasaKerja]) : '-';
+    const rawPendidikan = idxPendidikan !== -1 ? clean(values[idxPendidikan]) : '';
+    const rawDiklat = idxDiklat !== -1 ? clean(values[idxDiklat]) : '';
+
+    let jenisKelamin = '-';
+    let usia: string | number = '-';
+    if (rawGenderUsia) {
+      const parts = rawGenderUsia.split('/');
+      jenisKelamin = parts[0]?.trim() || '-';
+      if (parts[1]) {
+        const ageMatch = parts[1].match(/(\d+)/);
+        usia = ageMatch ? parseInt(ageMatch[1], 10) : parts[1].trim();
+      }
+    }
+
+    const golLower = rawPangkat.toLowerCase();
+    const isPPPK = ['5', '7', '9', 'v', 'vii', 'ix', 'x', 'xi', 'xii'].includes(golLower) || rawNip.includes('202521');
+    const statusKepegawaian: 'PNS' | 'PPPK' = isPPPK ? 'PPPK' : 'PNS';
+    const formattedPangkat = formatPangkatGolongan(rawPangkat);
+    const firstEduLine = rawPendidikan.split('\n')[0] || rawPendidikan;
+    const jenjangPendidikan = determineJenjangPendidikan(rawPendidikan);
+
+    return {
+      id: `master-emp-${rawNip || index}`,
+      no: rawNo || (index + 1).toString(),
+      nama: rawNama,
+      nip: rawNip,
+      jabatan: rawJabatan,
+      pangkat: formattedPangkat,
+      golonganRaw: rawPangkat,
+      statusKepegawaian,
+      jenisKelamin,
+      usia,
+      pendidikan: rawPendidikan,
+      pendidikanTerakhir: firstEduLine,
+      jenjangPendidikan,
+      diklatStruktural: rawDiklat,
+      masaKerja: rawMasaKerja,
+      tmt: rawTmt,
+      unitKerja: 'Badan Standardisasi dan Kebijakan Jasa Industri (BSKJI)',
+      gajiLama: 0,
+      gajiBaru: 0,
+      status: 'Upcoming'
+    };
+  });
+};
+
+// Internal Fetchers with server caching
+const getServerEmployees = async (): Promise<any[]> => {
+  if (serverCachedEmployees && (Date.now() - serverCachedEmployees.timestamp < CACHE_TTL_MS)) {
+    return serverCachedEmployees.data;
+  }
+  try {
+    const res = await fetch(CSV_URL_KGB);
+    if (!res.ok) throw new Error('Failed to fetch KGB sheet');
+    const text = await res.text();
+    const parsed = parseKgbCSV(text);
+    if (parsed.length > 0) {
+      serverCachedEmployees = { data: parsed, timestamp: Date.now() };
+      return parsed;
+    }
+  } catch (err) {
+    console.error('Server error fetching KGB sheet:', err);
+    if (serverCachedEmployees) return serverCachedEmployees.data;
+  }
+  return [];
+};
+
+const getServerPromotions = async (): Promise<any[]> => {
+  if (serverCachedPromotions && (Date.now() - serverCachedPromotions.timestamp < CACHE_TTL_MS)) {
+    return serverCachedPromotions.data;
+  }
+  try {
+    const res = await fetch(CSV_URL_KP);
+    if (!res.ok) throw new Error('Failed to fetch KP sheet');
+    const text = await res.text();
+    const parsed = parsePromotionCSV(text);
+    if (parsed.length > 0) {
+      serverCachedPromotions = { data: parsed, timestamp: Date.now() };
+      return parsed;
+    }
+  } catch (err) {
+    console.error('Server error fetching KP sheet:', err);
+    if (serverCachedPromotions) return serverCachedPromotions.data;
+  }
+  return [];
+};
+
+const getServerMasterPegawai = async (): Promise<any[]> => {
+  if (serverCachedMaster && (Date.now() - serverCachedMaster.timestamp < CACHE_TTL_MS)) {
+    return serverCachedMaster.data;
+  }
+  try {
+    const res = await fetch(CSV_URL_MASTER);
+    if (!res.ok) throw new Error('Failed to fetch Master sheet');
+    const text = await res.text();
+    const parsed = parseMasterPegawaiCSV(text);
+    if (parsed.length > 0) {
+      serverCachedMaster = { data: parsed, timestamp: Date.now() };
+      return parsed;
+    }
+  } catch (err) {
+    console.error('Server error fetching Master sheet:', err);
+    if (serverCachedMaster) return serverCachedMaster.data;
+  }
+  return [];
+};
+
+// ==========================================
+// API ROUTES
+// ==========================================
+
+// 1. Authentication Login (Backend-controlled auth)
+app.post('/api/auth/login', rateLimitAuth, async (req: Request, res: Response) => {
+  try {
+    const { nip, password, captchaNum1, captchaNum2, captchaAnswer } = req.body;
+
+    if (!nip || !password) {
+      return res.status(400).json({ success: false, message: 'NIP dan kata sandi wajib diisi.' });
+    }
+
+    // Verify Captcha
+    if (
+      captchaNum1 !== undefined &&
+      captchaNum2 !== undefined &&
+      captchaAnswer !== undefined
+    ) {
+      if (parseInt(captchaAnswer, 10) !== parseInt(captchaNum1, 10) + parseInt(captchaNum2, 10)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Jawaban verifikasi keamanan (CAPTCHA) tidak sesuai. Silakan coba lagi.'
+        });
+      }
+    }
+
+    // Secure Backend Password Verification (Never exposed to frontend)
+    const isValidPassword = password === SERVER_AUTH_PASSWORD || (process.env.AUTH_MASTER_PASSWORD && password === process.env.AUTH_MASTER_PASSWORD);
+    if (!isValidPassword) {
+      return res.status(401).json({ success: false, message: 'Kredensial atau kata sandi akses tidak valid.' });
+    }
+
+    // Check Employee existence across KGB and Master databases
+    const cleanNip = String(nip).replace(/\D/g, '').trim();
+    const [kgbEmps, masterEmps] = await Promise.all([getServerEmployees(), getServerMasterPegawai()]);
+    
+    let matchedEmp = kgbEmps.find((e: any) => e.nip === cleanNip) || masterEmps.find((e: any) => e.nip === cleanNip);
+
+    if (!matchedEmp) {
+      return res.status(404).json({
+        success: false,
+        message: `NIP ${cleanNip} tidak terdaftar dalam pangkalan data resmi kepegawaian BSKJI.`
+      });
+    }
+
+    // Determine Role & Permissions
+    let role: 'admin' | 'pimpinan' | 'pegawai' = 'pegawai';
+    const jabatanLower = (matchedEmp.jabatan || '').toLowerCase();
+
+    if (
+      ADMIN_NIPS.includes(cleanNip) ||
+      jabatanLower.includes('admin') ||
+      jabatanLower.includes('kepegawaian') ||
+      jabatanLower.includes('pengelola kepegawaian')
+    ) {
+      role = 'admin';
+    } else if (
+      jabatanLower.includes('kepala') ||
+      jabatanLower.includes('direktur') ||
+      jabatanLower.includes('sekretaris') ||
+      jabatanLower.includes('koordinator')
+    ) {
+      role = 'pimpinan';
+    }
+
+    const permissions = role === 'admin'
+      ? ['view_all', 'edit_status', 'export_data', 'view_reports', 'manage_system']
+      : role === 'pimpinan'
+        ? ['view_all', 'view_reports', 'export_data']
+        : ['view_own', 'view_general_stats', 'view_dsp'];
+
+    const userProfile = {
+      nip: cleanNip,
+      nama: matchedEmp.nama,
+      role,
+      jabatan: matchedEmp.jabatan,
+      unitKerja: matchedEmp.unitKerja,
+      pangkat: matchedEmp.pangkat,
+      statusKepegawaian: matchedEmp.statusKepegawaian,
+      permissions
+    };
+
+    const token = generateAuthToken({
+      nip: cleanNip,
+      nama: matchedEmp.nama,
+      role
+    });
+
+    return res.json({
+      success: true,
+      token,
+      user: userProfile
+    });
+  } catch (err: any) {
+    console.error('Login error:', err);
+    return res.status(500).json({ success: false, message: 'Terjadi kesalahan sistem pada server otentikasi.' });
+  }
+});
+
+// 2. Auth Session Check / Current User
+app.get('/api/auth/me', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userPayload = req.user!;
+    const [kgbEmps, masterEmps] = await Promise.all([getServerEmployees(), getServerMasterPegawai()]);
+    const matchedEmp = kgbEmps.find((e: any) => e.nip === userPayload.nip) || masterEmps.find((e: any) => e.nip === userPayload.nip);
+
+    const permissions = userPayload.role === 'admin'
+      ? ['view_all', 'edit_status', 'export_data', 'view_reports', 'manage_system']
+      : userPayload.role === 'pimpinan'
+        ? ['view_all', 'view_reports', 'export_data']
+        : ['view_own', 'view_general_stats', 'view_dsp'];
+
+    return res.json({
+      success: true,
+      user: {
+        nip: userPayload.nip,
+        nama: userPayload.nama,
+        role: userPayload.role,
+        jabatan: matchedEmp?.jabatan || '-',
+        unitKerja: matchedEmp?.unitKerja || 'BSKJI',
+        pangkat: matchedEmp?.pangkat || '-',
+        statusKepegawaian: matchedEmp?.statusKepegawaian || '-',
+        permissions
+      }
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Gagal memverifikasi sesi otentikasi.' });
+  }
+});
+
+// 3. Auth Logout
+app.post('/api/auth/logout', requireAuth, (_req: Request, res: Response) => {
+  return res.json({ success: true, message: 'Sesi berhasil diakhiri.' });
+});
+
+// 4. Data Endpoints with Role-Based Access Control
+app.get('/api/data/employees', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const data = await getServerEmployees();
+    const user = req.user!;
+
+    // Role-based data sanitization:
+    // Admin & Pimpinan see full salary details.
+    // Regular pegawai see non-sensitive listing with their own salary record intact.
+    if (user.role === 'admin' || user.role === 'pimpinan') {
+      return res.json(data);
+    }
+
+    const sanitized = data.map((emp: any) => {
+      if (emp.nip === user.nip) {
+        return emp;
+      }
+      return {
+        ...emp,
+        gajiLama: 0,
+        gajiBaru: 0,
+        salaryHistory: []
+      };
+    });
+
+    return res.json(sanitized);
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Gagal memuat data layanan KGB.' });
+  }
+});
+
+app.get('/api/data/promotions', requireAuth, async (_req: AuthenticatedRequest, res: Response) => {
+  try {
+    const data = await getServerPromotions();
+    return res.json(data);
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Gagal memuat data layanan Kenaikan Pangkat.' });
+  }
+});
+
+app.get('/api/data/master-pegawai', requireAuth, async (_req: AuthenticatedRequest, res: Response) => {
+  try {
+    const data = await getServerMasterPegawai();
+    return res.json(data);
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Gagal memuat data master pegawai BSKJI.' });
+  }
+});
+
+app.get('/api/data/jam-kerja', requireAuth, async (_req: AuthenticatedRequest, res: Response) => {
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=xlsx`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch spreadsheet xlsx');
+    const arrayBuffer = await response.arrayBuffer();
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    return res.send(Buffer.from(arrayBuffer));
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Gagal memuat data jam kerja dari server.' });
+  }
+});
+
+// 5. Protected Administrative Action: Toggle KGB Status
+app.post('/api/data/employees/:id/toggle-status', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  const user = req.user!;
+  if (user.role !== 'admin') {
+    return res.status(403).json({
+      success: false,
+      message: 'Akses ditolak. Hanya Administrator yang memiliki hak akses untuk memutakhirkan status berkas KGB.'
+    });
+  }
+
+  const { id } = req.params;
+  const employees = await getServerEmployees();
+  const empIndex = employees.findIndex((e: any) => e.id === id);
+
+  if (empIndex === -1) {
+    return res.status(404).json({ success: false, message: 'Data pegawai tidak ditemukan.' });
+  }
+
+  const currentStatus = employees[empIndex].status;
+  const newStatus = currentStatus === 'Processed' ? 'Upcoming' : 'Processed';
+  employees[empIndex].status = newStatus;
+
+  return res.json({
+    success: true,
+    message: `Status berhasil diubah menjadi ${newStatus}.`,
+    employee: employees[empIndex]
+  });
+});
+
+// ==========================================
+// VITE MIDDLEWARE & STATIC SERVING
+// ==========================================
+async function startServer() {
+  if (process.env.NODE_ENV !== 'production') {
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: 'spa',
+    });
+    app.use(vite.middlewares);
+  } else {
+    const distPath = path.join(process.cwd(), 'dist');
+    app.use(express.static(distPath));
+    app.get('*all', (_req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  }
+
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`BSKJI Kepegawaian Server running securely on http://0.0.0.0:${PORT}`);
+  });
+}
+
+startServer();

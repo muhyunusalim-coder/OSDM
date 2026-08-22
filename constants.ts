@@ -1,15 +1,17 @@
 
-export const GOOGLE_SHEET_ID = "1JfQ-DU2LrLhdc89JlGaKcuGuRhw6w2kB_iU6NWurL8U";
-export const GID = "102066519";
-export const CSV_EXPORT_URL = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv&gid=${GID}`;
+// API Endpoints (All communication routes through backend securely)
+export const API_BASE_URL = "/api";
+export const API_ENDPOINTS = {
+  AUTH_LOGIN: "/api/auth/login",
+  AUTH_ME: "/api/auth/me",
+  AUTH_LOGOUT: "/api/auth/logout",
+  EMPLOYEES: "/api/data/employees",
+  PROMOTIONS: "/api/data/promotions",
+  MASTER_PEGAWAI: "/api/data/master-pegawai",
+  TOGGLE_STATUS: (id: string) => `/api/data/employees/${id}/toggle-status`,
+};
 
-export const GID_KENAIKAN_PANGKAT = "451178497";
-export const CSV_EXPORT_URL_KENAIKAN_PANGKAT = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv&gid=${GID_KENAIKAN_PANGKAT}`;
-
-export const SHEET_NAME_MASTER_PEGAWAI = "Data Pegawai BSKJI";
-export const CSV_EXPORT_URL_MASTER_PEGAWAI = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME_MASTER_PEGAWAI)}`;
-
-// Fallback mock data in case the sheet is not public or CORS fails
+// Fallback mock data in case offline or backend bootstrapping
 export const MOCK_EMPLOYEES = [
   {
     "No": "1",
