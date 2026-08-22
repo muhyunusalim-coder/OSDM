@@ -5,7 +5,6 @@ import { fetchJamKerjaData, JamKerjaRecord, DailyAttendance, isWeekendForMonth, 
 import * as XLSX from 'xlsx';
 
 export function useJamKerja(language: 'id' | 'en' = 'id') {
-
   const t = (key: string) => {
     return LOCAL_TRANSLATIONS[language]?.[key] || LOCAL_TRANSLATIONS['id']?.[key] || key;
   };
@@ -13,7 +12,6 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
   const [data, setData] = useState<JamKerjaRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMonth, setSelectedMonth] = useState<string>('Semua');
   const [selectedUnitKerja, setSelectedUnitKerja] = useState<string>('Semua');
@@ -51,7 +49,6 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
       } catch (cacheErr) {
         console.warn("Failed to load cached jam kerja data:", cacheErr);
       }
-
       if (cachedData.length === 0) {
         setLoading(true);
       }
@@ -113,9 +110,7 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
   // Filter & Search
   const filteredRecords = useMemo(() => {
     return monthFilteredData.filter(record => {
-      const matchSearch = 
-        record.nama.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        record.nip.includes(searchTerm);
+      const matchSearch = record.nama.toLowerCase().includes(searchTerm.toLowerCase()) || record.nip.includes(searchTerm);
       return matchSearch;
     });
   }, [monthFilteredData, searchTerm]);
@@ -127,7 +122,6 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
       sortableItems.sort((a: any, b: any) => {
         let valA = a[sortConfig.key];
         let valB = b[sortConfig.key];
-        
         if (typeof valA === 'string') {
           return sortConfig.direction === 'asc' 
             ? valA.localeCompare(valB) 
@@ -180,7 +174,6 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
     let sumHadir = 0;
     let sumLeave = 0;
     let requiredDaysTotal = 0;
-
     let bestEmployee: JamKerjaRecord | null = null;
 
     monthFilteredData.forEach(record => {
@@ -188,10 +181,8 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
       sumWorkingHours += record.totalActualWorked;
       sumHadir += record.totalHadir;
       sumLeave += record.totalLeave;
-      
       const employeeRequiredDays = Object.values(record.attendance).filter((a: any) => (a as DailyAttendance).isRequiredDay).length;
       requiredDaysTotal += employeeRequiredDays;
-
       if (!bestEmployee) {
         bestEmployee = record;
       } else {
@@ -261,7 +252,6 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
     data.forEach(record => {
       const { key: qKey } = getQuarterFromMonth(record.bulan);
       const def = record.totalDeficiency;
-
       officeTotalAccumulatedDeficiency += def;
       if (qKey === "Q1") officeQ1Deficiency += def;
       else if (qKey === "Q2") officeQ2Deficiency += def;
@@ -284,13 +274,11 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
           monthsCount: 0
         };
       }
-
       const emp = employeeSummaryMap[record.nip];
       emp.totalDeficiency += def;
       emp.totalHadir += record.totalHadir;
       emp.totalLeave += record.totalLeave;
       emp.monthsCount += 1;
-
       if (qKey === "Q1") emp.q1Deficiency += def;
       else if (qKey === "Q2") emp.q2Deficiency += def;
       else if (qKey === "Q3") emp.q3Deficiency += def;
@@ -313,9 +301,7 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
   const filteredQuarterlyEmployees = useMemo(() => {
     return quarterlyMetrics.employeesSummaryList.filter(emp => {
       // 1. Search text filter
-      const matchSearch = 
-        emp.nama.toLowerCase().includes(quarterSearch.toLowerCase()) || 
-        emp.nip.includes(quarterSearch);
+      const matchSearch = emp.nama.toLowerCase().includes(quarterSearch.toLowerCase()) || emp.nip.includes(quarterSearch);
       if (!matchSearch) return false;
 
       // 2. Status category filter
@@ -383,7 +369,6 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
     // Determine number of days in this month
     const m = monthName.toLowerCase();
     const daysCount = m.includes("mei") || m.includes("may") || m.includes("maret") || m.includes("march") ? 31 : (m.includes("februari") || m.includes("february") ? 28 : 30);
-    
     const dailyStats: { [day: number]: { day: number; label: string; deficiency: number; presenceCount: number } } = {};
 
     // Initialize days
@@ -393,12 +378,8 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
       let label = `${d}`;
       if (isWeekend) label += " (W)";
       else if (isHoliday) label += " (L)";
-
       dailyStats[d] = {
-        day: d,
-        label,
-        deficiency: 0,
-        presenceCount: 0
+        day: d, label, deficiency: 0, presenceCount: 0
       };
     }
 
@@ -467,15 +448,12 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
     // If a specific month is selected, we group by Unit Kerja to show divisional performance!
     if (selectedMonth === 'Semua') {
       const monthGroups: { [month: string]: { totalHadir: number; requiredDays: number; totalDeficiencyMins: number; employeeCount: number } } = {};
-      
       data.forEach(record => {
         const month = record.bulan || 'Unknown';
         const requiredDays = Object.values(record.attendance || {}).filter((a: any) => (a as DailyAttendance).isRequiredDay).length;
-        
         if (!monthGroups[month]) {
           monthGroups[month] = { totalHadir: 0, requiredDays: 0, totalDeficiencyMins: 0, employeeCount: 0 };
         }
-        
         monthGroups[month].totalHadir += record.totalHadir || 0;
         monthGroups[month].requiredDays += requiredDays || 0;
         monthGroups[month].totalDeficiencyMins += record.totalDeficiency || 0;
@@ -497,15 +475,12 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
       
       // Use data filtered by selectedMonth, but without unit filter so they can compare all units!
       const monthData = data.filter(record => record.bulan === selectedMonth);
-      
       monthData.forEach(record => {
         const unit = (record.unitKerja || 'Lainnya').trim();
         const requiredDays = Object.values(record.attendance || {}).filter((a: any) => (a as DailyAttendance).isRequiredDay).length;
-        
         if (!unitGroups[unit]) {
           unitGroups[unit] = { totalHadir: 0, requiredDays: 0, totalDeficiencyMins: 0, employeeCount: 0 };
         }
-        
         unitGroups[unit].totalHadir += record.totalHadir || 0;
         unitGroups[unit].requiredDays += requiredDays || 0;
         unitGroups[unit].totalDeficiencyMins += record.totalDeficiency || 0;
@@ -571,18 +546,16 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
         // Compute specific dates for unexcused absence and working hour deficiency
         const alpaDays: string[] = [];
         const deficiencyDays: string[] = [];
-
         if (r.attendance) {
           Object.entries(r.attendance).forEach(([dayStr, attVal]) => {
             const att = attVal as DailyAttendance;
             const dayNum = parseInt(dayStr, 10);
             const isAlpa = att.note && (
-              att.note.toLowerCase().includes('tidak hadir') || 
-              att.note.toLowerCase().includes('alfa') || 
-              att.note.toLowerCase().includes('mangkir') || 
+              att.note.toLowerCase().includes('tidak hadir') ||
+              att.note.toLowerCase().includes('alfa') ||
+              att.note.toLowerCase().includes('mangkir') ||
               att.raw === 'A'
             );
-            
             if (isAlpa) {
               alpaDays.push(`Tgl ${dayNum}`);
             } else if (att.deficiency > 0 && att.isRequiredDay) {
@@ -594,7 +567,6 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
             }
           });
         }
-
         const alpaDaysStr = alpaDays.length > 0 ? alpaDays.join(", ") : "-";
         const deficiencyDaysStr = deficiencyDays.length > 0 ? deficiencyDays.join(", ") : "-";
 
@@ -606,33 +578,15 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
           const numBlocks = Math.min(10, Math.ceil(hoursDeficiency / 4));
           progressBar = "█".repeat(numBlocks) + "░".repeat(10 - numBlocks) + ` (${hoursDeficiency.toFixed(1)} jam)`;
         }
-
         return [
-          idx + 1,
-          r.nip,
-          r.nama,
-          r.bulan,
-          r.unitKerja,
-          r.totalHadir,
-          r.totalLeave,
-          r.totalAbsen,
-          alpaDaysStr,
-          hoursWorked,
-          hoursDeficiency,
-          deficiencyDaysStr,
-          progressBar,
-          status
+          idx + 1, r.nip, r.nama, r.bulan, r.unitKerja, r.totalHadir, r.totalLeave, r.totalAbsen, alpaDaysStr, hoursWorked, hoursDeficiency, deficiencyDaysStr, progressBar, status
         ];
       });
 
       const wsData = [
-        title,
-        subtitle,
-        blankRow,
-        headers,
+        title, subtitle, blankRow, headers,
         ...exportData
       ];
-
       const ws = XLSX.utils.aoa_to_sheet(wsData);
 
       // Merge Title Block for sheet 1
@@ -692,7 +646,7 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
       const sortedByDeficiency = [...monthFilteredData]
         .filter(r => r.totalDeficiency > 0)
         .sort((a, b) => b.totalDeficiency - a.totalDeficiency);
-      
+
       let punishmentRecommendation = "Tidak ada";
       if (sortedByDeficiency.length > 0) {
         const criticalDeficiencyList = sortedByDeficiency.filter(r => (r.totalDeficiency / 60) > 30);
@@ -715,7 +669,6 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
 
       const statsTitle = [`DASHBOARD STATISTIK KEDISIPLINAN PEGAWAI - ${selectedMonthUpper} 2026`];
       const statsSubtitle = ["RINGKASAN METRIK & DISTRIBUSI KEKURANGAN JAM KERJA"];
-
       const statsHeaders = ["METRIK UTAMA", "NILAI", "SATUAN", "KETERANGAN"];
       const statRows = [
         ["Total Pegawai Terdata", metrics.totalEmployees, "Orang", "Total seluruh pegawai dalam analisis"],
@@ -739,17 +692,10 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
       ];
 
       const wsStatsData = [
-        statsTitle,
-        statsSubtitle,
-        blankRow,
-        statsHeaders,
-        ...statRows,
-        blankRow,
-        blankRow,
-        distHeaders,
+        statsTitle, statsSubtitle, blankRow, statsHeaders,
+        ...statRows, blankRow, blankRow, distHeaders,
         ...distRows
       ];
-
       const wsStats = XLSX.utils.aoa_to_sheet(wsStatsData);
 
       // Merge Title Block for sheet 2
@@ -783,11 +729,10 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
   };
 
   const handleExportQuarterlyExcel = async () => {
-    if (filteredQuarterlyEmployees.length === 0) return;
+    if (filteredQuarterlyEmployees.length === 0) return; 
     setIsExportingQuarterly(true);
     try {
       const XLSX = await import('xlsx');
-      
       const title = ["LAPORAN AKUMULASI & DETAIL KEKURANGAN JAM KERJA PEGAWAI"];
       const subtitle = ["BADAN STANDARDISASI DAN KEBIJAKAN JASA INDUSTRI (BSKJI)"];
       const filterDesc = [
@@ -819,10 +764,8 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
 
       const summaryRows: any[] = [];
       let rowIdx = 1;
-
       filteredQuarterlyEmployees.forEach((emp) => {
         const totalDefHours = emp.totalDeficiency / 60;
-        
         let statusLabel = "Sangat Baik";
         if (totalDefHours > 60) {
           statusLabel = "Tindakan Berat (>60j)";
@@ -836,23 +779,19 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
 
         // Gather monthly records for this employee
         const empRecords = data.filter(r => r.nip === emp.nip);
-
         empRecords.forEach((record) => {
           const dayDetails: string[] = [];
           let monthlyDeficiencyMins = 0;
-
           if (record.attendance) {
             const sortedDays = Object.entries(record.attendance)
               .map(([dayStr, attVal]) => ({ dayNum: parseInt(dayStr, 10), att: attVal as DailyAttendance }))
               .sort((a, b) => a.dayNum - b.dayNum);
-
             sortedDays.forEach(({ dayNum, att }) => {
               if (att.deficiency > 0 && att.isRequiredDay) {
                 monthlyDeficiencyMins += att.deficiency;
                 const mins = att.deficiency;
                 const hours = Math.floor(mins / 60);
                 const minsLeft = mins % 60;
-                
                 let durationStr = "";
                 if (hours > 0 && minsLeft > 0) {
                   durationStr = `${hours}j ${minsLeft}m`;
@@ -865,41 +804,24 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
               }
             });
           }
-
           const rincianTanggalStr = dayDetails.length > 0 
             ? dayDetails.join(", ") 
             : "Sempurna (0m)";
 
           summaryRows.push([
-            rowIdx++,
-            emp.nip,
-            emp.nama,
-            emp.gol,
-            emp.unitKerja,
-            record.bulan,
-            Math.round((monthlyDeficiencyMins / 60) * 100) / 100,
-            formatMinutesFriendly(monthlyDeficiencyMins),
-            rincianTanggalStr,
+            rowIdx++, emp.nip, emp.nama, emp.gol, emp.unitKerja, record.bulan,
+            Math.round((monthlyDeficiencyMins / 60) * 100) / 100, formatMinutesFriendly(monthlyDeficiencyMins), rincianTanggalStr,
             Math.round((emp.q1Deficiency / 60) * 100) / 100,
             Math.round((emp.q2Deficiency / 60) * 100) / 100,
-            Math.round((emp.totalDeficiency / 60) * 100) / 100,
-            formatMinutesFriendly(emp.totalDeficiency),
-            emp.totalHadir,
-            emp.totalLeave,
-            statusLabel
+            Math.round((emp.totalDeficiency / 60) * 100) / 100, formatMinutesFriendly(emp.totalDeficiency), emp.totalHadir, emp.totalLeave, statusLabel
           ]);
         });
       });
 
       const wsSummaryData = [
-        title,
-        subtitle,
-        filterDesc,
-        blankRow,
-        summaryHeaders,
+        title, subtitle, filterDesc, blankRow, summaryHeaders,
         ...summaryRows
       ];
-
       const wsSummary = XLSX.utils.aoa_to_sheet(wsSummaryData);
 
       // Merge titles
@@ -946,7 +868,6 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
         "Kekurangan (Format Jam:Menit)",
         "Keterangan Kehadiran/Catatan"
       ];
-
       const detailRows: any[] = [];
       let detailIdx = 1;
 
@@ -960,19 +881,7 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
               if (att.deficiency > 0 && att.isRequiredDay) {
                 const dayName = getDayNameIndonesian(getDayOfWeekForMonth(record.bulan, dayNum));
                 detailRows.push([
-                  detailIdx++,
-                  emp.nip,
-                  emp.nama,
-                  emp.gol,
-                  emp.unitKerja,
-                  record.bulan,
-                  dayNum,
-                  dayName,
-                  att.checkIn || "-",
-                  att.checkOut || "-",
-                  att.deficiency,
-                  formatMinutesFriendly(att.deficiency),
-                  att.note || "Kekurangan Jam Kerja"
+                  detailIdx++, emp.nip, emp.nama, emp.gol, emp.unitKerja, record.bulan, dayNum, dayName, att.checkIn || "-", att.checkOut || "-", att.deficiency, formatMinutesFriendly(att.deficiency), att.note || "Kekurangan Jam Kerja"
                 ]);
               }
             });
@@ -982,15 +891,10 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
 
       const detailTitle = ["JURNAL RINCIAN TANGGAL KEKURANGAN JAM KERJA PEGAWAI"];
       const detailSubtitle = ["DAFTAR SELURUH TANGGAL YANG MEMILIKI KEKURANGAN UNTUK PEGAWAI TERFILTER"];
-      
       const wsDetailData = [
-        detailTitle,
-        detailSubtitle,
-        blankRow,
-        detailHeaders,
+        detailTitle, detailSubtitle, blankRow, detailHeaders,
         ...detailRows
       ];
-
       const wsDetail = XLSX.utils.aoa_to_sheet(wsDetailData);
 
       // Merge titles for sheet 2
@@ -1034,7 +938,6 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
     setExportingNip(emp.nip);
     try {
       const XLSX = await import('xlsx');
-      
       const title = [`LAPORAN DETAIL KEKURANGAN JAM KERJA PEGAWAI`];
       const subtitle = [`BADAN STANDARDISASI DAN KEBIJAKAN JASA INDUSTRI (BSKJI)`];
       const empInfo = [`Pegawai: ${emp.nama} (NIP. ${emp.nip}) - Golongan ${emp.gol}`];
@@ -1048,7 +951,6 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
         "Parameter",
         "Nilai / Keterangan"
       ];
-
       const totalDefHours = emp.totalDeficiency / 60;
       let statusLabel = "Sangat Baik";
       if (totalDefHours > 60) {
@@ -1075,23 +977,15 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
       ];
 
       const wsSummaryData = [
-        title,
-        subtitle,
-        empInfo,
-        unitInfo,
-        blankRow,
-        summaryHeaders,
+        title, subtitle, empInfo, unitInfo, blankRow, summaryHeaders,
         ...summaryRows
       ];
-
       const wsSummary = XLSX.utils.aoa_to_sheet(wsSummaryData);
-      
       if (!wsSummary['!merges']) wsSummary['!merges'] = [];
       wsSummary['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 1 } });
       wsSummary['!merges'].push({ s: { r: 1, c: 0 }, e: { r: 1, c: 1 } });
       wsSummary['!merges'].push({ s: { r: 2, c: 0 }, e: { r: 2, c: 1 } });
       wsSummary['!merges'].push({ s: { r: 3, c: 0 }, e: { r: 3, c: 1 } });
-
       wsSummary['!cols'] = [{ wch: 35 }, { wch: 55 }];
 
       // ==========================================
@@ -1108,7 +1002,6 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
         "Kekurangan (Format Jam:Menit)",
         "Keterangan/Catatan"
       ];
-
       const detailRows: any[] = [];
       let detailIdx = 1;
 
@@ -1118,20 +1011,11 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
           const sortedDays = Object.entries(record.attendance)
             .map(([dayStr, attVal]) => ({ dayNum: parseInt(dayStr, 10), att: attVal as DailyAttendance }))
             .sort((a, b) => a.dayNum - b.dayNum);
-
           sortedDays.forEach(({ dayNum, att }) => {
             if (att.deficiency > 0 && att.isRequiredDay) {
               const dayName = getDayNameIndonesian(getDayOfWeekForMonth(record.bulan, dayNum));
               detailRows.push([
-                detailIdx++,
-                record.bulan,
-                dayNum,
-                dayName,
-                att.checkIn || "-",
-                att.checkOut || "-",
-                att.deficiency,
-                formatMinutesFriendly(att.deficiency),
-                att.note || "Kekurangan Jam Kerja"
+                detailIdx++, record.bulan, dayNum, dayName, att.checkIn || "-", att.checkOut || "-", att.deficiency, formatMinutesFriendly(att.deficiency), att.note || "Kekurangan Jam Kerja"
               ]);
             }
           });
@@ -1140,21 +1024,14 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
 
       const detailTitle = [`JURNAL DETAIL KEKURANGAN - ${emp.nama.split(',')[0].toUpperCase()}`];
       const detailSubtitle = ["DAFTAR SELURUH TANGGAL YANG MEMILIKI KEKURANGAN JAM KERJA"];
-
       const wsDetailData = [
-        detailTitle,
-        detailSubtitle,
-        blankRow,
-        detailHeaders,
+        detailTitle, detailSubtitle, blankRow, detailHeaders,
         ...detailRows
       ];
-
       const wsDetail = XLSX.utils.aoa_to_sheet(wsDetailData);
-
       if (!wsDetail['!merges']) wsDetail['!merges'] = [];
       wsDetail['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 8 } });
       wsDetail['!merges'].push({ s: { r: 1, c: 0 }, e: { r: 1, c: 8 } });
-
       wsDetail['!cols'] = [
         { wch: 5 },   // No
         { wch: 15 },  // Bulan
@@ -1181,72 +1058,22 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
     }
   };
 
-
-
   return {
-    t,
-    data,
-    setData,
-    loading,
-    setLoading,
-    error,
-    setError,
-    searchTerm,
-    setSearchTerm,
-    selectedMonth,
-    setSelectedMonth,
-    selectedUnitKerja,
-    setSelectedUnitKerja,
-    sortConfig,
-    setSortConfig,
-    currentPage,
-    setCurrentPage,
-    itemsPerPage,
-    setItemsPerPage,
-    selectedRecord,
-    setSelectedRecord,
-    activeChartTab,
-    setActiveChartTab,
-    isExporting,
-    setIsExporting,
-    mainTab,
-    setMainTab,
-    quarterSearch,
-    setQuarterSearch,
-    quarterStatusFilter,
-    setQuarterStatusFilter,
-    quarterMinDeficiency,
-    setQuarterMinDeficiency,
-    quarterCurrentPage,
-    setQuarterCurrentPage,
-    quarterItemsPerPage,
-    setQuarterItemsPerPage,
-    isExportingQuarterly,
-    setIsExportingQuarterly,
-    exportingNip,
-    setExportingNip,
-    drawerFilterDeficiencyOnly,
-    setDrawerFilterDeficiencyOnly,
-    uniqueMonths,
-    uniqueUnitKerjas,
-    monthFilteredData,
-    filteredRecords,
-    sortedRecords,
-    paginatedRecords,
-    totalPages,
-    requestSort,
-    metrics,
-    quarterlyMetrics,
-    filteredQuarterlyEmployees,
-    quarterTotalPages,
-    paginatedQuarterlyEmployees,
-    dailyTrendData,
-    topDeficiencyData,
-    distributionData,
-    monthlyPerformanceData,
-    getDisciplineStatus,
-    handleExportExcel,
-    handleExportQuarterlyExcel,
-    handleExportSingleEmployeeExcel
+    t, data, setData, loading, setLoading, error, setError,
+    searchTerm, setSearchTerm, selectedMonth, setSelectedMonth,
+    selectedUnitKerja, setSelectedUnitKerja, sortConfig, setSortConfig,
+    currentPage, setCurrentPage, itemsPerPage, setItemsPerPage,
+    selectedRecord, setSelectedRecord, activeChartTab, setActiveChartTab,
+    isExporting, setIsExporting, mainTab, setMainTab,
+    quarterSearch, setQuarterSearch, quarterStatusFilter, setQuarterStatusFilter,
+    quarterMinDeficiency, setQuarterMinDeficiency, quarterCurrentPage, setQuarterCurrentPage,
+    quarterItemsPerPage, setQuarterItemsPerPage, isExportingQuarterly, setIsExportingQuarterly,
+    exportingNip, setExportingNip, drawerFilterDeficiencyOnly, setDrawerFilterDeficiencyOnly,
+    uniqueMonths, uniqueUnitKerjas, monthFilteredData, filteredRecords,
+    sortedRecords, paginatedRecords, totalPages, requestSort,
+    metrics, quarterlyMetrics, filteredQuarterlyEmployees, quarterTotalPages,
+    paginatedQuarterlyEmployees, dailyTrendData, topDeficiencyData,
+    distributionData, monthlyPerformanceData, getDisciplineStatus,
+    handleExportExcel, handleExportQuarterlyExcel, handleExportSingleEmployeeExcel
   };
 }

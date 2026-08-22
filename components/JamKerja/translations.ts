@@ -1,14 +1,17 @@
 export const LOCAL_TRANSLATIONS = {
   id: {
     title: "Analisis Kekurangan Jam Kerja ASN",
-    subtitle: "Sistem ini menghitung secara akurat akumulasi jam kerja dan kekurangan waktu kerja (deficiency) Pegawai ASN BSKJI berdasarkan Peraturan Jam Kerja.",
+    subtitle:
+      "Sistem ini menghitung secara akurat akumulasi jam kerja dan kekurangan waktu kerja (deficiency) Pegawai ASN BSKJI berdasarkan Peraturan Jam Kerja.",
     rules_title: "Aturan Jam Kerja ASN BSKJI",
     mon_thu: "Senin s.d Kamis",
     fri: "Jumat",
     break: "Istirahat",
     max_checkout: "Pulang Maks",
-    rule_note_1: "Jam Flexi Masuk s.d 08:30. Keterlambatan check-in di atas 08:30 atau kepulangan melebihi batas maksimal dihitung sebagai kekurangan jam kerja (Target: 7.5 jam/hari).",
-    rule_note_2: "Kode Absensi Khusus: CT (Cuti Tahunan), C (Cuti Sakit/Lainnya), D/DL (Dinas/Dinas Luar), T (Tugas Belajar), DK, dan TL dibebaskan dari target jam kerja harian & tidak dihitung sebagai kekurangan waktu kerja.",
+    rule_note_1:
+      "Jam Flexi Masuk s.d 08:30. Keterlambatan check-in di atas 08:30 atau kepulangan melebihi batas maksimal dihitung sebagai kekurangan jam kerja (Target: 7.5 jam/hari).",
+    rule_note_2:
+      "Kode Absensi Khusus: CT (Cuti Tahunan), C (Cuti Sakit/Lainnya), D/DL (Dinas/Dinas Luar), T (Tugas Belajar), DK, dan TL dibebaskan dari target jam kerja harian & tidak dihitung sebagai kekurangan waktu kerja.",
     total_employees: "Total Pegawai",
     total_employees_sub: "Pegawai dimonitor",
     avg_deficiency: "Rata-rata Kekurangan",
@@ -20,18 +23,23 @@ export const LOCAL_TRANSLATIONS = {
     def_time: "Kurang",
     leave_time: "Cuti",
     quarter_recap: "Rekapitulasi Triwulan & Akumulasi Jam Kerja",
-    quarter_recap_sub: "Analisis akumulasi kekurangan jam kerja secara triwulanan dan komparasi kumulatif individu",
+    quarter_recap_sub:
+      "Analisis akumulasi kekurangan jam kerja secara triwulanan dan komparasi kumulatif individu",
     quarter_1: "Triwulan I",
     quarter_1_sub: "Januari - Maret 2026",
-    quarter_1_desc: "Mencakup bulan: Februari, Maret (Ramadan aktif tgl 19 Feb s.d 17 Mar)",
+    quarter_1_desc:
+      "Mencakup bulan: Februari, Maret (Ramadan aktif tgl 19 Feb s.d 17 Mar)",
     quarter_2: "Triwulan II",
     quarter_2_sub: "April - Juni 2026",
-    quarter_2_desc: "Mencakup bulan: Mei, Juni (Jam kerja normal berlaku penuh)",
+    quarter_2_desc:
+      "Mencakup bulan: Mei, Juni (Jam kerja normal berlaku penuh)",
     total_accumulated: "Total Akumulasi",
     until_now: "Hingga Saat Ini (Feb - Jun)",
-    total_accumulated_desc: "Akumulasi total kekurangan jam dari seluruh bulan data yang terdata.",
+    total_accumulated_desc:
+      "Akumulasi total kekurangan jam dari seluruh bulan data yang terdata.",
     accumulation_list: "Daftar Akumulasi Kekurangan per Pegawai",
-    accumulation_list_sub: "Total komulatif kekurangan jam kerja untuk setiap pegawai secara rinci",
+    accumulation_list_sub:
+      "Total komulatif kekurangan jam kerja untuk setiap pegawai secara rinci",
     export_accumulation: "Ekspor Excel Akumulasi",
     search_placeholder: "Cari Nama atau NIP...",
     all_units: "Semua Unit Kerja",
@@ -45,20 +53,23 @@ export const LOCAL_TRANSLATIONS = {
     need_guidance: "Perlu Pembinaan",
     heavy_action: "Tindakan Berat",
     visual_analysis: "Visualisasi & Analisis Jam Kerja",
-    visual_analysis_sub: "Grafik analisis performa waktu kerja pegawai ASN BSKJI",
+    visual_analysis_sub:
+      "Grafik analisis performa waktu kerja pegawai ASN BSKJI",
     presence_perf: "Performa Kehadiran",
     daily_trend: "Tren Harian",
     highest_def: "Kekurangan Terbanyak",
     status_dist: "Distribusi Status",
     attendance_list: "Daftar Kehadiran Pegawai ASN",
-    attendance_list_sub: "Klik baris pegawai untuk melihat detail absensi kalender harian",
+    attendance_list_sub:
+      "Klik baris pegawai untuk melihat detail absensi kalender harian",
     day_date: "Hari & Tanggal",
     check_in: "Jam Masuk",
     check_out: "Jam Pulang",
     work_duration: "Waktu Kerja",
     deficiency: "Kekurangan",
     daily_log: "Log Harian Absensi",
-    daily_log_sub: "Rincian absen, jam masuk-pulang, dan kekurangan kerja per hari",
+    daily_log_sub:
+      "Rincian absen, jam masuk-pulang, dan kekurangan kerja per hari",
     only_deficiencies: "Hanya Hari dengan Kekurangan",
     fulfilled: "Terpenuhi",
     alfa: "Alfa / Mangkir",
@@ -69,8 +80,10 @@ export const LOCAL_TRANSLATIONS = {
     tab_ringkasan: "Ringkasan",
     tab_bulanan: "Data Bulanan",
     tab_triwulan: "Rekap Triwulan",
-    average_monthly_deficiency_desc: "Analisis performa rata-rata kehadiran (%) & rata-rata kekurangan (jam) per bulan",
-    compare_monthly_deficiency_desc: "Perbandingan performa rata-rata kehadiran (%) & rata-rata kekurangan (jam) antar unit kerja bulan",
+    average_monthly_deficiency_desc:
+      "Analisis performa rata-rata kehadiran (%) & rata-rata kekurangan (jam) per bulan",
+    compare_monthly_deficiency_desc:
+      "Perbandingan performa rata-rata kehadiran (%) & rata-rata kekurangan (jam) antar unit kerja bulan",
     attendance_rate_axis: "Tingkat Kehadiran (%)",
     deficiency_axis: "Rata-rata Kekurangan (Jam)",
     total_deficiency_axis: "Total Kekurangan (Jam)",
@@ -87,24 +100,29 @@ export const LOCAL_TRANSLATIONS = {
     showing: "Menampilkan",
     to: "hingga",
     of: "dari",
-    remaining_lisan_warning: "Sisa {remaining} s.d Teguran Lisan (3 Hari / 22.5j)",
+    remaining_lisan_warning:
+      "Sisa {remaining} s.d Teguran Lisan (3 Hari / 22.5j)",
     reached_lisan_warning: "Sudah s.d batas Teguran Lisan",
     error_title: "Terjadi Kesalahan",
     error_retry: "Coba Lagi",
     loader_message: "Memproses & menghitung database jam kerja...",
     print_title: "LAPORAN MONITORING KEHADIRAN & KEKURANGAN JAM KERJA ASN",
-    print_title_detail: "LAPORAN RINCIAN KEHADIRAN & KEKURANGAN JAM KERJA INDIVIDU"
+    print_title_detail:
+      "LAPORAN RINCIAN KEHADIRAN & KEKURANGAN JAM KERJA INDIVIDU",
   },
   en: {
     title: "ASN Working Hours Deficiency Analysis",
-    subtitle: "This system accurately computes the accumulated working hours and working time deficiency (deficit) for BSKJI ASN employees based on Working Hours Regulations.",
+    subtitle:
+      "This system accurately computes the accumulated working hours and working time deficiency (deficit) for BSKJI ASN employees based on Working Hours Regulations.",
     rules_title: "BSKJI ASN Work Hours Rules",
     mon_thu: "Monday to Thursday",
     fri: "Friday",
     break: "Break Time",
     max_checkout: "Max Checkout",
-    rule_note_1: "Flexi hours enter up to 08:30. Check-ins after 08:30 or checkouts before the maximum time are computed as working hour deficits (Target: 7.5 hours/day).",
-    rule_note_2: "Special Attendance Codes: CT (Annual Leave), C (Sick/Other Leave), D/DL (On-Duty/External Duty), T (Study Duty), DK, and TL are exempt from daily hour targets & do not count as working hour deficits.",
+    rule_note_1:
+      "Flexi hours enter up to 08:30. Check-ins after 08:30 or checkouts before the maximum time are computed as working hour deficits (Target: 7.5 hours/day).",
+    rule_note_2:
+      "Special Attendance Codes: CT (Annual Leave), C (Sick/Other Leave), D/DL (On-Duty/External Duty), T (Study Duty), DK, and TL are exempt from daily hour targets & do not count as working hour deficits.",
     total_employees: "Total Employees",
     total_employees_sub: "Monitored employees",
     avg_deficiency: "Average Deficiency",
@@ -116,18 +134,23 @@ export const LOCAL_TRANSLATIONS = {
     def_time: "Deficit",
     leave_time: "Leave",
     quarter_recap: "Quarterly Summary & Working Hour Accumulation",
-    quarter_recap_sub: "Quarterly deficiency accumulation analysis and cumulative individual comparison",
+    quarter_recap_sub:
+      "Quarterly deficiency accumulation analysis and cumulative individual comparison",
     quarter_1: "Quarter I",
     quarter_1_sub: "January - March 2026",
-    quarter_1_desc: "Includes months: February, March (Ramadan active Feb 19 - Mar 17)",
+    quarter_1_desc:
+      "Includes months: February, March (Ramadan active Feb 19 - Mar 17)",
     quarter_2: "Quarter II",
     quarter_2_sub: "April - June 2026",
-    quarter_2_desc: "Includes months: May, June (Full normal working hours apply)",
+    quarter_2_desc:
+      "Includes months: May, June (Full normal working hours apply)",
     total_accumulated: "Total Accumulation",
     until_now: "Until Now (Feb - Jun)",
-    total_accumulated_desc: "Total accumulated working hours deficit across all compiled data.",
+    total_accumulated_desc:
+      "Total accumulated working hours deficit across all compiled data.",
     accumulation_list: "Employee Accumulated Deficiency List",
-    accumulation_list_sub: "Detailed cumulative deficit of working hours for each employee",
+    accumulation_list_sub:
+      "Detailed cumulative deficit of working hours for each employee",
     export_accumulation: "Export Accumulated Excel",
     search_placeholder: "Search Name or NIP...",
     all_units: "All Working Units",
@@ -141,20 +164,23 @@ export const LOCAL_TRANSLATIONS = {
     need_guidance: "Needs Counseling",
     heavy_action: "Disciplinary Action",
     visual_analysis: "Working Hours Visualization & Analysis",
-    visual_analysis_sub: "Statistical performance charts of BSKJI ASN working hours",
+    visual_analysis_sub:
+      "Statistical performance charts of BSKJI ASN working hours",
     presence_perf: "Attendance Performance",
     daily_trend: "Daily Trend",
     highest_def: "Highest Deficiencies",
     status_dist: "Status Distribution",
     attendance_list: "ASN Employee Attendance List",
-    attendance_list_sub: "Click on any employee row to open their detailed daily attendance calendar",
+    attendance_list_sub:
+      "Click on any employee row to open their detailed daily attendance calendar",
     day_date: "Day & Date",
     check_in: "Check In",
     check_out: "Check Out",
     work_duration: "Work Hours",
     deficiency: "Deficiency",
     daily_log: "Daily Attendance Log",
-    daily_log_sub: "Daily breakdown of clock-in/out, work duration, and deficits",
+    daily_log_sub:
+      "Daily breakdown of clock-in/out, work duration, and deficits",
     only_deficiencies: "Show Deficiencies Only",
     fulfilled: "Fulfilled",
     alfa: "Absent / Unexcused",
@@ -165,8 +191,10 @@ export const LOCAL_TRANSLATIONS = {
     tab_ringkasan: "Summary",
     tab_bulanan: "Monthly Data",
     tab_triwulan: "Quarterly Recap",
-    average_monthly_deficiency_desc: "Analysis of average attendance (%) & average deficiency (hours) per month",
-    compare_monthly_deficiency_desc: "Comparison of average attendance (%) & average deficiency (hours) per working unit in",
+    average_monthly_deficiency_desc:
+      "Analysis of average attendance (%) & average deficiency (hours) per month",
+    compare_monthly_deficiency_desc:
+      "Comparison of average attendance (%) & average deficiency (hours) per working unit in",
     attendance_rate_axis: "Attendance Rate (%)",
     deficiency_axis: "Average Deficiency (Hours)",
     total_deficiency_axis: "Total Deficiency (Hours)",
@@ -183,12 +211,14 @@ export const LOCAL_TRANSLATIONS = {
     showing: "Showing",
     to: "to",
     of: "of",
-    remaining_lisan_warning: "{remaining} left until Verbal Warning (3 Days / 22.5h)",
+    remaining_lisan_warning:
+      "{remaining} left until Verbal Warning (3 Days / 22.5h)",
     reached_lisan_warning: "Already reached the Verbal Warning limit",
     error_title: "An Error Occurred",
     error_retry: "Try Again",
     loader_message: "Processing and calculating work hours database...",
     print_title: "ASN ATTENDANCE & WORKING HOURS DEFICIENCY MONITORING REPORT",
-    print_title_detail: "INDIVIDUAL ATTENDANCE & WORKING HOURS DEFICIENCY DETAIL REPORT"
-  }
+    print_title_detail:
+      "INDIVIDUAL ATTENDANCE & WORKING HOURS DEFICIENCY DETAIL REPORT",
+  },
 };

@@ -13,12 +13,10 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
   // 1. Process employee data to extract pension info
   const pensionData = useMemo(() => {
     const currentYear = new Date().getFullYear();
-    
     return employees
       .map(emp => {
         const birthDate = getBirthDateFromNIP(emp.nip);
         if (!birthDate) return null;
-        
         const bup = getRetirementAge(emp.jabatan);
         const tmtPensiun = calculateTmtPensiun(birthDate, bup);
         const retirementYear = tmtPensiun.getFullYear();
@@ -26,7 +24,6 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
         // Calculate remaining years
         const age = currentYear - birthDate.getFullYear();
         const yearsRemaining = Math.max(0, bup - age);
-        
         return {
           id: emp.id,
           nama: emp.nama,
@@ -48,23 +45,19 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
     pensionData.forEach(p => {
       counts[p.retirementYear] = (counts[p.retirementYear] || 0) + 1;
     });
-
     const years = Object.keys(counts).map(Number).sort((a, b) => a - b);
     
     // If empty or very small, create a nice visual range
     if (years.length === 0) return [];
-    
     const minYear = Math.min(...years);
     const maxYear = Math.max(...years);
     const data = [];
-    
     for (let y = minYear; y <= maxYear; y++) {
       data.push({
         tahun: y.toString(),
         "Jumlah Pegawai": counts[y] || 0,
       });
     }
-    
     return data;
   }, [pensionData]);
 
@@ -74,7 +67,6 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
     pensionData.forEach(p => {
       counts[p.unitKerja] = (counts[p.unitKerja] || 0) + 1;
     });
-
     const data = Object.entries(counts)
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value);
@@ -88,7 +80,6 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
       }
       return top5;
     }
-    
     return data;
   }, [pensionData]);
 
@@ -98,7 +89,6 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
     const within1Year = pensionData.filter(p => p.yearsRemaining <= 1).length;
     const within5Years = pensionData.filter(p => p.yearsRemaining <= 5).length;
     const within10Years = pensionData.filter(p => p.yearsRemaining <= 10).length;
-    
     return {
       total,
       within1Year,
@@ -125,38 +115,32 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
               iconBg: 'bg-rose-50 dark:bg-rose-500/10 border-rose-100 dark:border-rose-800/40 text-rose-600 dark:text-rose-400',
               dot: 'bg-rose-500 dark:bg-rose-400',
               borderHover: 'hover:border-rose-300 dark:hover:border-rose-700/60',
-              glow: 'group-hover:bg-rose-500/5',
             },
             amber: {
               iconBg: 'bg-amber-50 dark:bg-amber-500/10 border-amber-100 dark:border-amber-800/40 text-amber-600 dark:text-amber-400',
               dot: 'bg-amber-500 dark:bg-amber-400',
               borderHover: 'hover:border-amber-300 dark:hover:border-amber-700/60',
-              glow: 'group-hover:bg-amber-500/5',
             },
             primary: {
               iconBg: 'bg-primary-50 dark:bg-primary-500/10 border-primary-100 dark:border-primary-800/40 text-primary-600 dark:text-primary-400',
               dot: 'bg-primary-500 dark:bg-primary-400',
               borderHover: 'hover:border-primary-300 dark:hover:border-primary-700/60',
-              glow: 'group-hover:bg-primary-500/5',
             }
           };
           const theme = statThemes[stat.color];
           return (
-            <div 
-              key={i} 
-              className={`group relative text-left w-full bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/90 dark:border-slate-800 shadow-sm ${theme.borderHover} hover:shadow-md transition-all duration-300 overflow-hidden animate-in fade-in slide-in-from-bottom-4`}
+            <div
+              key={i}
+              className={`group relative text-left w-full bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-200/90 dark:border-gray-800 shadow-sm ${theme.borderHover} hover:shadow-md transition-all duration-300 overflow-hidden animate-in fade-in slide-in-from-bottom-4`}
               style={{ animationDelay: `${i * 50}ms` }}
             >
-              {/* Subtle corner soft glow on hover */}
-              <div className={`absolute -right-8 -top-8 w-28 h-28 rounded-full transition-all duration-500 opacity-0 group-hover:opacity-100 pointer-events-none ${theme.glow} blur-xl`}></div>
-
               <div className="relative z-10 flex items-start justify-between gap-3 mb-3">
                 <div>
-                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
+                  <span className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase r block truncate">
                     {stat.label}
                   </span>
                   <div className="flex items-baseline gap-2 mt-1">
-                    <span className="text-3xl font-sans font-black text-slate-900 dark:text-slate-100 tracking-tight leading-none">
+                    <span className="text-3xl font-black text-gray-900 dark:text-gray-100 leading-none">
                       {stat.value}
                     </span>
                   </div>
@@ -167,7 +151,7 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
                 </div>
               </div>
 
-              <div className="relative z-10 flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-xs font-medium text-slate-600 dark:text-slate-300">
+              <div className="relative z-10 flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-800 text-xs font-medium text-gray-600 dark:text-gray-300">
                 <div className="flex items-center gap-2 truncate">
                   <span className={`w-2 h-2 rounded-full ${theme.dot} shrink-0`}></span>
                   <span className="truncate">{stat.subtext}</span>
@@ -181,112 +165,86 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
       {/* Recharts Graphical Dashboard */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Chart: Distribution of Pension Years */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-6 flex flex-col justify-between min-h-[380px] hover:shadow-md transition-all duration-300">
+        <div className="lg:col-span-2 bg-white dark:bg-gray-900 rounded-xl border border-gray-200/80 dark:border-gray-800 shadow-sm p-6 flex flex-col justify-between min-h-[380px] hover:shadow-md transition-all duration-300">
           <div>
-            <h3 className="text-base font-display font-bold text-slate-800 dark:text-slate-100 tracking-tight">Distribusi Kebutuhan Regenerasi Pegawai</h3>
-            <p className="text-slate-600 dark:text-slate-300 text-xs font-medium mt-1">Jumlah proyeksi pegawai yang memasuki Batas Usia Pensiun (BUP) per tahun.</p>
+            <h3 className="text-base font-bold text-gray-800 dark:text-gray-100 ">Distribusi Kebutuhan Regenerasi Pegawai</h3>
+            <p className="text-gray-600 dark:text-gray-300 text-xs font-medium mt-1">Jumlah proyeksi pegawai yang memasuki Batas Usia Pensiun (BUP) per tahun.</p>
           </div>
           
           <div className="h-[250px] w-full mt-4">
             {yearDistribution.length > 0 ? (
               <DeferredView>
-<ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={yearDistribution}
-                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                >
-                  <defs>
-                    <linearGradient id="pensionGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#f43f5e" stopOpacity={0.85}/>
-                      <stop offset="100%" stopColor="#ec4899" stopOpacity={0.3}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis 
-                    dataKey="tahun" 
-                    tick={{ fontSize: 10, fill: '#64748b', fontWeight: 'bold' }} 
-                    axisLine={false} 
-                    tickLine={false} 
-                  />
-                  <YAxis 
-                    allowDecimals={false}
-                    tick={{ fontSize: 10, fill: '#64748b', fontWeight: 'bold' }} 
-                    axisLine={false} 
-                    tickLine={false} 
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#1e293b', 
-                      borderRadius: '16px', 
-                      border: 'none', 
-                      color: '#f8fafc',
-                      fontSize: '11px',
-                      fontFamily: 'monospace',
-                      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
-                    }}
-                    cursor={{ fill: 'rgba(244, 63, 94, 0.05)' }}
-                  />
-                  <Bar 
-                    dataKey="Jumlah Pegawai" 
-                    fill="url(#pensionGradient)" 
-                    radius={[6, 6, 0, 0]} 
-                    maxBarSize={36}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-</DeferredView>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={yearDistribution} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="pensionGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#f43f5e" stopOpacity={0.85}/>
+                        <stop offset="100%" stopColor="#ec4899" stopOpacity={0.3}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <XAxis dataKey="tahun" tick={{ fontSize: 10, fill: '#64748b', fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 10, fill: '#64748b', fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1e293b',
+                        borderRadius: '16px',
+                        border: 'none',
+                        color: '#f8fafc',
+                        fontSize: '11px',
+                        fontFamily: 'monospace',
+                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                      }}
+                      cursor={{ fill: 'rgba(244, 63, 94, 0.05)' }}
+                    />
+                    <Bar dataKey="Jumlah Pegawai" fill="url(#pensionGradient)" radius={[6, 6, 0, 0]} maxBarSize={36} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </DeferredView>
             ) : (
-              <div className="h-full w-full flex items-center justify-center text-slate-400 dark:text-slate-500 font-bold text-xs">
+              <div className="h-full w-full flex items-center justify-center text-gray-400 dark:text-gray-500 font-bold text-xs">
                 Tidak ada data distribusi tahun pensiun
               </div>
             )}
           </div>
           
-          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-bold mt-2 text-right">
+          <div className="text-[10px] text-gray-500 dark:text-gray-400 font-bold mt-2 text-right">
             💡 Distribusi tahun dihitung otomatis berdasarkan tanggal lahir pada NIP dan BUP jabatan masing-masing pegawai.
           </div>
         </div>
 
         {/* Side Chart: Distribution by Unit Kerja */}
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-6 flex flex-col justify-between min-h-[380px] hover:shadow-md transition-all duration-300">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200/80 dark:border-gray-800 shadow-sm p-6 flex flex-col justify-between min-h-[380px] hover:shadow-md transition-all duration-300">
           <div>
-            <h3 className="text-base font-display font-bold text-slate-800 dark:text-slate-100 tracking-tight">Dampak Pensiun per Unit</h3>
-            <p className="text-slate-600 dark:text-slate-300 text-xs font-medium mt-1">Konsentrasi pensiun di lingkungan BSKJI.</p>
+            <h3 className="text-base font-bold text-gray-800 dark:text-gray-100 ">Dampak Pensiun per Unit</h3>
+            <p className="text-gray-600 dark:text-gray-300 text-xs font-medium mt-1">Konsentrasi pensiun di lingkungan BSKJI.</p>
           </div>
           
           <div className="h-[210px] w-full mt-4 flex items-center justify-center">
             {unitDistribution.length > 0 ? (
               <DeferredView>
-<ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={unitDistribution}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={55}
-                    outerRadius={80}
-                    paddingAngle={4}
-                    dataKey="value"
-                  >
-                    {unitDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{ 
-                      backgroundColor: '#1e293b', 
-                      borderRadius: '16px', 
-                      border: 'none', 
-                      color: '#f8fafc',
-                      fontSize: '10px',
-                      textShadow: 'none'
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-</DeferredView>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie data={unitDistribution} cx="50%" cy="50%" innerRadius={55} outerRadius={80} paddingAngle={4} dataKey="value">
+                      {unitDistribution.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1e293b',
+                        borderRadius: '16px',
+                        border: 'none',
+                        color: '#f8fafc',
+                        fontSize: '10px',
+                        textShadow: 'none'
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </DeferredView>
             ) : (
-              <div className="h-full w-full flex items-center justify-center text-slate-400 dark:text-slate-500 font-bold text-xs">
+              <div className="h-full w-full flex items-center justify-center text-gray-400 dark:text-gray-500 font-bold text-xs">
                 Tidak ada data Unit Kerja
               </div>
             )}
@@ -298,9 +256,9 @@ export const PensiunVisualization: React.FC<Props> = ({ employees }) => {
               <div key={entry.name} className="flex items-center justify-between text-[11px]">
                 <div className="flex items-center gap-2 truncate">
                   <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }}></span>
-                  <span className="text-slate-600 dark:text-slate-300 font-medium truncate max-w-[150px]" title={entry.name}>{entry.name}</span>
+                  <span className="text-gray-600 dark:text-gray-300 font-medium truncate max-w-[150px]" title={entry.name}>{entry.name}</span>
                 </div>
-                <span className="font-bold text-slate-800 dark:text-slate-200 font-mono">{entry.value} Pegawai</span>
+                <span className="font-bold text-gray-800 dark:text-gray-200 font-mono">{entry.value} Pegawai</span>
               </div>
             ))}
           </div>

@@ -1,27 +1,33 @@
 const fs = require('fs');
 
-let content = fs.readFileSync('components/EmployeeTable.tsx', 'utf8');
+function replaceVirtuoso(filePath, itemContentRegex, isPromotion) {
+  let content = fs.readFileSync(filePath, 'utf8');
 
-// 1. Remove TableVirtuoso import
-content = content.replace("import { TableVirtuoso } from 'react-virtuoso';\n", "");
+  // 1. Remove TableVirtuoso import
+  content = content.replace(/import\s+\{\s*TableVirtuoso\s*\}\s+from\s+['"]react-virtuoso['"];?\n/, "");
 
-// 2. Replace TableVirtuoso block with normal table
-const virtuosoStart = content.indexOf('<TableVirtuoso');
-const virtuosoEnd = content.indexOf('/>\n          </div>\n        </div>\n      </div>\n      {/* Employee Detail Modal */}');
-
-if (virtuosoStart !== -1 && virtuosoEnd !== -1) {
+  // 2. Replace TableVirtuoso block
+  const virtuosoRegex = /<TableVirtuoso[\s\S]*?style=\{\{\s*height:\s*['"]100%['"]\s*\}\}\s*\/>/g;
+  
+  const match = content.match(virtuosoRegex);
+  if (!match) {
+    console.log("No TableVirtuoso block found in " + filePath);
+    return;
+  }
+  
+  const virtuosoBlock = match[0];
+  
   // Extract itemContent logic
-  const itemContentRegex = /itemContent=\{\(index, emp\) => \(\s*<>\s*([\s\S]*?)\s*<\/>\s*\)\}/;
-  const itemContentMatch = content.match(itemContentRegex);
+  const itemContentMatch = virtuosoBlock.match(itemContentRegex);
   const rowContent = itemContentMatch ? itemContentMatch[1] : '';
 
   // Extract fixedHeaderContent logic
   const headerContentRegex = /fixedHeaderContent=\{\(\) => \(\s*([\s\S]*?)\s*\)\}/;
-  const headerContentMatch = content.match(headerContentRegex);
+  const headerContentMatch = virtuosoBlock.match(headerContentRegex);
   const headerContent = headerContentMatch ? headerContentMatch[1] : '';
   
   const emptyPlaceholderRegex = /EmptyPlaceholder: \(\) => \(\s*<tbody>\s*([\s\S]*?)<\/tbody>\s*\)/;
-  const emptyPlaceholderMatch = content.match(emptyPlaceholderRegex);
+  const emptyPlaceholderMatch = virtuosoBlock.match(emptyPlaceholderRegex);
   const emptyPlaceholder = emptyPlaceholderMatch ? emptyPlaceholderMatch[1] : '';
 
   const newTable = `
@@ -55,7 +61,7 @@ if (virtuosoStart !== -1 && virtuosoEnd !== -1) {
         <div className="bg-gray-50 dark:bg-gray-800/50 p-4 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between px-6 gap-4">
           <div className="flex flex-wrap items-center gap-4">
             <span className="text-xs text-gray-600 dark:text-gray-300 font-bold uppercase r">
-              Total: {filtered.length} Pegawai
+              Total: {${isPromotion ? 'filteredEmployees.length' : 'filtered.length'}} Pegawai
             </span>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-gray-600 dark:text-gray-300 font-bold uppercase">
@@ -68,6 +74,7 @@ if (virtuosoStart !== -1 && virtuosoEnd !== -1) {
               >
                 <option value={10}>10</option>
                 <option value={20}>20</option>
+                <option value={25}>25</option>
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
@@ -116,12 +123,11 @@ if (virtuosoStart !== -1 && virtuosoEnd !== -1) {
         </div>
 `;
 
-  // Actually replace the virtuoso part
-  content = content.substring(0, virtuosoStart) + newTable + content.substring(virtuosoEnd + 2);
-  
-  // Save it back
-  fs.writeFileSync('components/EmployeeTable.tsx', content);
-  console.log("Replaced TableVirtuoso in EmployeeTable");
-} else {
-  console.log("Could not find TableVirtuoso block");
+  content = content.replace(virtuosoRegex, newTable);
+  fs.writeFileSync(filePath, content);
+  console.log("Successfully updated " + filePath);
 }
+
+replaceVirtuoso('components/EmployeeTable.tsx', /itemContent=\{\(\s*index,\s*emp\s*\)\s*=>\s*\(\s*<>\s*([\s\S]*?)\s*<\/>\s*\)\}/, false);
+replaceVirtuoso('components/PromotionTable.tsx', /itemContent=\{\(\s*index(?:\s*:\s*number)?,\s*emp(?:\s*:\s*Employee)?\s*\)\s*=>\s*\(\s*<>\s*([\s\S]*?)\s*<\/>\s*\)\}/, true);
+

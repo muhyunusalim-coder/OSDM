@@ -1,39 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowUp } from 'lucide-react';
-
+import React, { useState, useEffect } from "react";
+import { ArrowUp } from "lucide-react";
 export const ScrollToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
-
   useEffect(() => {
-    const findContainer = () => document.querySelector('.overflow-y-auto') || window;
-
+    const findContainer = () =>
+      document.querySelector(".overflow-y-auto") || window;
     const toggleVisibility = () => {
       const container = findContainer();
-      const scrollTop = container === window 
-        ? window.scrollY 
-        : (container as HTMLElement).scrollTop;
-
+      const scrollTop =
+        container === window
+          ? window.scrollY
+          : (container as HTMLElement).scrollTop;
       if (scrollTop > 250) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
       }
     };
-
     const container = findContainer();
-    container.addEventListener('scroll', toggleVisibility, { passive: true });
-    return () => container.removeEventListener('scroll', toggleVisibility);
+    container.addEventListener("scroll", toggleVisibility, { passive: true });
+    return () => container.removeEventListener("scroll", toggleVisibility);
   }, []);
-
   const scrollToTop = () => {
-    const container = document.querySelector('.overflow-y-auto') || window;
+    const container = document.querySelector(".overflow-y-auto") || window;
     if (container === window) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      (container as HTMLElement).scrollTo({ top: 0, behavior: 'smooth' });
+      (container as HTMLElement).scrollTo({ top: 0, behavior: "smooth" });
     }
   };
-
   return (
     <>
       {isVisible && (
