@@ -583,7 +583,7 @@ function App() {
   const isJamKerjaAreaActive = ['jam-kerja'].includes(currentView);
 
   return (
-    <div className="flex h-screen w-full bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 selection:bg-primary-500 selection:text-white overflow-hidden transition-colors duration-300">
+    <div className="flex h-screen h-[100dvh] w-full bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 selection:bg-primary-500 selection:text-white overflow-hidden transition-colors duration-300">
       
       {/* Overlay */}
       {mobileMenuOpen && (
@@ -822,12 +822,22 @@ function App() {
         </>
         
         {/* Top Header */}
-        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-3.5 sm:px-6 py-3 sm:py-4 flex items-center justify-between sticky top-0 z-30 w-full shrink-0 print:hidden">
-          <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
-            <button onClick={() => setMobileMenuOpen(true)} className="md:hidden p-2 -ml-1 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 rounded-xl transition-colors shrink-0 active:scale-95 cursor-pointer">
-              <Menu size={20} />
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between sticky top-0 z-30 w-full shrink-0 print:hidden shadow-xs">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <button 
+              onClick={() => setMobileMenuOpen(true)} 
+              className="md:hidden p-2 -ml-1 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800 rounded-xl transition-colors shrink-0 active:scale-95 cursor-pointer"
+              title="Buka Menu"
+              aria-label="Buka Navigasi"
+            >
+              <Menu size={22} />
             </button>
-            <div className="min-w-0">
+            <div className="md:hidden flex items-center gap-2 shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center shadow-xs">
+                <Landmark size={17} className="text-white" />
+              </div>
+            </div>
+            <div className="min-w-0 flex flex-col justify-center">
               <button
                 type="button"
                 onClick={() => {
@@ -837,23 +847,29 @@ function App() {
                   setIsPensiunExpanded(false);
                   setIsJamKerjaExpanded(false);
                 }}
-                className="text-[11px] sm:text-xs font-semibold text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 uppercase r hidden sm:block mb-0.5 transition-colors cursor-pointer text-left"
+                className="text-[10px] sm:text-xs font-bold text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 uppercase tracking-wider block mb-0.5 transition-colors cursor-pointer text-left truncate leading-tight"
                 title="Ke Beranda"
               >
-                Sistem Informasi Kepegawaian BSKJI
+                BSKJI Kepegawaian
               </button>
-              <h2 className="font-bold text-gray-900 dark:text-white text-lg sm:text-2xl truncate">
+              <h2 className="font-bold text-gray-900 dark:text-white text-sm sm:text-2xl truncate leading-tight">
                 {viewTitle}
               </h2>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
             <HeaderClock />
             
             {/* Notification Center Trigger */}
             <div className="relative z-50">
-              <button id="notification-bell" onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative cursor-pointer active:scale-95">
+              <button 
+                id="notification-bell" 
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} 
+                className="p-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative cursor-pointer active:scale-95"
+                title="Notifikasi Sistem"
+                aria-label="Notifikasi"
+              >
                 {systemAlerts.length > 0 ? (
                   <>
                     <BellRing size={20} className="text-primary-600 dark:text-primary-400" />
@@ -925,6 +941,16 @@ function App() {
                 </>
               )}
             </div>
+
+            {/* Mobile User Avatar & Menu Trigger */}
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="md:hidden flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white font-bold text-xs shadow-xs active:scale-95 transition-transform cursor-pointer"
+              title="Buka Profil & Menu"
+              aria-label="Profil Pengguna"
+            >
+              {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
+            </button>
           </div>
         </header>
 

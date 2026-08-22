@@ -87,10 +87,31 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
     }
   };
   return (
-    <div className="min-h-screen flex relative overflow-hidden bg-gray-950 w-full py-8 md:py-0 overflow-y-auto md:overflow-hidden">
+    <div className="min-h-screen flex flex-col relative overflow-hidden bg-gray-950 w-full overflow-y-auto md:overflow-hidden">
       <GovtBackground />
 
-      <div className="relative z-10 w-full flex flex-col md:flex-row min-h-screen md:h-screen">
+      {/* Mobile Top Header */}
+      <header className="md:hidden w-full px-4 py-3.5 flex items-center justify-between border-b border-gray-800/80 bg-gray-950/90 backdrop-blur-md sticky top-0 z-30 shadow-md">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 bg-primary-500/15 border border-primary-500/30 rounded-xl flex items-center justify-center">
+            <Landmark size={18} className="text-primary-400" />
+          </div>
+          <div>
+            <h1 className="text-[11px] font-bold text-white uppercase tracking-wider leading-tight">
+              {t("brand_ministry")}
+            </h1>
+            <p className="text-[9px] text-primary-400 font-medium leading-tight">
+              Portal Kepegawaian BSKJI
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 text-[10px] font-medium">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          Online
+        </div>
+      </header>
+
+      <div className="relative z-10 w-full flex-1 flex flex-col md:flex-row min-h-0 md:h-screen">
         {/* Left Side: Brand & Info */}
         <div className="hidden md:flex flex-col justify-between w-1/2 p-12 lg:p-20 text-white relative">
           <div className="relative z-10 my-auto">
