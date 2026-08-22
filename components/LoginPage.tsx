@@ -91,7 +91,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
       <GovtBackground />
 
       {/* Mobile Top Header */}
-      <header className="md:hidden w-full px-4 py-3.5 flex items-center justify-between border-b border-gray-800/80 bg-gray-950/90 backdrop-blur-md sticky top-0 z-30 shadow-md">
+      <header className="md:hidden w-full px-4 py-3.5 flex items-center justify-between border-b border-gray-800/80 bg-gray-950/90 backdrop-blur-md sticky top-0 z-30 shadow-md pwa-safe-top">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 bg-primary-500/15 border border-primary-500/30 rounded-xl flex items-center justify-center">
             <Landmark size={18} className="text-primary-400" />

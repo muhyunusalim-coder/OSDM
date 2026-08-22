@@ -591,7 +591,7 @@ function App() {
       )}
 
       {/* Modern Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-gray-300 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static flex flex-col border-r border-gray-800 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} print:hidden`}>
+      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-gray-300 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static flex flex-col border-r border-gray-800 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} print:hidden pwa-safe-sidebar`}>
         {/* Brand Area */}
         <div className="px-5 py-4 border-b border-gray-800 flex items-center justify-between">
           <button
@@ -822,7 +822,7 @@ function App() {
         </>
         
         {/* Top Header */}
-        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between sticky top-0 z-30 w-full shrink-0 print:hidden shadow-xs">
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between sticky top-0 z-30 w-full shrink-0 print:hidden shadow-xs pwa-safe-top">
           <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <button 
               onClick={() => setMobileMenuOpen(true)} 
