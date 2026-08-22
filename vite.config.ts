@@ -35,7 +35,7 @@ export default defineConfig(({ mode }) => {
             name: 'Monitoring Layanan Kepegawaian BSKJI',
             short_name: 'Kepegawaian BSKJI',
             description: 'Sistem Informasi Terpadu untuk Monitoring Layanan Kepegawaian BSKJI',
-            theme_color: '#10b981',
+            theme_color: '#2563eb',
             background_color: '#020817',
             display: 'standalone',
             icons: [
