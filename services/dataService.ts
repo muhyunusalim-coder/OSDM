@@ -1,5 +1,5 @@
 import { Employee, AuthUser, LoginResponse } from '../types';
-import { API_ENDPOINTS, MOCK_EMPLOYEES, MOCK_PROMOTION_EMPLOYEES } from '../constants';
+import { API_ENDPOINTS } from '../constants';
 
 // Clean up legacy localStorage & PWA cache artifacts for strict security compliance
 try {
@@ -19,7 +19,8 @@ try {
 // Token accessor from memory / sessionStorage (Never store sensitive credentials permanently in localStorage)
 export const getAuthToken = (): string | null => {
   try {
-    return sessionStorage.getItem('kgb_session_token');
+    sessionStorage.removeItem('kgb_session_token');
+    return null;
   } catch {
     return null;
   }
@@ -27,11 +28,7 @@ export const getAuthToken = (): string | null => {
 
 export const setAuthToken = (token: string | null): void => {
   try {
-    if (token) {
-      sessionStorage.setItem('kgb_session_token', token);
-    } else {
-      sessionStorage.removeItem('kgb_session_token');
-    }
+    sessionStorage.removeItem('kgb_session_token');
   } catch {
     // Ignore
   }
@@ -63,7 +60,7 @@ export const clearDataCache = () => {
 export const loginWithBackend = async (
   nip: string,
   password: string,
-  captcha?: { num1: number; num2: number; answer: string }
+  captcha: { challenge: string; answer: string }
 ): Promise<LoginResponse> => {
   try {
     const res = await fetch(API_ENDPOINTS.AUTH_LOGIN, {
@@ -75,19 +72,14 @@ export const loginWithBackend = async (
       body: JSON.stringify({
         nip: nip.trim(),
         password,
-        captchaNum1: captcha?.num1,
-        captchaNum2: captcha?.num2,
-        captchaAnswer: captcha?.answer,
+        captchaChallenge: captcha.challenge,
+        captchaAnswer: captcha.answer,
       }),
     });
 
     const data: LoginResponse = await res.json();
     if (!res.ok || !data.success) {
       throw new Error(data.message || 'Otentikasi gagal. Silakan periksa kembali data Anda.');
-    }
-
-    if (data.token) {
-      setAuthToken(data.token);
     }
 
     return data;
@@ -184,29 +176,9 @@ export const fetchEmployeeData = async (): Promise<Employee[]> => {
     inMemoryEmployees = { data, timestamp: Date.now() };
     return data;
   } catch (error: any) {
-    console.warn('Backend fetch error for KGB data. Using fallback.', error);
+    console.warn('Backend fetch error for KGB data.', error);
     if (inMemoryEmployees?.data?.length) return inMemoryEmployees.data;
-    
-    // Offline fallback for demo
-    const mapped = (MOCK_EMPLOYEES as any[]).map((m, i) => ({
-      id: `mock-${i}`,
-      no: m.No,
-      nama: m.Nama,
-      nip: m.NIP,
-      jabatan: m.Jabatan || '-',
-      pangkat: m.Pangkat || '-',
-      statusKepegawaian: (m.Pangkat || '').includes('PPPK') ? 'PPPK' : 'PNS',
-      gajiLama: parseInt(m['Gaji Lama'] || '0', 10),
-      gajiBaru: parseInt(m['Gaji Baru'] || '0', 10),
-      masaKerja: '2 Tahun 0 Bulan',
-      tmt: m['TMT KGB Baru'] || m['TMT'] || '-',
-      unitKerja: m['Unit Kerja'] || '-',
-      status: (m['Status KGB'] || '').includes('Terbit') ? 'Processed' : 'Upcoming',
-      statusKeterangan: m['Status KGB'] || '',
-      salaryHistory: []
-    })) as Employee[];
-    
-    return mapped;
+    throw error;
   }
 };
 
@@ -231,30 +203,7 @@ export const fetchPromotionData = async (): Promise<Employee[]> => {
   } catch (error: any) {
     console.warn('Backend fetch error for promotion data.', error);
     if (inMemoryPromotions?.data?.length) return inMemoryPromotions.data;
-
-    const mapped = (MOCK_PROMOTION_EMPLOYEES as any[]).map((m, i) => ({
-      id: `mock-promo-${i}`,
-      no: m.No,
-      nama: m.Nama,
-      nip: m.NIP,
-      jabatan: '-',
-      pangkat: m['Pangkat Baru'] || '-',
-      pangkatLama: m['Pangkat Lama'] || '-',
-      pangkatBaru: m['Pangkat Baru'] || '-',
-      suratUsulan: m['Surat Usulan'] || '-',
-      inputSiasn: m['Input Siasn'] || '-',
-      statusSiasn: m['Status Siasn'] || '',
-      statusKepegawaian: (m['Pangkat Baru'] || '').includes('PPPK') ? 'PPPK' : 'PNS',
-      masaKerja: '-',
-      gajiLama: 0,
-      gajiBaru: 0,
-      tmt: m.TMT || '-',
-      unitKerja: m['Unit Kerja'] || '-',
-      status: (m['Status Siasn'] || '').includes('Terbit') ? 'Processed' : 'Upcoming',
-      statusKeterangan: m['Status Siasn'] || '',
-    })) as Employee[];
-
-    return mapped;
+    throw error;
   }
 };
 
@@ -278,7 +227,8 @@ export const fetchMasterPegawaiData = async (): Promise<Employee[]> => {
     return data;
   } catch (error: any) {
     console.warn('Backend fetch error for master pegawai data.', error);
-    return inMemoryMaster?.data || [];
+    if (inMemoryMaster?.data?.length) return inMemoryMaster.data;
+    throw error;
   }
 };
 
