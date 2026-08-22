@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { LOCAL_TRANSLATIONS } from './translations';
-import { getQuarterFromMonth, translateMonthName } from './utils';
+import { getQuarterFromMonth, translateMonthName, sortMonthsChronologically, getMonthOrderIndex } from './utils';
 import { fetchJamKerjaData, JamKerjaRecord, DailyAttendance, isWeekendForMonth, getIndonesianHolidayName, formatMinutesFriendly, getDayNameIndonesian, getDayOfWeekForMonth } from '../../utils/jamKerjaHelpers';
 import * as XLSX from 'xlsx';
 
@@ -81,7 +81,7 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
         monthsSet.add(record.bulan);
       }
     });
-    return Array.from(monthsSet).sort();
+    return sortMonthsChronologically(Array.from(monthsSet));
   }, [data]);
 
   // Unique unit kerja available in data
@@ -460,7 +460,9 @@ export function useJamKerja(language: 'id' | 'en' = 'id') {
         monthGroups[month].employeeCount += 1;
       });
 
-      return Object.entries(monthGroups).map(([month, stats]) => {
+      return Object.entries(monthGroups)
+        .sort(([monthA], [monthB]) => getMonthOrderIndex(monthA) - getMonthOrderIndex(monthB))
+        .map(([month, stats]) => {
         const avgPresence = stats.requiredDays > 0 ? (stats.totalHadir / stats.requiredDays) * 100 : 0;
         const avgDeficiencyHours = stats.employeeCount > 0 ? (stats.totalDeficiencyMins / stats.employeeCount) / 60 : 0;
         return {
