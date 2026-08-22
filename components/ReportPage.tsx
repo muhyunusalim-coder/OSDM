@@ -211,34 +211,95 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
       const { jsPDF } = await import('jspdf');
       const autoTable = (await import('jspdf-autotable')).default;
       const doc = new jsPDF('l', 'mm', 'a4');
-      doc.setFontSize(16);
-      doc.text(isKP ? "DAFTAR NOMINATIF KENAIKAN PANGKAT" : "DAFTAR NOMINATIF KENAIKAN GAJI BERKALA", 148.5, 15, { align: 'center' });
+      
+      // Kop / Judul Dokumen
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text(isKP ? "DAFTAR NOMINATIF KENAIKAN PANGKAT" : "DAFTAR NOMINATIF KENAIKAN GAJI BERKALA", 148.5, 14, { align: 'center' });
+      
       doc.setFontSize(10);
-      doc.text(viewMode === 'monthly' ? `Periode: ${selectedMonth === 'All' ? 'Semua Bulan' : selectedMonth} ${selectedYear}` : 'Riwayat Proses (TMT Descending)', 148.5, 22, { align: 'center' });
+      doc.setFont("helvetica", "normal");
+      doc.text("BADAN STANDARDISASI DAN KEBIJAKAN JASA INDUSTRI - KEMENTERIAN PERINDUSTRIAN", 148.5, 19, { align: 'center' });
+      
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "italic");
+      const periodeText = viewMode === 'monthly' 
+        ? `Periode: ${selectedMonth === 'All' ? 'Semua Bulan' : selectedMonth} ${selectedYear}` 
+        : 'Riwayat Proses Kenaikan (TMT Terbaru)';
+      doc.text(periodeText, 148.5, 24, { align: 'center' });
+
+      // Garis pemisah
+      doc.setLineWidth(0.5);
+      doc.line(14, 27, 283, 27);
+
       const tableColumn = isKP 
         ? ["No", "Nama Pegawai", "NIP", "Unit Kerja", "Pangkat Lama", "Pangkat Baru", "Status", "TMT"]
         : ["No", "Nama Pegawai", "NIP", "Golongan", "Jabatan", "Unit Kerja", "Gaji Lama", "Gaji Baru", "Masa Kerja", "TMT"];
+      
       const tableRows = filteredData.map((emp, index) => {
         const hasAccess = currentUser?.nip === emp.nip || currentUser?.nip === ADMIN_NIP;
         if (isKP) {
           return [
-            index + 1, emp.nama, emp.nip, emp.unitKerja, emp.pangkatLama || '-', emp.pangkatBaru || emp.pangkat, emp.statusKepegawaian, emp.tmt
+            index + 1, 
+            emp.nama, 
+            emp.nip, 
+            emp.unitKerja, 
+            emp.pangkatLama || '-', 
+            emp.pangkatBaru || emp.pangkat, 
+            emp.statusKepegawaian || '-', 
+            emp.tmt
           ];
         }
         return [
-          index + 1, emp.nama, emp.nip, emp.pangkat, emp.jabatan, emp.unitKerja, hasAccess ? formatRupiah(emp.gajiLama) : '******', hasAccess ? formatRupiah(emp.gajiBaru) : '******', emp.masaKerja, emp.tmt
+          index + 1, 
+          emp.nama, 
+          emp.nip, 
+          emp.pangkat, 
+          emp.jabatan, 
+          emp.unitKerja, 
+          hasAccess ? formatRupiah(emp.gajiLama) : 'Rp ******', 
+          hasAccess ? formatRupiah(emp.gajiBaru) : 'Rp ******', 
+          emp.masaKerja, 
+          emp.tmt
         ];
       });
+
       autoTable(doc, {
         head: [tableColumn],
         body: tableRows,
         startY: 30,
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [79, 70, 229] }
+        theme: 'grid',
+        styles: { 
+          fontSize: 7.5, 
+          cellPadding: 2, 
+          textColor: [30, 41, 59],
+          valign: 'middle'
+        },
+        headStyles: { 
+          fillColor: [37, 99, 235], 
+          textColor: [255, 255, 255], 
+          fontStyle: 'bold',
+          halign: 'center' 
+        },
+        alternateRowStyles: {
+          fillColor: [248, 250, 252]
+        },
+        didDrawPage: (data) => {
+          // Footer
+          const pageCount = (doc as any).internal.getNumberOfPages();
+          doc.setFontSize(8);
+          doc.setFont("helvetica", "normal");
+          doc.text(
+            `Halaman ${data.pageNumber} dari ${pageCount} • Dicetak pada ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`,
+            14,
+            200
+          );
+        }
       });
+
       const fileName = viewMode === 'monthly' 
-        ? `Laporan_${selectedMonth}_${selectedYear}.pdf` 
-        : `Riwayat_Proses_Kenaikan.pdf`;
+        ? `Laporan_${isKP ? 'KP' : 'KGB'}_${selectedMonth}_${selectedYear}.pdf` 
+        : `Riwayat_${isKP ? 'KP' : 'KGB'}_Selesai.pdf`;
       doc.save(fileName);
     } catch (error) {
       console.error("Failed to load PDF module", error);
@@ -589,25 +650,25 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
       {/* Report Summary & Table */}
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden print:shadow-none print:border-none print:rounded-none print:overflow-visible">
           
-          {/* Header Print View Only - Formal Style */}
-          <div className="hidden print:block mb-8 text-center text-black">
-             <div className="flex flex-col items-center mb-3">
-                <h1 className="text-sm font-bold uppercase r text-black">KEMENTERIAN PERINDUSTRIAN REPUBLIK INDONESIA</h1>
-                <h2 className="text-base font-extrabold uppercase text-black">BADAN STANDARDISASI DAN KEBIJAKAN JASA INDUSTRI</h2>
-                <p className="text-[10px] font-medium text-black">Gedung Kementerian Perindustrian, Jl. Jend. Gatot Subroto Kav. 52-53, Jakarta Selatan</p>
+          {/* Header Print View Only - Formal Kop Surat Style */}
+          <div className="hidden print:block mb-6 text-center text-black">
+             <div className="flex flex-col items-center mb-2">
+                <h1 className="text-xs font-bold uppercase tracking-wider text-black">KEMENTERIAN PERINDUSTRIAN REPUBLIK INDONESIA</h1>
+                <h2 className="text-sm font-extrabold uppercase tracking-wide text-black">BADAN STANDARDISASI DAN KEBIJAKAN JASA INDUSTRI</h2>
+                <p className="text-[10px] text-gray-700">Jl. Jenderal Gatot Subroto Kav. 52-53, Jakarta Selatan 12950 | Telp. (021) 5255509</p>
              </div>
-             <div className="border-b-4 border-black w-full mb-1"></div>
-             <div className="border-b border-black w-full mb-6"></div>
+             <div className="border-b-2 border-black w-full mb-0.5"></div>
+             <div className="border-b border-black w-full mb-4"></div>
 
-              <h2 className="text-lg font-bold uppercase r mb-1">
-                 {isKP ? 'DAFTAR NOMINATIF KENAIKAN PANGKAT' : 'DAFTAR NOMINATIF KENAIKAN GAJI BERKALA'}
-              </h2>
-              <h3 className="text-md font-bold uppercase mb-2">
-                 PEGAWAI NEGERI SIPIL & PPPK
-              </h3>
-              <p className="text-sm font-medium">
-                 {viewMode === 'monthly' ? `Periode: ${selectedMonth === 'All' ? 'Semua Bulan' : selectedMonth} ${selectedYear}` : 'Riwayat Proses (TMT Descending)'}
-              </p>
+             <h2 className="text-base font-bold uppercase tracking-wide mb-1 text-black">
+                {isKP ? 'DAFTAR NOMINATIF KENAIKAN PANGKAT' : 'DAFTAR NOMINATIF KENAIKAN GAJI BERKALA'}
+             </h2>
+             <h3 className="text-xs font-bold uppercase tracking-wider mb-1 text-black">
+                PEGAWAI NEGERI SIPIL & PPPK
+             </h3>
+             <p className="text-xs font-medium text-black">
+                {viewMode === 'monthly' ? `Periode: ${selectedMonth === 'All' ? 'Semua Bulan' : selectedMonth} ${selectedYear}` : 'Riwayat Proses Selesai (TMT Terbaru)'}
+             </p>
           </div>
 
           <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/50 print:hidden">
@@ -635,89 +696,90 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
           </div>
 
           <div className="overflow-x-auto custom-scrollbar print:overflow-visible">
-              <table className="w-full text-left border-collapse print:border print:border-black print:text-xs">
-                  <thead>
+              <table className="w-full text-left border-collapse print:border print:border-black print:text-[10px]">
+                  <thead className="print:table-header-group">
                       <tr className="bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-200 text-xs uppercase font-bold r border-b border-gray-200 dark:border-gray-700 print:bg-gray-100 print:text-black print:border-black print:border-b-2">
-                          <th className="px-6 py-4 w-12 text-center border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-2">No</th>
-                          <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-2">Pegawai</th>
-                          <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-2">Unit Kerja</th>
-                          {!isKP && <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-2">Gaji Lama</th>}
-                          {!isKP && <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-2">Gaji Baru</th>}
-                          {isKP && <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-2">Pangkat Lama</th>}
-                          {isKP && <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-2">Pangkat Baru</th>}
-                          {!isKP && <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-2">Masa Kerja</th>}
-                          {isKP && <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-2">Status</th>}
-                          <th className="px-6 py-4 text-center print:border print:border-black print:px-2 print:py-2">TMT</th>
+                          <th className="px-6 py-4 w-12 text-center border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-1.5 print:w-10">No</th>
+                          <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-1.5">Pegawai</th>
+                          <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-1.5">Unit Kerja</th>
+                          {!isKP && <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-1.5">Gaji Lama</th>}
+                          {!isKP && <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-1.5">Gaji Baru</th>}
+                          {isKP && <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-1.5">Pangkat Lama</th>}
+                          {isKP && <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-1.5">Pangkat Baru</th>}
+                          {!isKP && <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-1.5">Masa Kerja</th>}
+                          {isKP && <th className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-1.5">Status</th>}
+                          <th className="px-6 py-4 text-center print:border print:border-black print:px-2 print:py-1.5">TMT</th>
                       </tr>
                   </thead>
+                  
+                  {/* Web interactive view (paginated) */}
                   <tbody className="divide-y divide-gray-100 dark:divide-gray-800 text-sm print:hidden">
                       {filteredData.length > 0 ? ( 
                         paginatedData.map((emp, index) => {
                               // Logic akses: Pemilik data ATAU Admin Khusus
                               const hasAccess = currentUser?.nip === emp.nip || currentUser?.nip === ADMIN_NIP; 
                               return (
-                              <tr key={emp.id} className="even:bg-gray-50/50 dark:even:bg-gray-800/20 odd:bg-white dark:odd:bg-gray-900 hover:!bg-primary-50/60 dark:hover:!bg-gray-800/70 transition-all duration-150 print:hover:bg-transparent">
-                                  <td className="px-6 py-4 text-center font-medium text-gray-600 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                              <tr key={emp.id} className="even:bg-gray-50/50 dark:even:bg-gray-800/20 odd:bg-white dark:odd:bg-gray-900 hover:!bg-primary-50/60 dark:hover:!bg-gray-800/70 transition-all duration-150">
+                                  <td className="px-6 py-4 text-center font-medium text-gray-600 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800">
                                       {(currentPage - 1) * itemsPerPage + index + 1}
                                   </td>
-                                  <td className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-2">
-                                      <div className="font-bold text-gray-800 dark:text-gray-100 text-xs md:text-sm print:text-black">{emp.nama}</div>
-                                      <div className="text-primary-700 dark:text-primary-400 text-xs font-mono font-medium mt-0.5 print:text-black">{emp.nip}</div>
-                                      <div className="text-gray-500 dark:text-gray-400 text-xs mt-0.5 print:hidden">{emp.pangkat}</div>
-                                      <div className="hidden print:block text-xs mt-0.5">{emp.pangkat}</div>
+                                  <td className="px-6 py-4 border-r border-gray-100 dark:border-gray-800">
+                                      <div className="font-bold text-gray-800 dark:text-gray-100 text-xs md:text-sm">{emp.nama}</div>
+                                      <div className="text-primary-700 dark:text-primary-400 text-xs font-mono font-medium mt-0.5">{emp.nip}</div>
+                                      <div className="text-gray-500 dark:text-gray-400 text-xs mt-0.5">{emp.pangkat}</div>
                                   </td>
-                                  <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                  <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800">
                                       {emp.unitKerja}
                                   </td>
-                                  {!isKP && <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                  {!isKP && <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800">
                                       {hasAccess ? formatRupiah(emp.gajiLama) : 'Rp ******'}
                                   </td>}
-                                  {!isKP && <td className="px-6 py-4 font-bold text-primary-600 dark:text-primary-400 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:font-normal print:px-2 print:py-2">
+                                  {!isKP && <td className="px-6 py-4 font-bold text-primary-600 dark:text-primary-400 border-r border-gray-100 dark:border-gray-800">
                                       {hasAccess ? formatRupiah(emp.gajiBaru) : 'Rp ******'}
                                   </td>}
-                                  {isKP && <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                  {isKP && <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800">
                                       {emp.pangkatLama || '-'}
                                   </td>}
-                                  {isKP && <td className="px-6 py-4 font-bold text-primary-600 dark:text-primary-400 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:font-normal print:px-2 print:py-2">
+                                  {isKP && <td className="px-6 py-4 font-bold text-primary-600 dark:text-primary-400 border-r border-gray-100 dark:border-gray-800">
                                       {emp.pangkatBaru || emp.pangkat}
                                   </td>}
-                                  {!isKP && <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                  {!isKP && <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800">
                                       {emp.masaKerja}
                                   </td>}
-                                  {isKP && <td className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                  {isKP && <td className="px-6 py-4 border-r border-gray-100 dark:border-gray-800">
                                       <div className="flex flex-col gap-1 items-start">
                                           {/* Status Proses Badge */}
                                           {emp.status === 'Processed' && (
-                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/60 inline-flex items-center gap-1 print:bg-transparent print:border-none print:text-black print:p-0">
+                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/60 inline-flex items-center gap-1">
                                                   Selesai (SK Terbit)
                                               </span>
                                           )}
                                           {emp.status === 'Pending' && (
-                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 inline-flex items-center gap-1 print:bg-transparent print:border-none print:text-black print:p-0">
+                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 inline-flex items-center gap-1">
                                                   Diproses (Biro OSDM)
                                               </span>
                                           )}
                                           {emp.status === 'Upcoming' && (
-                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/60 inline-flex items-center gap-1 print:bg-transparent print:border-none print:text-black print:p-0">
+                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/60 inline-flex items-center gap-1">
                                                   Akan Datang
                                               </span>
                                           )}
 
                                           {/* Kepegawaian & SIASN Info */}
                                           <div className="flex flex-wrap gap-1 items-center">
-                                              <span className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded text-[9px] font-bold uppercase r print:border print:border-black print:text-black print:bg-transparent">
+                                              <span className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded text-[9px] font-bold uppercase r">
                                                   {emp.statusKepegawaian}
                                               </span>
                                               {emp.statusSiasn && emp.statusSiasn !== '-' && (
-                                                  <span className="px-1 py-0.5 bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 rounded text-[9px] font-bold print:hidden border border-violet-100 dark:border-violet-800/60">
+                                                  <span className="px-1 py-0.5 bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 rounded text-[9px] font-bold border border-violet-100 dark:border-violet-800/60">
                                                       SIASN: {emp.statusSiasn}
                                                   </span>
                                               )}
                                           </div>
                                       </div>
                                   </td>}
-                                  <td className="px-6 py-4 whitespace-nowrap text-center print:border print:border-black print:text-black print:px-2 print:py-2">
-                                      <div className={`font-mono font-medium px-2 py-1 rounded border inline-block print:bg-transparent print:border-none print:p-0 ${ viewMode === 'history' && (getTmtDate(emp.tmt)?.getFullYear() || 0) >= 2026 
+                                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                                      <div className={`font-mono font-medium px-2 py-1 rounded border inline-block ${ viewMode === 'history' && (getTmtDate(emp.tmt)?.getFullYear() || 0) >= 2026 
                                           ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-800/60' 
                                           : 'bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700'
                                       }`}>
@@ -729,99 +791,66 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
                         })
                       ) : (
                           <tr>
-                              <td colSpan={7} className="px-6 py-16 text-center text-gray-500 dark:text-gray-400 print:border print:border-black print:text-black print:py-8">
+                              <td colSpan={7} className="px-6 py-16 text-center text-gray-500 dark:text-gray-400">
                                   <div className="flex flex-col items-center justify-center gap-2">
-                                      <Search size={32} className="opacity-20 print:hidden" />
+                                      <Search size={32} className="opacity-20" />
                                       <p className="font-medium">Tidak ada data ditemukan untuk periode ini.</p>
                                   </div>
                               </td>
                           </tr>
                       )}
                   </tbody>
-<tbody className="divide-y divide-gray-200 hidden print:table-row-group print:text-[10px] print:text-black">
+
+                  {/* Print-only tbody showing ALL filtered records with 1-based sequential numbering */}
+                  <tbody className="divide-y divide-black hidden print:table-row-group print:text-[10px] print:text-black">
                       {filteredData.length > 0 ? ( 
                         filteredData.map((emp, index) => {
                               // Logic akses: Pemilik data ATAU Admin Khusus
                               const hasAccess = currentUser?.nip === emp.nip || currentUser?.nip === ADMIN_NIP; 
                               return (
-                              <tr key={emp.id} className="even:bg-gray-50/50 dark:even:bg-gray-800/20 odd:bg-white dark:odd:bg-gray-900 hover:!bg-primary-50/60 dark:hover:!bg-gray-800/70 transition-all duration-150 print:hover:bg-transparent">
-                                  <td className="px-6 py-4 text-center font-medium text-gray-600 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
-                                      {(currentPage - 1) * itemsPerPage + index + 1}
+                              <tr key={`print-${emp.id}`} className="print:border-b print:border-black break-inside-avoid">
+                                  <td className="print:border print:border-black print:text-black print:text-center print:px-2 print:py-1.5 font-medium">
+                                      {index + 1}
                                   </td>
-                                  <td className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-2">
-                                      <div className="font-bold text-gray-800 dark:text-gray-100 text-xs md:text-sm print:text-black">{emp.nama}</div>
-                                      <div className="text-primary-700 dark:text-primary-400 text-xs font-mono font-medium mt-0.5 print:text-black">{emp.nip}</div>
-                                      <div className="text-gray-500 dark:text-gray-400 text-xs mt-0.5 print:hidden">{emp.pangkat}</div>
-                                      <div className="hidden print:block text-xs mt-0.5">{emp.pangkat}</div>
+                                  <td className="print:border print:border-black print:text-black print:px-2 print:py-1.5">
+                                      <div className="font-bold print:text-black">{emp.nama}</div>
+                                      <div className="text-[9px] font-mono print:text-black">NIP. {emp.nip}</div>
+                                      <div className="text-[9px] print:text-black">{emp.pangkat} {emp.jabatan ? `• ${emp.jabatan}` : ''}</div>
                                   </td>
-                                  <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                  <td className="print:border print:border-black print:text-black print:px-2 print:py-1.5">
                                       {emp.unitKerja}
                                   </td>
-                                  {!isKP && <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                  {!isKP && <td className="print:border print:border-black print:text-black print:px-2 print:py-1.5">
                                       {hasAccess ? formatRupiah(emp.gajiLama) : 'Rp ******'}
                                   </td>}
-                                  {!isKP && <td className="px-6 py-4 font-bold text-primary-600 dark:text-primary-400 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:font-normal print:px-2 print:py-2">
+                                  {!isKP && <td className="print:border print:border-black print:text-black print:px-2 print:py-1.5 font-semibold">
                                       {hasAccess ? formatRupiah(emp.gajiBaru) : 'Rp ******'}
                                   </td>}
-                                  {isKP && <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                  {isKP && <td className="print:border print:border-black print:text-black print:px-2 print:py-1.5">
                                       {emp.pangkatLama || '-'}
                                   </td>}
-                                  {isKP && <td className="px-6 py-4 font-bold text-primary-600 dark:text-primary-400 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:font-normal print:px-2 print:py-2">
+                                  {isKP && <td className="print:border print:border-black print:text-black print:px-2 print:py-1.5 font-semibold">
                                       {emp.pangkatBaru || emp.pangkat}
                                   </td>}
-                                  {!isKP && <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                  {!isKP && <td className="print:border print:border-black print:text-black print:px-2 print:py-1.5 text-center">
                                       {emp.masaKerja}
                                   </td>}
-                                  {isKP && <td className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
-                                      <div className="flex flex-col gap-1 items-start">
-                                          {/* Status Proses Badge */}
-                                          {emp.status === 'Processed' && (
-                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/60 inline-flex items-center gap-1 print:bg-transparent print:border-none print:text-black print:p-0">
-                                                  Selesai (SK Terbit)
-                                              </span>
-                                          )}
-                                          {emp.status === 'Pending' && (
-                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 inline-flex items-center gap-1 print:bg-transparent print:border-none print:text-black print:p-0">
-                                                  Diproses (Biro OSDM)
-                                              </span>
-                                          )}
-                                          {emp.status === 'Upcoming' && (
-                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/60 inline-flex items-center gap-1 print:bg-transparent print:border-none print:text-black print:p-0">
-                                                  Akan Datang
-                                              </span>
-                                          )}
-
-                                          {/* Kepegawaian & SIASN Info */}
-                                          <div className="flex flex-wrap gap-1 items-center">
-                                              <span className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded text-[9px] font-bold uppercase r print:border print:border-black print:text-black print:bg-transparent">
-                                                  {emp.statusKepegawaian}
-                                              </span>
-                                              {emp.statusSiasn && emp.statusSiasn !== '-' && (
-                                                  <span className="px-1 py-0.5 bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 rounded text-[9px] font-bold print:hidden border border-violet-100 dark:border-violet-800/60">
-                                                      SIASN: {emp.statusSiasn}
-                                                  </span>
-                                              )}
-                                          </div>
+                                  {isKP && <td className="print:border print:border-black print:text-black print:px-2 print:py-1.5">
+                                      <div className="text-[9px]">
+                                          <div>{emp.status === 'Processed' ? 'Selesai (SK Terbit)' : emp.status === 'Pending' ? 'Diproses (OSDM)' : 'Akan Datang'}</div>
+                                          <div className="text-gray-600 font-mono">Status: {emp.statusKepegawaian}</div>
                                       </div>
                                   </td>}
-                                  <td className="px-6 py-4 whitespace-nowrap text-center print:border print:border-black print:text-black print:px-2 print:py-2">
-                                      <div className={`font-mono font-medium px-2 py-1 rounded border inline-block print:bg-transparent print:border-none print:p-0 ${ viewMode === 'history' && (getTmtDate(emp.tmt)?.getFullYear() || 0) >= 2026 
-                                          ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-800/60' 
-                                          : 'bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700'
-                                      }`}>
-                                          {emp.tmt}
-                                      </div>
+                                  <td className="print:border print:border-black print:text-black print:px-2 print:py-1.5 whitespace-nowrap text-center font-mono font-medium">
+                                      {emp.tmt}
                                   </td>
                               </tr>
                           );
                         })
                       ) : (
                           <tr>
-                              <td colSpan={7} className="px-6 py-16 text-center text-gray-500 dark:text-gray-400 print:border print:border-black print:text-black print:py-8">
-                                  <div className="flex flex-col items-center justify-center gap-2">
-                                      <Search size={32} className="opacity-20 print:hidden" />
-                                      <p className="font-medium">Tidak ada data ditemukan untuk periode ini.</p>
-                                  </div>
+                              <td colSpan={7} className="print:border print:border-black print:text-black print:py-8 text-center">
+                                  <p className="font-medium">Tidak ada data ditemukan untuk periode ini.</p>
                               </td>
                           </tr>
                       )}
@@ -840,7 +869,7 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
                       <select value={itemsPerPage} onChange={(e) => setItemsPerPage(Number(e.target.value))} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-[10px] font-bold px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-gray-700 dark:text-gray-300">
                           <option value={10}>10</option>
                           <option value={20}>20</option>
-<option value={25}>25</option>
+                          <option value={25}>25</option>
                           <option value={50}>50</option>
                           <option value={100}>100</option>
                       </select>
@@ -873,16 +902,21 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
           </div>
       </div>
       
-      {/* Print Signature Area (Visible only on print) */}
-      <div className="hidden print:flex flex-col items-end mt-16 pr-8 page-break-inside-avoid text-black">
-          <div className="text-left w-64">
-              <p className="mb-1">Ditetapkan di: Jakarta</p>
-              <p className="mb-6">Tanggal: ...........................</p>
+      {/* Print Signature & Footer Area (Visible only on print) */}
+      <div className="hidden print:flex flex-row justify-between items-start mt-8 px-4 text-black text-xs break-inside-avoid">
+          <div className="text-left space-y-1">
+              <p className="text-[10px] text-gray-600">Dicetak melalui Portal Kepegawaian BSKJI</p>
+              <p className="text-[10px] text-gray-600">Waktu Cetak: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })} WIB</p>
+              <p className="text-[10px] text-gray-600">Total Data: {filteredData.length} Pegawai</p>
           </div>
-          <div className="text-center w-64">
-              <p className="mb-20 font-bold">Mengetahui,<br/>{isKP ? 'Kepala Bagian Kepegawaian dan Umum' : 'Kepala Subbagian Kepegawaian'}</p>
+          <div className="text-center w-72">
+              <p className="mb-1 text-left">Ditetapkan di : Jakarta</p>
+              <p className="mb-4 text-left">Pada tanggal : {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+              <p className="mb-16 font-bold leading-snug">
+                  {isKP ? 'Kepala Bagian Kepegawaian dan Umum' : 'Kepala Subbagian Kepegawaian'}
+              </p>
               <p className="font-bold underline">......................................................</p>
-              <p className="font-medium mt-1">NIP. ...........................................</p>
+              <p className="font-medium mt-0.5">NIP. ...........................................</p>
           </div>
       </div>
     </div>
