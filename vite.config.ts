@@ -134,10 +134,21 @@ export default defineConfig(({ mode }) => {
         chunkSizeWarningLimit: 1000,
         rollupOptions: {
           output: {
-            manualChunks: {
-              'react-vendor': ['react', 'react-dom'],
-              'ui-vendor': ['lucide-react'],
-              'charts-vendor': ['recharts']
+            manualChunks(id) {
+              if (id.includes('node_modules')) {
+                if (id.includes('react') || id.includes('react-dom') || id.includes('zustand')) {
+                  return 'react-vendor';
+                }
+                if (id.includes('lucide-react')) {
+                  return 'ui-vendor';
+                }
+                if (id.includes('recharts') || id.includes('d3-')) {
+                  return 'charts-vendor';
+                }
+                if (id.includes('jspdf') || id.includes('jspdf-autotable') || id.includes('xlsx')) {
+                  return 'export-vendor';
+                }
+              }
             }
           }
         }

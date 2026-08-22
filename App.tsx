@@ -33,7 +33,7 @@ import { getRandomQuote } from './utils/quotesGenerator';
 import { TRANSLATIONS, Language, getGreeting } from './utils/translationHelper';
 import { getBirthDateFromNIP, getRetirementAge, calculateTmtPensiun } from './utils/pensionHelpers';
 
-// Direct view imports for reliable offline/online instant rendering
+// Direct view imports for reliable offline/online instant rendering without dynamic chunk fetch issues
 import DashboardPage from './components/DashboardPage';
 import KGBDataPage from './components/KGBDataPage';
 import PromotionTable from './components/PromotionTable';
@@ -133,7 +133,14 @@ const HeaderClock = React.memo(() => {
   const [time, setTime] = useState(() => new Date());
 
   useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      return;
+    }
+    const timer = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        setTime(new Date());
+      }
+    }, 1000);
     return () => clearInterval(timer);
   }, []);
 
