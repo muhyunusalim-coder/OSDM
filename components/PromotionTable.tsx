@@ -476,7 +476,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                     {stat.label}
                   </span>
                   <div className="flex items-baseline gap-2 mt-1">
-                    <span className="text-3xl font-black text-gray-900 dark:text-gray-100 leading-none">
+                    <span className="text-3xl font-normal text-gray-900 dark:text-gray-100 leading-none">
                       {stat.value}
                     </span>
                   </div>

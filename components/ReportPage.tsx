@@ -355,7 +355,7 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
                   <span className="text-[10px] font-bold text-primary-700 dark:text-primary-400 uppercase st block">Total Usul KP</span>
-                  <h3 className="text-3xl font-extrabold text-gray-800 dark:text-gray-100 ">{kpStats.total}</h3>
+                  <h3 className="text-3xl font-normal text-gray-800 dark:text-gray-100 ">{kpStats.total}</h3>
                   <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">Usulan kenaikan pangkat aktif.</p>
                 </div>
                 <div className="p-3 bg-primary-600 text-white rounded-2xl shadow-md shadow-primary-600/10 group-hover:scale-110 transition-transform duration-300">
@@ -375,7 +375,7 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
                   <span className="text-[10px] font-bold text-primary-700 dark:text-primary-400 uppercase st block">Selesai (Terbit SK)</span>
-                  <h3 className="text-3xl font-extrabold text-gray-800 dark:text-gray-100 ">{kpStats.processed}</h3>
+                  <h3 className="text-3xl font-normal text-gray-800 dark:text-gray-100 ">{kpStats.processed}</h3>
                   <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">SK KP sudah terbit & disetujui.</p>
                 </div>
                 <div className="p-3 bg-primary-500 text-white rounded-2xl shadow-md shadow-primary-500/10 group-hover:scale-110 transition-transform duration-300">
@@ -395,7 +395,7 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
                   <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase st block">Sedang Diproses</span>
-                  <h3 className="text-3xl font-extrabold text-gray-800 dark:text-gray-100 ">{kpStats.pending}</h3>
+                  <h3 className="text-3xl font-normal text-gray-800 dark:text-gray-100 ">{kpStats.pending}</h3>
                   <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">Berkas sedang diverifikasi.</p>
                 </div>
                 <div className="p-3 bg-amber-500 text-white rounded-2xl shadow-md shadow-amber-500/10 group-hover:scale-110 transition-transform duration-300">
@@ -415,7 +415,7 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
                   <span className="text-[10px] font-bold text-primary-700 dark:text-primary-400 uppercase st block">Akan Datang (Upcoming)</span>
-                  <h3 className="text-3xl font-extrabold text-gray-800 dark:text-gray-100 ">{kpStats.upcoming}</h3>
+                  <h3 className="text-3xl font-normal text-gray-800 dark:text-gray-100 ">{kpStats.upcoming}</h3>
                   <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">Pegawai periode berikutnya.</p>
                 </div>
                 <div className="p-3 bg-primary-600 text-white rounded-2xl shadow-md shadow-primary-600/10 group-hover:scale-110 transition-transform duration-300">
