@@ -180,7 +180,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
         <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-3 sm:p-6 md:p-12 lg:p-16 relative my-auto">
           <div className="w-full max-w-md bg-[#0f172a] border border-gray-800 p-5 sm:p-10 rounded-3xl shadow-2xl relative overflow-hidden">
             {/* Premium Subtle Accent Line */}
-            <div className="absolute top-0 left-0 w-full h-[3px] bg-primary-50 dark:bg-gray-800"></div>
+            <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-primary-600 to-primary-400 dark:from-primary-500 dark:to-primary-300"></div>
 
             <div className="mb-6 sm:mb-8 text-center relative z-10">
               <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2  ">
@@ -313,9 +313,9 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary-50 dark:bg-gray-800 hover:from-primary-500 hover:to-primary-400 text-white font-bold py-4 rounded-2xl shadow-sm hover:shadow-sm transition-all duration-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-6 relative overflow-hidden text-sm uppercase r group cursor-pointer"
+                className="w-full bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 text-white font-bold py-4 rounded-2xl shadow-sm hover:shadow-sm transition-all duration-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-6 relative overflow-hidden text-sm uppercase r group cursor-pointer"
               >
-                <div className="absolute inset-0 bg-white/10 trangray-y-full group-hover:trangray-y-0 transition-transform duration-300 ease-out"></div>
+                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
                 <div className="relative z-10 flex items-center justify-center gap-2">
                   {loading ? (
                     <>
@@ -327,7 +327,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                       <span>{t("login_btn")}</span>
                       <ArrowRight
                         size={16}
-                        className="group-hover:trangray-x-1 transition-transform"
+                        className="group-hover:translate-x-1 transition-transform"
                       />
                     </>
                   )}

@@ -259,7 +259,7 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-4 print:p-0 print:space-y-0 print:bg-white dark:bg-gray-900 print:w-full">
       {/* Header Section (Hidden on Print) */}
-      <div className="bg-primary-50 dark:bg-gray-800 rounded-xl p-6 shadow-md relative overflow-hidden text-white print:hidden">
+      <div className="bg-gray-900 dark:bg-gray-800 rounded-xl p-6 shadow-md relative overflow-hidden text-white print:hidden">
         <div className="absolute bottom-0 left-0 w-40 h-40 bg-primary-500/30 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none transform trangray-z-0"></div>
         
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">

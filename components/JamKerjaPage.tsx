@@ -72,7 +72,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
       </div>
 
       {/* Hero Banner / Rules Overview */}
-      <div className="bg-primary-50 dark:bg-gray-800 rounded-3xl p-6 md:p-8 text-white relative overflow-hidden shadow-xl border border-primary-500/10 print:hidden">
+      <div className="bg-gray-900 dark:bg-gray-800 rounded-3xl p-6 md:p-8 text-white relative overflow-hidden shadow-xl border border-primary-500/10 print:hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
           <div className="space-y-3 max-w-2xl">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-500/20 text-primary-300 text-[10px] font-extrabold st uppercase border border-primary-500/30">

@@ -991,7 +991,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
                 </button>
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 relative z-10 text-center sm:text-left">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center bg-primary-50 dark:bg-gray-800 border-2 border-primary-500 text-white font-bold text-lg sm:text-xl shadow-lg shadow-primary-500/20 flex-shrink-0">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center bg-gray-800 border-2 border-primary-500 text-white font-bold text-lg sm:text-xl shadow-lg shadow-primary-500/20 flex-shrink-0">
                     {selectedEmployee.nama.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="flex-1">

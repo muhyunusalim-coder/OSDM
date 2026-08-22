@@ -790,7 +790,7 @@ const PensiunTable = React.memo(({ employees }: Props) => {
               </button>
 
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-primary-50 dark:bg-gray-800 border-2 border-rose-500 text-white font-bold text-lg shadow-lg shadow-rose-500/20 flex-shrink-0">
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-gray-800 border-2 border-rose-500 text-white font-bold text-lg shadow-lg shadow-rose-500/20 flex-shrink-0">
                   {selectedEmployee.nama.slice(0, 2).toUpperCase()}
                 </div>
                 <div>
