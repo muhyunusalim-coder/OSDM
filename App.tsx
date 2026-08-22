@@ -115,14 +115,14 @@ const MenuItem = React.memo(({
       }}
       className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
         isActive
-          ? 'bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 font-medium'
-          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200'
+          ? 'bg-primary-500/10 text-primary-400 font-medium'
+          : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'
       }`}
     >
       <Icon size={isNested ? 16 : 18} strokeWidth={isActive ? 2.5 : 2} />
       <span className="text-sm flex-1 text-left">{label}</span>
       {badge !== null && badge !== undefined && (
-        <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-primary-100 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400">
+        <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-primary-500/20 text-primary-400">
           {badge}
         </span>
       )}
@@ -586,19 +586,19 @@ function App() {
       )}
 
       {/* Modern Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 transform transition-transform duration-300 ease-in-out md:trangray-x-0 md:static flex flex-col border-r border-gray-200 dark:border-gray-800 ${mobileMenuOpen ? 'trangray-x-0' : '-trangray-x-full'} print:hidden`}>
+      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-gray-300 transform transition-transform duration-300 ease-in-out md:trangray-x-0 md:static flex flex-col border-r border-gray-800 ${mobileMenuOpen ? 'trangray-x-0' : '-trangray-x-full'} print:hidden`}>
         {/* Brand Area */}
-        <div className="px-5 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-gray-800 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => { setCurrentView('dashboard'); setMobileMenuOpen(false); }}>
             <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary-600 flex items-center justify-center shadow-sm">
               <Landmark size={20} className="text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="font-bold text-lg text-gray-900 dark:text-white leading-tight">BSKJI</h1>
-              <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400">Portal Kepegawaian</p>
+              <h1 className="font-bold text-lg text-white leading-tight">BSKJI</h1>
+              <p className="text-[11px] font-medium text-gray-400">Portal Kepegawaian</p>
             </div>
           </div>
-          <button onClick={() => setMobileMenuOpen(false)} className="md:hidden p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+          <button onClick={() => setMobileMenuOpen(false)} className="md:hidden p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800 rounded-lg transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -616,8 +616,8 @@ function App() {
             }}
             className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-colors ${
               currentView === 'dashboard' 
-                ? 'bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400' 
-                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200'
+                ? 'bg-primary-500/10 text-primary-400' 
+                : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'
             }`}
           >
             <LayoutDashboard size={18} strokeWidth={currentView === 'dashboard' ? 2.5 : 2} />
@@ -641,7 +641,7 @@ function App() {
                   setCurrentView('kenaikan-pangkat');
                 }
               }}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200'}`}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'bg-primary-500/10 text-primary-400' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}
             >
               <div className="flex items-center gap-3">
                 <Award size={18} strokeWidth={(isKenaikanPangkatExpanded || isKPAreaActive) ? 2.5 : 2} />
@@ -672,7 +672,7 @@ function App() {
                   setCurrentView('data-kgb');
                 }
               }}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isLayananKgbExpanded || isKGBAreaActive) ? 'bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200'}`}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isLayananKgbExpanded || isKGBAreaActive) ? 'bg-primary-500/10 text-primary-400' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}
             >
               <div className="flex items-center gap-3">
                 <Banknote size={18} strokeWidth={(isLayananKgbExpanded || isKGBAreaActive) ? 2.5 : 2} />
@@ -707,7 +707,7 @@ function App() {
                   setCurrentView('pensiun');
                 }
               }}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isPensiunExpanded || isPensiunAreaActive) ? 'bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200'}`}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isPensiunExpanded || isPensiunAreaActive) ? 'bg-primary-500/10 text-primary-400' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}
             >
               <div className="flex items-center gap-3">
                 <Archive size={18} strokeWidth={(isPensiunExpanded || isPensiunAreaActive) ? 2.5 : 2} />
@@ -741,7 +741,7 @@ function App() {
                   setCurrentView('jam-kerja');
                 }
               }}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200'}`}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'bg-primary-500/10 text-primary-400' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}
             >
               <div className="flex items-center gap-3">
                 <Clock size={18} strokeWidth={(isJamKerjaExpanded || isJamKerjaAreaActive) ? 2.5 : 2} />
@@ -766,20 +766,20 @@ function App() {
         </nav>
 
         {/* Sidebar Footer User Card */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50">
+        <div className="p-4 border-t border-gray-800 bg-gray-900/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold text-sm flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-full bg-gray-800 text-gray-300 font-semibold text-sm flex items-center justify-center shrink-0">
               {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+              <p className="text-sm font-semibold text-gray-100 truncate">
                 {currentUser ? currentUser.nama.split(' ')[0] : 'Pegawai'}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+              <p className="text-xs text-gray-400 truncate">
                 {currentUser?.nip || 'BSKJI ASN'}
               </p>
             </div>
-            <button onClick={handleLogout} title="Keluar / Log Out" className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-200 dark:hover:text-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors shrink-0">
+            <button onClick={handleLogout} title="Keluar / Log Out" className="p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800 rounded-lg transition-colors shrink-0">
               <LogOut size={18} />
             </button>
           </div>
