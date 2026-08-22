@@ -587,16 +587,28 @@ function App() {
       <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-gray-300 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static flex flex-col border-r border-gray-800 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} print:hidden`}>
         {/* Brand Area */}
         <div className="px-5 py-4 border-b border-gray-800 flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => { setCurrentView('dashboard'); setMobileMenuOpen(false); }}>
-            <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary-600 flex items-center justify-center shadow-sm">
+          <button
+            type="button"
+            className="flex items-center gap-3 cursor-pointer p-1.5 -ml-1.5 rounded-xl hover:bg-gray-800/80 transition-all text-left group active:scale-95 focus:outline-none"
+            onClick={() => {
+              setCurrentView('dashboard');
+              setMobileMenuOpen(false);
+              setIsKenaikanPangkatExpanded(false);
+              setIsLayananKgbExpanded(false);
+              setIsPensiunExpanded(false);
+              setIsJamKerjaExpanded(false);
+            }}
+            title="Ke Beranda Utama"
+          >
+            <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary-600 group-hover:bg-primary-500 flex items-center justify-center shadow-sm transition-colors">
               <Landmark size={20} className="text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="font-bold text-lg text-white leading-tight">BSKJI</h1>
-              <p className="text-[11px] font-medium text-gray-400">Portal Kepegawaian</p>
+              <h1 className="font-bold text-lg text-white group-hover:text-primary-300 leading-tight transition-colors">BSKJI</h1>
+              <p className="text-[11px] font-medium text-gray-400 group-hover:text-gray-300 transition-colors">Portal Kepegawaian</p>
             </div>
-          </div>
-          <button onClick={() => setMobileMenuOpen(false)} className="md:hidden p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800 rounded-lg transition-colors">
+          </button>
+          <button onClick={() => setMobileMenuOpen(false)} className="md:hidden p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800 rounded-lg transition-colors cursor-pointer">
             <X size={20} />
           </button>
         </div>
@@ -805,9 +817,20 @@ function App() {
               <Menu size={20} />
             </button>
             <div>
-              <span className="text-xs font-semibold text-primary-600 dark:text-primary-400 uppercase r hidden sm:block mb-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentView('dashboard');
+                  setIsKenaikanPangkatExpanded(false);
+                  setIsLayananKgbExpanded(false);
+                  setIsPensiunExpanded(false);
+                  setIsJamKerjaExpanded(false);
+                }}
+                className="text-xs font-semibold text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 uppercase r hidden sm:block mb-0.5 transition-colors cursor-pointer text-left"
+                title="Ke Beranda"
+              >
                 Sistem Informasi Kepegawaian BSKJI
-              </span>
+              </button>
               <h2 className="font-bold text-gray-900 dark:text-white text-xl sm:text-2xl truncate">
                 {viewTitle}
               </h2>
