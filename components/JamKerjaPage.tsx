@@ -416,7 +416,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                                   {emp.totalHadir} {language === 'en' ? 'days present' : 'hari hadir'}<br />
                                   <span className="text-[10px] text-primary-600">({emp.totalLeave} {language === 'en' ? 'days leave' : 'hari cuti/izin'})</span>
                                 </td>
-                                <td className="px-4 py-3.5 text-center">
+                                <td className="px-4 py-3.5 text-center print:hidden">
                                   <div className="flex flex-col items-center justify-center gap-1.5">
                                     <span className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-bold ${statusBg}`}>
                                       {statusLabel}
@@ -432,7 +432,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                                     )}
                                   </div>
                                 </td>
-                                <td className="px-4 py-3.5 text-center">
+                                <td className="px-4 py-3.5 text-center print:hidden">
                                   <button onClick={() => handleExportSingleEmployeeExcel(emp)} disabled={exportingNip !== null} className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-primary-50 hover:bg-primary-100 disabled:bg-gray-50 dark:bg-gray-800/50 text-primary-700 disabled:text-gray-400 dark:text-gray-500 rounded-lg text-[10px] font-bold transition-all border border-primary-200/50 hover:border-primary-300 shadow-sm active:scale-95 cursor-pointer disabled:cursor-not-allowed" title={`Unduh rincian kekurangan jam kerja untuk ${emp.nama}`}>
                                     {exportingNip === emp.nip ? (
                                       <>
@@ -732,7 +732,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                         <th className="px-5 py-3.5 text-center cursor-pointer hover:bg-gray-100 dark:bg-gray-800 transition-colors" onClick={() => requestSort('totalDeficiency')}>
                           {t('deficiency')} <ArrowUpDown size={11} className="inline ml-1 text-gray-400 dark:text-gray-500" />
                         </th>
-                        <th className="px-5 py-3.5 text-center">Status</th>
+                        <th className="px-5 py-3.5 text-center print:hidden">Status</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50 print:hidden">
@@ -784,18 +784,18 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                           const status = getDisciplineStatus(r.totalDeficiency);
                           return (
                             <tr key={`print-${r.nip}-${r.bulan}`} className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-                              <td className="px-4 py-3 font-mono text-xs text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700">{recordNumber}</td>
+                              <td className="px-4 py-3 font-mono text-xs print:text-black dark:text-gray-100 border border-gray-200 dark:border-gray-700">{recordNumber}</td>
                               <td className="px-4 py-3 border border-gray-200 dark:border-gray-700">
                                 <div>
-                                  <div className="font-bold text-gray-900 dark:text-gray-100 text-xs">{r.nama}</div>
-                                  <div className="text-gray-500 dark:text-gray-500 text-[10px] font-mono mt-0.5">NIP. {r.nip} • {r.gol}</div>
+                                  <div className="font-bold print:text-black dark:text-gray-100 text-xs">{r.nama}</div>
+                                  <div className="print:text-black dark:print:text-black text-[10px] font-mono mt-0.5">NIP. {r.nip} • {r.gol}</div>
                                 </div>
                               </td>
                               <td className="px-4 py-3 text-gray-800 dark:text-gray-100 text-xs font-medium border border-gray-200 dark:border-gray-700">{r.bulan}</td>
                               <td className="px-4 py-3 text-gray-800 dark:text-gray-100 text-xs border border-gray-200 dark:border-gray-700">{r.unitKerja}</td>
-                              <td className="px-4 py-3 text-center font-mono text-xs font-bold text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700">{r.totalHadir} hr</td>
-                              <td className="px-4 py-3 text-center font-mono text-xs text-gray-500 dark:text-gray-500 border border-gray-200 dark:border-gray-700">{r.totalLeave} hr</td>
-                              <td className="px-4 py-3 text-center font-mono text-xs font-bold text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700">
+                              <td className="px-4 py-3 text-center font-mono text-xs font-bold print:text-black dark:text-gray-100 border border-gray-200 dark:border-gray-700">{r.totalHadir} hr</td>
+                              <td className="px-4 py-3 text-center font-mono text-xs print:text-black dark:print:text-black border border-gray-200 dark:border-gray-700">{r.totalLeave} hr</td>
+                              <td className="px-4 py-3 text-center font-mono text-xs font-bold print:text-black dark:text-gray-100 border border-gray-200 dark:border-gray-700">
                                 {Math.round(r.totalActualWorked / 60)}j
                               </td>
                               <td className="px-4 py-3 text-center font-mono text-xs font-black text-rose-700 border border-gray-200 dark:border-gray-700">
@@ -811,7 +811,7 @@ const JamKerjaPage = React.memo(({ language = 'id' }: JamKerjaPageProps) => {
                         })
                       ) : (
                         <tr>
-                          <td colSpan={9} className="px-5 py-12 text-center text-gray-400 dark:text-gray-500">
+                          <td colSpan={9} className="px-5 py-12 text-center text-gray-400 dark:print:text-black">
                             {t('no_data')}
                           </td>
                         </tr>

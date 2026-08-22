@@ -650,9 +650,97 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
                           <th className="px-6 py-4 text-center print:border print:border-black print:px-2 print:py-2">TMT</th>
                       </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-gray-800 text-sm print:divide-black">
+                  <tbody className="divide-y divide-gray-100 dark:divide-gray-800 text-sm print:hidden">
                       {filteredData.length > 0 ? ( 
                         paginatedData.map((emp, index) => {
+                              // Logic akses: Pemilik data ATAU Admin Khusus
+                              const hasAccess = currentUser?.nip === emp.nip || currentUser?.nip === ADMIN_NIP; 
+                              return (
+                              <tr key={emp.id} className="even:bg-gray-50/50 dark:even:bg-gray-800/20 odd:bg-white dark:odd:bg-gray-900 hover:!bg-primary-50/60 dark:hover:!bg-gray-800/70 transition-all duration-150 print:hover:bg-transparent">
+                                  <td className="px-6 py-4 text-center font-medium text-gray-600 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                      {(currentPage - 1) * itemsPerPage + index + 1}
+                                  </td>
+                                  <td className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:px-2 print:py-2">
+                                      <div className="font-bold text-gray-800 dark:text-gray-100 text-xs md:text-sm print:text-black">{emp.nama}</div>
+                                      <div className="text-primary-700 dark:text-primary-400 text-xs font-mono font-medium mt-0.5 print:text-black">{emp.nip}</div>
+                                      <div className="text-gray-500 dark:text-gray-400 text-xs mt-0.5 print:hidden">{emp.pangkat}</div>
+                                      <div className="hidden print:block text-xs mt-0.5">{emp.pangkat}</div>
+                                  </td>
+                                  <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                      {emp.unitKerja}
+                                  </td>
+                                  {!isKP && <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                      {hasAccess ? formatRupiah(emp.gajiLama) : 'Rp ******'}
+                                  </td>}
+                                  {!isKP && <td className="px-6 py-4 font-bold text-primary-600 dark:text-primary-400 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:font-normal print:px-2 print:py-2">
+                                      {hasAccess ? formatRupiah(emp.gajiBaru) : 'Rp ******'}
+                                  </td>}
+                                  {isKP && <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                      {emp.pangkatLama || '-'}
+                                  </td>}
+                                  {isKP && <td className="px-6 py-4 font-bold text-primary-600 dark:text-primary-400 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:font-normal print:px-2 print:py-2">
+                                      {emp.pangkatBaru || emp.pangkat}
+                                  </td>}
+                                  {!isKP && <td className="px-6 py-4 text-gray-700 dark:text-gray-300 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                      {emp.masaKerja}
+                                  </td>}
+                                  {isKP && <td className="px-6 py-4 border-r border-gray-100 dark:border-gray-800 print:border print:border-black print:text-black print:px-2 print:py-2">
+                                      <div className="flex flex-col gap-1 items-start">
+                                          {/* Status Proses Badge */}
+                                          {emp.status === 'Processed' && (
+                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/60 inline-flex items-center gap-1 print:bg-transparent print:border-none print:text-black print:p-0">
+                                                  Selesai (SK Terbit)
+                                              </span>
+                                          )}
+                                          {emp.status === 'Pending' && (
+                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 inline-flex items-center gap-1 print:bg-transparent print:border-none print:text-black print:p-0">
+                                                  Diproses (Biro OSDM)
+                                              </span>
+                                          )}
+                                          {emp.status === 'Upcoming' && (
+                                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800/60 inline-flex items-center gap-1 print:bg-transparent print:border-none print:text-black print:p-0">
+                                                  Akan Datang
+                                              </span>
+                                          )}
+
+                                          {/* Kepegawaian & SIASN Info */}
+                                          <div className="flex flex-wrap gap-1 items-center">
+                                              <span className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded text-[9px] font-bold uppercase r print:border print:border-black print:text-black print:bg-transparent">
+                                                  {emp.statusKepegawaian}
+                                              </span>
+                                              {emp.statusSiasn && emp.statusSiasn !== '-' && (
+                                                  <span className="px-1 py-0.5 bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 rounded text-[9px] font-bold print:hidden border border-violet-100 dark:border-violet-800/60">
+                                                      SIASN: {emp.statusSiasn}
+                                                  </span>
+                                              )}
+                                          </div>
+                                      </div>
+                                  </td>}
+                                  <td className="px-6 py-4 whitespace-nowrap text-center print:border print:border-black print:text-black print:px-2 print:py-2">
+                                      <div className={`font-mono font-medium px-2 py-1 rounded border inline-block print:bg-transparent print:border-none print:p-0 ${ viewMode === 'history' && (getTmtDate(emp.tmt)?.getFullYear() || 0) >= 2026 
+                                          ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-800/60' 
+                                          : 'bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700'
+                                      }`}>
+                                          {emp.tmt}
+                                      </div>
+                                  </td>
+                              </tr>
+                          );
+                        })
+                      ) : (
+                          <tr>
+                              <td colSpan={7} className="px-6 py-16 text-center text-gray-500 dark:text-gray-400 print:border print:border-black print:text-black print:py-8">
+                                  <div className="flex flex-col items-center justify-center gap-2">
+                                      <Search size={32} className="opacity-20 print:hidden" />
+                                      <p className="font-medium">Tidak ada data ditemukan untuk periode ini.</p>
+                                  </div>
+                              </td>
+                          </tr>
+                      )}
+                  </tbody>
+<tbody className="divide-y divide-gray-200 hidden print:table-row-group print:text-[10px] print:text-black">
+                      {filteredData.length > 0 ? ( 
+                        filteredData.map((emp, index) => {
                               // Logic akses: Pemilik data ATAU Admin Khusus
                               const hasAccess = currentUser?.nip === emp.nip || currentUser?.nip === ADMIN_NIP; 
                               return (
