@@ -523,7 +523,7 @@ function App() {
 
   const viewTitle = useMemo(() => {
     switch (currentView) {
-      case 'dashboard': return 'Dasbor Utama';
+      case 'dashboard': return 'Beranda';
       case 'data-kgb': return 'Data Layanan KGB';
       case 'kenaikan-pangkat': return 'Data Layanan Kenaikan Pangkat';
       case 'kalender-kp': return 'Kalender Kenaikan Pangkat';
@@ -619,7 +619,7 @@ function App() {
             }`}
           >
             <LayoutDashboard size={18} strokeWidth={currentView === 'dashboard' ? 2.5 : 2} />
-            <span className="text-sm flex-1 text-left">{t('sidebar_monitoring_services')}</span>
+            <span className="text-sm flex-1 text-left">{t('sidebar_dashboard')}</span>
           </button>
 
           <div className="pt-4 pb-2">
