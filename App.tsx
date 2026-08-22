@@ -656,6 +656,7 @@ function App() {
                   setIsPensiunExpanded(false);
                   setIsJamKerjaExpanded(false);
                   setCurrentView('kenaikan-pangkat');
+                  setMobileMenuOpen(false);
                 }
               }}
               className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'bg-primary-500/10 text-primary-400' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}
@@ -687,6 +688,7 @@ function App() {
                   setIsPensiunExpanded(false);
                   setIsJamKerjaExpanded(false);
                   setCurrentView('data-kgb');
+                  setMobileMenuOpen(false);
                 }
               }}
               className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isLayananKgbExpanded || isKGBAreaActive) ? 'bg-primary-500/10 text-primary-400' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}
@@ -722,6 +724,7 @@ function App() {
                   setIsLayananKgbExpanded(false);
                   setIsJamKerjaExpanded(false);
                   setCurrentView('pensiun');
+                  setMobileMenuOpen(false);
                 }
               }}
               className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isPensiunExpanded || isPensiunAreaActive) ? 'bg-primary-500/10 text-primary-400' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}
@@ -756,6 +759,7 @@ function App() {
                   setIsLayananKgbExpanded(false);
                   setIsPensiunExpanded(false);
                   setCurrentView('jam-kerja');
+                  setMobileMenuOpen(false);
                 }
               }}
               className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'bg-primary-500/10 text-primary-400' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}

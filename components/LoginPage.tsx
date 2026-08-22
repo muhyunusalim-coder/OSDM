@@ -177,16 +177,24 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
         </div>
 
         {/* Right Side: Login Form */}
-        <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-3 sm:p-6 md:p-12 lg:p-16 relative my-auto">
-          <div className="w-full max-w-md bg-[#0f172a] border border-gray-800 p-5 sm:p-10 rounded-3xl shadow-2xl relative overflow-hidden">
+        <div className="w-full md:w-1/2 flex flex-col items-center justify-center px-4 py-6 sm:p-8 md:p-12 lg:p-16 relative my-auto">
+          <div className="w-full max-w-[360px] sm:max-w-md bg-[#0f172a] border border-gray-800 p-5 sm:p-8 md:p-10 rounded-2xl sm:rounded-3xl shadow-2xl relative overflow-hidden">
             {/* Premium Subtle Accent Line */}
             <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-primary-600 to-primary-400 dark:from-primary-500 dark:to-primary-300"></div>
 
-            <div className="mb-6 sm:mb-8 text-center relative z-10">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2  ">
+            <div className="mb-5 sm:mb-6 text-center relative z-10">
+              {/* Mobile mini brand badge */}
+              <div className="md:hidden inline-flex items-center justify-center gap-1.5 px-3 py-1 bg-primary-500/10 border border-primary-500/20 rounded-full mb-3">
+                <Landmark size={13} className="text-primary-400" />
+                <span className="text-[10px] font-bold tracking-wider text-primary-400 uppercase">
+                  {t("brand_ministry")}
+                </span>
+              </div>
+
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1 tracking-tight">
                 {t("login_title")}
               </h2>
-              <p className="text-gray-300 text-xs sm:text-sm">
+              <p className="text-gray-400 text-xs sm:text-sm">
                 {t("login_subtitle")}
               </p>
             </div>
@@ -195,12 +203,13 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
               onSubmit={handleLogin}
               className="space-y-4 sm:space-y-5 relative z-10"
             >
-              <div className="space-y-1.5 sm:space-y-2">
-                <label className="text-[10px] font-bold text-gray-300 uppercase st block ml-1">
+              {/* NIP Field */}
+              <div className="space-y-1.5">
+                <label className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider block ml-0.5">
                   {t("login_username")}
                 </label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 transition-colors group-focus-within:text-primary-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 transition-colors group-focus-within:text-primary-400">
                     <CreditCard size={18} />
                   </div>
                   <input
@@ -215,19 +224,20 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                       const val = e.target.value.replace(/\D/g, "");
                       setNip(val);
                     }}
-                    className="w-full pl-12 pr-4 py-3 sm:py-3.5 bg-gray-900/80 border border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-gray-900 transition-all duration-300 text-white placeholder-gray-400 text-sm font-medium shadow-inner"
+                    className="w-full h-11 sm:h-12 pl-11 pr-4 bg-gray-900/80 border border-gray-700/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-gray-900 transition-all text-white placeholder-gray-500 text-sm font-medium shadow-inner"
                     placeholder={t("login_username_placeholder")}
                     autoFocus
                   />
                 </div>
               </div>
 
-              <div className="space-y-1.5 sm:space-y-2">
-                <label className="text-[10px] font-bold text-gray-300 uppercase st block ml-1">
+              {/* Password Field */}
+              <div className="space-y-1.5">
+                <label className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider block ml-0.5">
                   {t("login_password")}
                 </label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 transition-colors group-focus-within:text-primary-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 transition-colors group-focus-within:text-primary-400">
                     <Lock size={18} />
                   </div>
                   <input
@@ -235,13 +245,13 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     value={password}
                     autoComplete="current-password"
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-12 pr-12 py-3 sm:py-3.5 bg-gray-900/80 border border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-gray-900 transition-all duration-300 text-white placeholder-gray-400 text-sm font-medium shadow-inner"
+                    className="w-full h-11 sm:h-12 pl-11 pr-11 bg-gray-900/80 border border-gray-700/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-gray-900 transition-all text-white placeholder-gray-500 text-sm font-medium shadow-inner"
                     placeholder={t("login_password_placeholder")}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-200 transition-colors cursor-pointer"
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-200 transition-colors cursor-pointer"
                     tabIndex={-1}
                     title={
                       showPassword
@@ -254,25 +264,25 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              {/* Captcha Section */}
+              <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-[10px] font-bold text-gray-300 uppercase st flex items-center gap-1.5 ml-1">
-                    <ShieldCheck size={13} className="text-primary-400" />
+                  <label className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider flex items-center gap-1.5 ml-0.5">
+                    <ShieldCheck size={14} className="text-primary-400" />
                     {t("login_captcha")}
                   </label>
                   <button
                     type="button"
                     onClick={generateCaptcha}
-                    className="text-[11px] text-primary-400 hover:text-primary-300 flex items-center gap-1.5 transition-colors font-semibold px-2.5 py-1 bg-primary-500/10 hover:bg-primary-500/20 border border-primary-500/20 rounded-lg touch-manipulation active:scale-95 cursor-pointer"
+                    className="text-[11px] text-primary-400 hover:text-primary-300 flex items-center gap-1 transition-colors font-medium px-2 py-0.5 bg-primary-500/10 hover:bg-primary-500/20 border border-primary-500/20 rounded-md touch-manipulation active:scale-95 cursor-pointer"
                     title="Acak ulang pertanyaan verifikasi"
                   >
                     <RefreshCw size={12} className="text-primary-400" /> Refresh
                   </button>
                 </div>
-                <div className="flex items-center gap-2.5 sm:gap-3">
-                  <div className="flex-shrink-0 min-w-[100px] sm:min-w-[120px] px-3 py-3 sm:py-3.5 bg-gray-900/80 border border-primary-500/30 rounded-2xl flex items-center justify-center text-primary-400 font-bold text-base sm:text-lg select-none shadow-inner r relative overflow-hidden">
-                    <div className="absolute inset-0 from-primary-500/10 to-transparent"></div>
-                    <span className="relative z-10">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex-shrink-0 w-28 sm:w-32 h-11 sm:h-12 bg-gray-900/80 border border-primary-500/30 rounded-xl flex items-center justify-center text-primary-400 font-mono font-bold text-sm sm:text-base select-none shadow-inner">
+                    <span>
                       {captchaNum1} + {captchaNum2} =
                     </span>
                   </div>
@@ -287,35 +297,34 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     onChange={(e) =>
                       setCaptchaAnswer(e.target.value.replace(/\D/g, ""))
                     }
-                    className="flex-1 min-w-0 px-4 py-3 sm:py-3.5 bg-gray-900/80 border border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-gray-900 transition-all duration-300 text-white placeholder-gray-400 text-base font-bold shadow-inner text-center sm:text-left r"
+                    className="flex-1 min-w-0 h-11 sm:h-12 px-3 bg-gray-900/80 border border-gray-700/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500 focus:bg-gray-900 transition-all text-white placeholder-gray-500 text-sm sm:text-base font-bold shadow-inner text-center sm:text-left"
                     placeholder={t("login_captcha_placeholder")}
                     required
                   />
                 </div>
               </div>
 
-              <>
-                {error && (
-                  <div className="overflow-hidden">
-                    <div className="p-3.5 mt-2 bg-rose-500/15 border border-rose-500/40 rounded-xl flex items-start gap-3 text-rose-200 text-xs shadow-sm">
-                      <AlertCircle
-                        size={16}
-                        className="flex-shrink-0 mt-0.5 text-rose-400"
-                      />
-                      <span className="font-semibold leading-relaxed">
-                        {error}
-                      </span>
-                    </div>
+              {/* Error Message */}
+              {error && (
+                <div className="overflow-hidden">
+                  <div className="p-3 bg-rose-500/15 border border-rose-500/40 rounded-xl flex items-start gap-2.5 text-rose-200 text-xs shadow-sm">
+                    <AlertCircle
+                      size={16}
+                      className="flex-shrink-0 mt-0.5 text-rose-400"
+                    />
+                    <span className="font-medium leading-relaxed">
+                      {error}
+                    </span>
                   </div>
-                )}
-              </>
+                </div>
+              )}
 
+              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400 text-white font-bold py-4 rounded-2xl shadow-sm hover:shadow-sm transition-all duration-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-6 relative overflow-hidden text-sm uppercase r group cursor-pointer"
+                className="w-full h-11 sm:h-12 bg-primary-600 hover:bg-primary-500 text-white font-bold rounded-xl shadow-lg transition-all duration-200 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-2 relative overflow-hidden text-xs sm:text-sm uppercase tracking-wider group cursor-pointer"
               >
-                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
                 <div className="relative z-10 flex items-center justify-center gap-2">
                   {loading ? (
                     <>
@@ -336,7 +345,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
             </form>
           </div>
 
-          <p className="mt-8 text-[11px] text-gray-400 font-medium text-center ">
+          <p className="mt-5 text-[11px] sm:text-xs text-gray-500 font-medium text-center">
             {t("login_footer")}
           </p>
         </div>
