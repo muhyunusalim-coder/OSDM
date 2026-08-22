@@ -16,11 +16,22 @@ export interface Employee {
   suratUsulan?: string;
   inputSiasn?: string;
   statusSiasn?: string;
-  statusKepegawaian: 'PNS' | 'PPPK' | '-'; // Field baru
+  statusKepegawaian: 'PNS' | 'PPPK' | '-'; // Field status ASN
+  jenisKelamin?: string; // 'Laki-laki' | 'Perempuan'
+  usia?: string | number; // e.g. 51 atau "51 th"
+  pendidikan?: string; // Riwayat pendidikan lengkap
+  pendidikanTerakhir?: string; // e.g. S2 Manajemen Teknologi
+  jenjangPendidikan?: string; // 'S3' | 'S2' | 'S1' | 'D3' | 'SMA/SMK' | '-'
+  diklatStruktural?: string; // Riwayat Diklat Struktural
+  golonganRaw?: string; // Raw input seperti "4c", "9", "3a"
   gajiLama: number;
   gajiBaru: number;
   masaKerja: string; 
   tmt: string; 
+  tmtCpns?: string;
+  mkgLama?: string;
+  mkgBaru?: string;
+  tmtKgbTerakhir?: string;
   unitKerja: string;
   status: 'Pending' | 'Processed' | 'Upcoming';
   statusKeterangan?: string; 

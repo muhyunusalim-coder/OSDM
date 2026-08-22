@@ -1,6 +1,6 @@
 
 import { Employee } from '../types';
-import { CSV_EXPORT_URL, CSV_EXPORT_URL_KENAIKAN_PANGKAT, MOCK_EMPLOYEES, MOCK_PROMOTION_EMPLOYEES } from '../constants';
+import { CSV_EXPORT_URL, CSV_EXPORT_URL_KENAIKAN_PANGKAT, CSV_EXPORT_URL_MASTER_PEGAWAI, MOCK_EMPLOYEES, MOCK_PROMOTION_EMPLOYEES } from '../constants';
 
 // Helper to determine status based on Golongan logic
 const determineStatusKepegawaian = (pangkat: string): 'PNS' | 'PPPK' | '-' => {
@@ -57,9 +57,13 @@ const parseCSV = (csvText: string): Employee[] => {
   
   // Prioritize "tmt kgb baru" specifically as requested
   const idxTmt = getColIndex(['tmt kgb baru', 'tmt baru', 'tmt', 'tanggal', 'date']);
+  const idxTmtCpns = getColIndex(['tmt cpns', 'cpns', 'pengangkatan']);
+  const idxMkgLama = getColIndex(['mkg lama', 'masa kerja golongan (mkg) lama', 'mkg_lama']);
+  const idxMkgBaru = getColIndex(['mkg baru', 'masa kerja golongan (mkg) baru', 'mkg_baru']);
+  const idxTmtKgbTerakhir = getColIndex(['tmt kgb terakhir', 'kgb terakhir', 'tmt lama']);
   
-  const idxUnit = getColIndex(['unit', 'kerja', 'skpd']);
-  const idxNo = getColIndex(['no', 'nomor']);
+  const idxUnit = getColIndex(['unit satker', 'unit kerja', 'unit', 'kerja', 'skpd']);
+  const idxNo = getColIndex(['no.', 'no', 'nomor']);
   
   // Detect Status Column from DB
   const idxStatus = getColIndex(['status kgb', 'status', 'keterangan', 'ket']);
@@ -101,10 +105,6 @@ const parseCSV = (csvText: string): Employee[] => {
     if (normalizedStatus.match(/sudah|selesai|terbit|sk|ok|done/)) {
         appStatus = 'Processed';
     } else {
-        // Updated Logic: 
-        // We do NOT automatically set status to 'Processed' if the date is past.
-        // We let the frontend display "Overdue" (Lewat X Hari) based on TMT calculation
-        // unless the database explicitly says it's done.
         appStatus = 'Upcoming';
     }
 
@@ -142,6 +142,10 @@ const parseCSV = (csvText: string): Employee[] => {
       gajiLama: parseMoney(clean(values[idxGajiLama])),
       gajiBaru: parseMoney(clean(values[idxGajiBaru])),
       tmt: tmtStr || '-',
+      tmtCpns: idxTmtCpns !== -1 ? clean(values[idxTmtCpns]) : undefined,
+      mkgLama: idxMkgLama !== -1 ? clean(values[idxMkgLama]) : undefined,
+      mkgBaru: idxMkgBaru !== -1 ? clean(values[idxMkgBaru]) : undefined,
+      tmtKgbTerakhir: idxTmtKgbTerakhir !== -1 ? clean(values[idxTmtKgbTerakhir]) : undefined,
       unitKerja: clean(values[idxUnit] || '-'),
       status: appStatus,
       statusKeterangan: rawStatus,
@@ -421,4 +425,214 @@ export const fetchPromotionData = async (): Promise<Employee[]> => {
     return mock;
   }
 };
+
+// ==========================================
+// MASTER PEGAWAI BSKJI (2.593 PEGAWAI)
+// ==========================================
+
+export const formatPangkatGolongan = (raw: string): string => {
+  const r = (raw || '').trim().toLowerCase();
+  const map: { [key: string]: string } = {
+    '4e': 'IV/e (Pembina Utama)',
+    '4d': 'IV/d (Pembina Utama Madya)',
+    '4c': 'IV/c (Pembina Utama Muda)',
+    '4b': 'IV/b (Pembina Tk. I)',
+    '4a': 'IV/a (Pembina)',
+    '3d': 'III/d (Penata Tk. I)',
+    '3c': 'III/c (Penata)',
+    '3b': 'III/b (Penata Muda Tk. I)',
+    '3a': 'III/a (Penata Muda)',
+    '2d': 'II/d (Pengatur Tk. I)',
+    '2c': 'II/c (Pengatur)',
+    '2b': 'II/b (Pengatur Muda Tk. I)',
+    '2a': 'II/a (Pengatur Muda)',
+    '1d': 'I/d (Juru Tk. I)',
+    '1c': 'I/c (Juru)',
+    '1b': 'I/b (Juru Muda Tk. I)',
+    '1a': 'I/a (Juru Muda)',
+    '5': 'Golongan V (PPPK)',
+    '7': 'Golongan VII (PPPK)',
+    '9': 'Golongan IX (PPPK)',
+    'ix': 'Golongan IX (PPPK)',
+    'vii': 'Golongan VII (PPPK)',
+    'v': 'Golongan V (PPPK)',
+  };
+  return map[r] || (raw ? `Golongan ${raw}` : '-');
+};
+
+const determineJenjangPendidikan = (pend: string): string => {
+  const p = (pend || '').toUpperCase();
+  if (p.includes('S3') || p.includes('S-3') || p.includes('DOKTOR')) return 'S3 (Doktor)';
+  if (p.includes('S2') || p.includes('S-2') || p.includes('MAGISTER')) return 'S2 (Magister)';
+  if (p.includes('S1') || p.includes('S-1') || p.includes('SARJANA') || p.includes('D4') || p.includes('D-IV')) return 'S1 / D4 (Sarjana)';
+  if (p.includes('D3') || p.includes('D-III') || p.includes('DIPLOMA')) return 'D3 (Diploma)';
+  if (p.includes('SMA') || p.includes('SMK') || p.includes('SLTA') || p.includes('STM') || p.includes('MADRASAH ALIYAH')) return 'SMA / SMK';
+  if (p.includes('SMP') || p.includes('SLTP')) return 'SMP';
+  if (p.includes('SD')) return 'SD';
+  return '-';
+};
+
+const parseMasterPegawaiCSV = (csvText: string): Employee[] => {
+  // Robust CSV parser supporting multiline cells within double quotes
+  const rows: string[][] = [];
+  let currentRow: string[] = [];
+  let currentField = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < csvText.length; i++) {
+    const char = csvText[i];
+    const nextChar = csvText[i + 1];
+    
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        currentField += '"';
+        i++; // skip escaped quote
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      currentRow.push(currentField.trim());
+      currentField = '';
+    } else if ((char === '\r' || char === '\n') && !inQuotes) {
+      if (char === '\r' && nextChar === '\n') i++;
+      currentRow.push(currentField.trim());
+      if (currentRow.some(f => f.length > 0)) rows.push(currentRow);
+      currentRow = [];
+      currentField = '';
+    } else {
+      currentField += char;
+    }
+  }
+  if (currentField || currentRow.length) {
+    currentRow.push(currentField.trim());
+    if (currentRow.some(f => f.length > 0)) rows.push(currentRow);
+  }
+
+  if (rows.length < 2) return [];
+
+  // Headers: "No.","Nama.","NIP.","Jenis Kelamin / Usia","Pangkat Gol/Ruang","Jabatan","TMT","Masa Kerja","Pendidikan","Diklat Struktural"
+  const headers = rows[0].map(h => h.toLowerCase().replace(/[^a-z0-9]/g, ''));
+  const getColIndex = (keywords: string[]) => {
+    for (const kw of keywords) {
+      const idx = headers.findIndex(h => h.includes(kw));
+      if (idx !== -1) return idx;
+    }
+    return -1;
+  };
+
+  const idxNo = getColIndex(['no']);
+  const idxNama = getColIndex(['nama']);
+  const idxNip = getColIndex(['nip']);
+  const idxGenderUsia = getColIndex(['jeniskelamin', 'usia', 'gender']);
+  const idxPangkat = getColIndex(['pangkat', 'gol', 'ruang']);
+  const idxJabatan = getColIndex(['jabatan', 'posisi', 'role']);
+  const idxTmt = getColIndex(['tmt']);
+  const idxMasaKerja = getColIndex(['masakerja', 'mk']);
+  const idxPendidikan = getColIndex(['pendidikan']);
+  const idxDiklat = getColIndex(['diklat']);
+
+  const clean = (val?: string) => (val || '').replace(/^["']|["']$/g, '').trim();
+
+  return rows.slice(1).map((values, index) => {
+    const rawNo = idxNo !== -1 ? clean(values[idxNo]) : (index + 1).toString();
+    const rawNama = idxNama !== -1 ? clean(values[idxNama]) : 'Tanpa Nama';
+    const rawNip = idxNip !== -1 ? clean(values[idxNip]) : '-';
+    const rawGenderUsia = idxGenderUsia !== -1 ? clean(values[idxGenderUsia]) : '';
+    const rawPangkat = idxPangkat !== -1 ? clean(values[idxPangkat]) : '';
+    const rawJabatan = idxJabatan !== -1 ? clean(values[idxJabatan]) : '-';
+    const rawTmt = idxTmt !== -1 ? clean(values[idxTmt]) : '-';
+    const rawMasaKerja = idxMasaKerja !== -1 ? clean(values[idxMasaKerja]) : '-';
+    const rawPendidikan = idxPendidikan !== -1 ? clean(values[idxPendidikan]) : '';
+    const rawDiklat = idxDiklat !== -1 ? clean(values[idxDiklat]) : '';
+
+    // Parse Gender and Age
+    let jenisKelamin = '-';
+    let usia: string | number = '-';
+    if (rawGenderUsia) {
+      const parts = rawGenderUsia.split('/');
+      jenisKelamin = parts[0]?.trim() || '-';
+      if (parts[1]) {
+        const ageMatch = parts[1].match(/(\d+)/);
+        usia = ageMatch ? parseInt(ageMatch[1], 10) : parts[1].trim();
+      }
+    }
+
+    // Determine Status Kepegawaian (PNS vs PPPK)
+    const golLower = rawPangkat.toLowerCase();
+    const isPPPK = ['5', '7', '9', 'v', 'vii', 'ix', 'x', 'xi', 'xii'].includes(golLower) || rawNip.includes('202521');
+    const statusKepegawaian: 'PNS' | 'PPPK' = isPPPK ? 'PPPK' : 'PNS';
+
+    // Formatted Pangkat & Golongan
+    const formattedPangkat = formatPangkatGolongan(rawPangkat);
+
+    // Education
+    const firstEduLine = rawPendidikan.split('\n')[0] || rawPendidikan;
+    const jenjangPendidikan = determineJenjangPendidikan(rawPendidikan);
+
+    return {
+      id: `master-emp-${rawNip || index}`,
+      no: rawNo || (index + 1).toString(),
+      nama: rawNama,
+      nip: rawNip,
+      jabatan: rawJabatan,
+      pangkat: formattedPangkat,
+      golonganRaw: rawPangkat,
+      statusKepegawaian,
+      jenisKelamin,
+      usia,
+      pendidikan: rawPendidikan,
+      pendidikanTerakhir: firstEduLine,
+      jenjangPendidikan,
+      diklatStruktural: rawDiklat,
+      masaKerja: rawMasaKerja,
+      tmt: rawTmt,
+      unitKerja: 'Badan Standardisasi dan Kebijakan Jasa Industri (BSKJI)',
+      gajiLama: 0,
+      gajiBaru: 0,
+      status: 'Upcoming'
+    };
+  });
+};
+
+let cachedMasterData: { data: Employee[]; timestamp: number } | null = null;
+
+export const fetchMasterPegawaiData = async (): Promise<Employee[]> => {
+  if (cachedMasterData && (Date.now() - cachedMasterData.timestamp < CACHE_TTL)) {
+    return cachedMasterData.data;
+  }
+
+  const localCache = getLocalCache<Employee[]>('bskji_master_pegawai_cache_v2');
+  if (localCache && (Date.now() - localCache.timestamp < CACHE_TTL)) {
+    cachedMasterData = localCache;
+    fetch(CSV_EXPORT_URL_MASTER_PEGAWAI, { credentials: 'omit' })
+      .then(res => res.text())
+      .then(text => {
+        const parsed = parseMasterPegawaiCSV(text);
+        if (parsed.length > 0) {
+          cachedMasterData = { data: parsed, timestamp: Date.now() };
+          setLocalCache('bskji_master_pegawai_cache_v2', parsed);
+        }
+      })
+      .catch(() => {});
+    return localCache.data;
+  }
+
+  try {
+    const response = await fetch(CSV_EXPORT_URL_MASTER_PEGAWAI, { credentials: 'omit' });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const text = await response.text();
+    const parsed = parseMasterPegawaiCSV(text);
+    if (parsed.length === 0) throw new Error("Empty CSV");
+    cachedMasterData = { data: parsed, timestamp: Date.now() };
+    setLocalCache('bskji_master_pegawai_cache_v2', parsed);
+    return parsed;
+  } catch (error) {
+    if (localCache?.data?.length) return localCache.data;
+    console.warn("Failed to fetch live master pegawai data from Google Sheets.", error);
+    return [];
+  }
+};
+
 

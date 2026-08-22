@@ -6,6 +6,9 @@ export const CSV_EXPORT_URL = `https://docs.google.com/spreadsheets/d/${GOOGLE_S
 export const GID_KENAIKAN_PANGKAT = "451178497";
 export const CSV_EXPORT_URL_KENAIKAN_PANGKAT = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv&gid=${GID_KENAIKAN_PANGKAT}`;
 
+export const SHEET_NAME_MASTER_PEGAWAI = "Data Pegawai BSKJI";
+export const CSV_EXPORT_URL_MASTER_PEGAWAI = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME_MASTER_PEGAWAI)}`;
+
 // Fallback mock data in case the sheet is not public or CORS fails
 export const MOCK_EMPLOYEES = [
   {

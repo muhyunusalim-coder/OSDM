@@ -22,12 +22,13 @@ import {
   BellRing,
   CheckCircle,
   Sun,
-  Moon
+  Moon,
+  Users
 } from 'lucide-react';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import LoginPage from './components/LoginPage';
-import { fetchEmployeeData, fetchPromotionData } from './services/dataService';
+import { fetchEmployeeData, fetchPromotionData, fetchMasterPegawaiData } from './services/dataService';
 import { Employee, DashboardStats as StatsType } from './types';
 import { getRandomQuote } from './utils/quotesGenerator';
 import { TRANSLATIONS, Language, getGreeting } from './utils/translationHelper';
@@ -42,6 +43,7 @@ import KPCalendar from './components/KPCalendar';
 import ReportPage from './components/ReportPage';
 import FAQPage from './components/FAQPage';
 import JamKerjaPage from './components/JamKerjaPage';
+import DaftarSusunanPegawaiPage from './components/DaftarSusunanPegawaiPage';
 
 // Lightweight Loading Component for Suspense
 const PageLoader = () => (
@@ -173,6 +175,7 @@ function App() {
   const { isAuthenticated, login, logout, userNip } = useAppStore();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [promotionEmployees, setPromotionEmployees] = useState<Employee[]>([]);
+  const [masterEmployees, setMasterEmployees] = useState<Employee[]>([]);
   const [currentUser, setCurrentUser] = useState<Employee | null>(null);
   const [loading, setLoading] = useState(true);
   const language: Language = 'id';
@@ -194,7 +197,7 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<'dashboard' | 'data-kgb' | 'kenaikan-pangkat' | 'faq' | 'report' | 'report-kp' | 'pensiun' | 'kalender-kp' | 'jam-kerja'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'data-kgb' | 'kenaikan-pangkat' | 'faq' | 'report' | 'report-kp' | 'pensiun' | 'kalender-kp' | 'jam-kerja' | 'susunan-pegawai'>('dashboard');
   const [isLayananKgbExpanded, setIsLayananKgbExpanded] = useState(false);
   const [isKenaikanPangkatExpanded, setIsKenaikanPangkatExpanded] = useState(false);
   const [isPensiunExpanded, setIsPensiunExpanded] = useState(false);
@@ -321,15 +324,17 @@ function App() {
     const loadData = async () => {
       setLoading(true);
       try {
-        const [data, promotionData] = await Promise.all([
+        const [data, promotionData, masterData] = await Promise.all([
           fetchEmployeeData(),
-          fetchPromotionData()
+          fetchPromotionData(),
+          fetchMasterPegawaiData()
         ]);
         setEmployees(data);
         setPromotionEmployees(promotionData);
+        setMasterEmployees(masterData);
         const savedNip = localStorage.getItem('kgb_user_nip') || sessionStorage.getItem('kgb_user_nip');
         if (savedNip) {
-          const user = data.find(e => e.nip === savedNip);
+          const user = data.find(e => e.nip === savedNip) || masterData.find(e => e.nip === savedNip);
           if (user) setCurrentUser(user);
         }
       } catch (e) {
@@ -531,6 +536,7 @@ function App() {
   const viewTitle = useMemo(() => {
     switch (currentView) {
       case 'dashboard': return 'Beranda';
+      case 'susunan-pegawai': return 'Daftar Susunan Pegawai (DSP)';
       case 'data-kgb': return 'Data Layanan KGB';
       case 'kenaikan-pangkat': return 'Data Layanan Kenaikan Pangkat';
       case 'kalender-kp': return 'Kalender Kenaikan Pangkat';
@@ -639,6 +645,29 @@ function App() {
           >
             <LayoutDashboard size={18} strokeWidth={currentView === 'dashboard' ? 2.5 : 2} />
             <span className="text-sm flex-1 text-left">{t('sidebar_dashboard')}</span>
+          </button>
+
+          {/* Menu Daftar Susunan Pegawai */}
+          <button
+            onClick={() => {
+              setCurrentView('susunan-pegawai');
+              setMobileMenuOpen(false);
+              setIsKenaikanPangkatExpanded(false);
+              setIsLayananKgbExpanded(false);
+              setIsPensiunExpanded(false);
+              setIsJamKerjaExpanded(false);
+            }}
+            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-colors ${
+              currentView === 'susunan-pegawai' 
+                ? 'bg-primary-500/10 text-primary-400 font-semibold' 
+                : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'
+            }`}
+          >
+            <Users size={18} strokeWidth={currentView === 'susunan-pegawai' ? 2.5 : 2} />
+            <span className="text-sm flex-1 text-left">Daftar Susunan Pegawai</span>
+            <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-primary-500/20 text-primary-400">
+              {masterEmployees.length > 0 ? masterEmployees.length.toLocaleString('id-ID') : '2.593'}
+            </span>
           </button>
 
           <div className="pt-4 pb-2">
@@ -963,6 +992,7 @@ function App() {
                 <Suspense fallback={<PageLoader />}>
                   <>
                     <div key={currentView} className="w-full">
+                      {currentView === 'susunan-pegawai' && <DaftarSusunanPegawaiPage employees={masterEmployees.length > 0 ? masterEmployees : employees} currentUser={currentUser} />}
                       {currentView === 'kenaikan-pangkat' && <PromotionTable employees={promotionEmployees} language={language} />}
                       {currentView === 'kalender-kp' && <KPCalendar language={language} />}
                       {currentView === 'report' && <ReportPage employees={employees} currentUser={currentUser} language={language} />}
