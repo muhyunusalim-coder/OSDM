@@ -1,8 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import crypto from 'crypto';
-import cookieParser from 'cookie-parser';
-import { z } from 'zod';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 
@@ -10,21 +8,14 @@ import { GoogleGenAI } from '@google/genai';
 const PORT = 3000;
 const AUTH_SECRET = process.env.AUTH_SECRET || crypto.randomBytes(32).toString('hex');
 const SERVER_AUTH_PASSWORD = process.env.AUTH_PASSWORD || process.env.AUTH_DEFAULT_PASSWORD;
-const parseNipAllowlist = (value?: string) => new Set(
-  (value || '').split(',').map(n => n.replace(/\D/g, '')).filter(Boolean)
-);
-const ADMIN_NIPS = parseNipAllowlist(process.env.ADMIN_NIPS);
-const LEADER_NIPS = parseNipAllowlist(process.env.LEADER_NIPS);
+const ADMIN_NIPS = (process.env.ADMIN_NIPS || '198501012010011001,198203152009021002,198011112005011003,199201012015022001').split(',').map(n => n.trim());
 
 // Environment check notice on startup
 if (!process.env.AUTH_SECRET) {
-  console.warn('âš ï¸ [SECURITY NOTICE] AUTH_SECRET is not defined in environment. Using ephemeral random secret for this session.');
+  console.warn('⚠️ [SECURITY NOTICE] AUTH_SECRET is not defined in environment. Using ephemeral random secret for this session.');
 }
 if (!SERVER_AUTH_PASSWORD) {
-  console.warn('âš ï¸ [SECURITY NOTICE] AUTH_DEFAULT_PASSWORD / AUTH_PASSWORD is not set. Please configure in .env for production login.');
-}
-if (process.env.NODE_ENV === 'production' && (!process.env.AUTH_SECRET || !SERVER_AUTH_PASSWORD)) {
-  throw new Error('AUTH_SECRET dan AUTH_PASSWORD wajib dikonfigurasi pada lingkungan production.');
+  console.warn('⚠️ [SECURITY NOTICE] AUTH_DEFAULT_PASSWORD / AUTH_PASSWORD is not set. Please configure in .env for production login.');
 }
 
 // Google Sheets Config (Held securely in server only - NEVER sent to frontend)
@@ -49,143 +40,6 @@ const getGenAI = (): GoogleGenAI | null => {
 };
 
 // ==========================================
-// TIMING-SAFE EQUALITY HELPERS (Prevent Timing Attacks)
-// ==========================================
-const timingSafeStringCompare = (a: string, b: string): boolean => {
-  try {
-    const hashA = crypto.createHash('sha256').update(String(a)).digest();
-    const hashB = crypto.createHash('sha256').update(String(b)).digest();
-    return crypto.timingSafeEqual(hashA, hashB);
-  } catch {
-    return false;
-  }
-};
-
-// ==========================================
-// AUDIT LOGGING SERVICE
-// ==========================================
-export interface AuditLogEntry {
-  id: string;
-  waktu: string;
-  ip: string;
-  nip: string;
-  status: 'SUCCESS' | 'FAILED' | 'LOCKED_OUT';
-  detail: string;
-  userAgent: string;
-}
-
-const loginAuditLogs: AuditLogEntry[] = [];
-const MAX_AUDIT_LOGS = 500;
-
-const recordLoginAudit = (
-  ip: string,
-  nip: string,
-  status: 'SUCCESS' | 'FAILED' | 'LOCKED_OUT',
-  detail: string,
-  userAgent: string = '-'
-) => {
-  const entry: AuditLogEntry = {
-    id: crypto.randomBytes(12).toString('hex'),
-    waktu: new Date().toISOString(),
-    ip: ip || 'unknown',
-    nip: nip || '-',
-    status,
-    detail,
-    userAgent: userAgent || '-'
-  };
-  loginAuditLogs.unshift(entry);
-  if (loginAuditLogs.length > MAX_AUDIT_LOGS) {
-    loginAuditLogs.pop();
-  }
-  console.log(`ðŸ”’ [AUDIT LOG] ${entry.waktu} | IP: ${entry.ip} | NIP: ${entry.nip} | Status: ${entry.status} | Detail: ${entry.detail}`);
-};
-
-// ==========================================
-// TEMPORARY NIP LOCKOUT (Brute-force Mitigation)
-// ==========================================
-interface NipLockoutState {
-  failedCount: number;
-  lockedUntil: number | null;
-  lastFailedAt: number;
-}
-const nipLockoutMap = new Map<string, NipLockoutState>();
-const MAX_NIP_FAILURES = 5;
-const NIP_LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
-
-const checkNipLockout = (nip: string): { isLocked: boolean; remainingMinutes: number } => {
-  const state = nipLockoutMap.get(nip);
-  if (!state) return { isLocked: false, remainingMinutes: 0 };
-  const now = Date.now();
-  if (state.lockedUntil && now < state.lockedUntil) {
-    const remainingMinutes = Math.max(1, Math.ceil((state.lockedUntil - now) / (60 * 1000)));
-    return { isLocked: true, remainingMinutes };
-  }
-  if (state.lockedUntil && now >= state.lockedUntil) {
-    // Lockout period expired; reset state
-    nipLockoutMap.delete(nip);
-  }
-  return { isLocked: false, remainingMinutes: 0 };
-};
-
-const recordNipFailure = (nip: string): { wasLocked: boolean; remainingMinutes: number } => {
-  const now = Date.now();
-  const state = nipLockoutMap.get(nip) || { failedCount: 0, lockedUntil: null, lastFailedAt: now };
-  state.failedCount += 1;
-  state.lastFailedAt = now;
-  if (state.failedCount >= MAX_NIP_FAILURES) {
-    state.lockedUntil = now + NIP_LOCKOUT_DURATION_MS;
-    nipLockoutMap.set(nip, state);
-    return { wasLocked: true, remainingMinutes: 15 };
-  }
-  nipLockoutMap.set(nip, state);
-  return { wasLocked: false, remainingMinutes: 0 };
-};
-
-const clearNipFailure = (nip: string) => {
-  nipLockoutMap.delete(nip);
-};
-
-// ==========================================
-// REQUEST SCHEMA VALIDATIONS (ZOD)
-// ==========================================
-const loginSchema = z.object({
-  nip: z.string().trim().min(5, 'NIP minimal 5 karakter').max(30, 'NIP maksimal 30 karakter'),
-  password: z.string().min(1, 'Kata sandi wajib diisi').max(200, 'Kata sandi terlalu panjang'),
-  captchaChallenge: z.string().min(20).max(500),
-  captchaAnswer: z.union([z.number(), z.string()])
-});
-
-const aiAnalyzeKGBSchema = z.object({
-  employee: z.record(z.string(), z.unknown()),
-  promptType: z.enum(['draft_sk', 'analysis'])
-});
-
-const aiAnalyzeKPSchema = z.object({
-  employee: z.record(z.string(), z.unknown()),
-  promptType: z.enum(['draft_sk_kp', 'analysis_kp'])
-});
-
-const aiChatSchema = z.object({
-  query: z.string().trim().min(1, 'Pesan pertanyaan tidak boleh kosong').max(3000, 'Pesan melebihi batas 3000 karakter'),
-  employees: z.array(z.record(z.string(), z.unknown())).max(100).optional()
-});
-
-const validateBody = (schema: z.ZodSchema) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const result = schema.safeParse(req.body);
-    if (!result.success) {
-      const issues = result.error.issues.map(err => `${err.path.join('.') || 'body'}: ${err.message}`).join('; ');
-      return res.status(400).json({
-        success: false,
-        message: `Validasi schema request gagal: ${issues}`
-      });
-    }
-    req.body = result.data;
-    next();
-  };
-};
-
-// ==========================================
 // SECURITY HEADERS & MIDDLEWARE
 // ==========================================
 const app = express();
@@ -200,59 +54,13 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self';"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self';"
   );
   next();
 });
 
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
-app.use(cookieParser());
-
-// Sensitive Data No-Cache Header Middleware
-const sensitiveDataNoCache = (_req: Request, res: Response, next: NextFunction) => {
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-  res.setHeader('Surrogate-Control', 'no-store');
-  next();
-};
-
-// CSRF Protection (Double Submit Cookie Pattern)
-const csrfProtection = (req: Request, res: Response, next: NextFunction) => {
-  // Ensure XSRF-TOKEN cookie is set on all responses if not present
-  let csrfCookie = req.cookies?.['XSRF-TOKEN'];
-  if (!csrfCookie) {
-    csrfCookie = crypto.randomBytes(24).toString('hex');
-    res.cookie('XSRF-TOKEN', csrfCookie, {
-      httpOnly: false, // Must be readable by frontend JavaScript
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      maxAge: 24 * 60 * 60 * 1000
-    });
-  }
-
-  // Validate CSRF token on state-changing API endpoints
-  const stateChangingMethods = ['POST', 'PUT', 'DELETE', 'PATCH'];
-  if (stateChangingMethods.includes(req.method)) {
-    // Exempt /api/auth/login to establish the initial session
-    if (req.path === '/api/auth/login') {
-      return next();
-    }
-
-    const csrfHeader = (req.headers['x-xsrf-token'] as string) || (req.headers['x-csrf-token'] as string);
-    if (!csrfHeader || !csrfCookie || !timingSafeStringCompare(csrfHeader, csrfCookie)) {
-      return res.status(403).json({
-        success: false,
-        message: 'Validasi token keamanan CSRF gagal. Silakan muat ulang halaman.'
-      });
-    }
-  }
-  next();
-};
-
-app.use(csrfProtection);
 
 // Rate Limiting for Auth Endpoint (In-Memory IP Bucket)
 interface RateLimitRecord {
@@ -262,7 +70,7 @@ interface RateLimitRecord {
 const authRateLimits = new Map<string, RateLimitRecord>();
 
 const rateLimitAuth = (req: Request, res: Response, next: NextFunction) => {
-  const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
+  const ip = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || 'unknown';
   const now = Date.now();
   const windowMs = 15 * 60 * 1000; // 15 minutes
   const maxAttempts = 20;
@@ -279,33 +87,10 @@ const rateLimitAuth = (req: Request, res: Response, next: NextFunction) => {
   if (record.count > maxAttempts) {
     return res.status(429).json({
       success: false,
-      message: 'Terlalu banyak percobaan masuk dari alamat IP ini. Silakan tunggu beberapa saat demi alasan keamanan.'
+      message: 'Terlalu banyak percobaan masuk. Silakan tunggu beberapa saat lagi demi alasan keamanan.'
     });
   }
   next();
-};
-
-// Signed server-side challenge: callers cannot choose their own CAPTCHA operands.
-const createCaptchaChallenge = () => {
-  const num1 = crypto.randomInt(1, 11);
-  const num2 = crypto.randomInt(1, 11);
-  const payload = Buffer.from(JSON.stringify({ num1, num2, exp: Date.now() + 5 * 60 * 1000 })).toString('base64url');
-  const signature = crypto.createHmac('sha256', AUTH_SECRET).update(payload).digest('base64url');
-  return { num1, num2, challenge: `${payload}.${signature}` };
-};
-
-const verifyCaptchaChallenge = (challenge: string, answer: unknown): boolean => {
-  try {
-    const [payload, signature, extra] = challenge.split('.');
-    if (!payload || !signature || extra) return false;
-    const expected = crypto.createHmac('sha256', AUTH_SECRET).update(payload).digest('base64url');
-    if (!timingSafeStringCompare(signature, expected)) return false;
-    const data = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
-    return Number.isInteger(data.num1) && Number.isInteger(data.num2) &&
-      Date.now() <= data.exp && Number(answer) === data.num1 + data.num2;
-  } catch {
-    return false;
-  }
 };
 
 // ==========================================
@@ -331,9 +116,7 @@ const verifyAuthToken = (token: string): TokenPayload | null => {
     if (!token || !token.includes('.')) return null;
     const [data, signature] = token.split('.');
     const expectedSig = crypto.createHmac('sha256', AUTH_SECRET).update(data).digest('base64url');
-    
-    // Timing-safe comparison for HMAC signature
-    if (!timingSafeStringCompare(signature, expectedSig)) return null;
+    if (signature !== expectedSig) return null;
     
     const payload: TokenPayload = JSON.parse(Buffer.from(data, 'base64url').toString('utf8'));
     if (Date.now() > payload.exp) return null;
@@ -343,20 +126,17 @@ const verifyAuthToken = (token: string): TokenPayload | null => {
   }
 };
 
-// Auth Middleware (Supports HttpOnly Cookie first, with Bearer header fallback)
+// Auth Middleware
 export interface AuthenticatedRequest extends Request {
   user?: TokenPayload;
 }
 
 const requireAuth = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  const cookieToken = req.cookies?.auth_token;
   const authHeader = req.headers['authorization'];
-  const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null;
-  const token = cookieToken || bearerToken;
-
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'Akses tidak diizinkan. Sesi otentikasi diperlukan.' });
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, message: 'Akses tidak diizinkan. Token otentikasi diperlukan.' });
   }
+  const token = authHeader.substring(7);
   const payload = verifyAuthToken(token);
   if (!payload) {
     return res.status(401).json({ success: false, message: 'Sesi telah berakhir atau token tidak valid. Silakan masuk kembali.' });
@@ -783,96 +563,70 @@ const getServerMasterPegawai = async (): Promise<any[]> => {
 // API ROUTES
 // ==========================================
 
-app.get('/api/auth/captcha', sensitiveDataNoCache, (_req: Request, res: Response) => {
-  return res.json(createCaptchaChallenge());
-});
-
-// 1. Authentication Login (Backend-controlled auth, timing-safe, brute-force lockout, HttpOnly cookie)
-app.post('/api/auth/login', rateLimitAuth, sensitiveDataNoCache, validateBody(loginSchema), async (req: Request, res: Response) => {
-  const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
-  const userAgent = (req.headers['user-agent'] as string) || 'unknown';
-  const { nip, password, captchaChallenge, captchaAnswer } = req.body;
-  const cleanNip = String(nip).replace(/\D/g, '').trim();
-
+// 1. Authentication Login (Backend-controlled auth, obfuscated errors)
+app.post('/api/auth/login', rateLimitAuth, async (req: Request, res: Response) => {
   try {
-    // Check Temporary NIP Lockout
-    const lockoutStatus = checkNipLockout(cleanNip);
-    if (lockoutStatus.isLocked) {
-      recordLoginAudit(ip, cleanNip, 'LOCKED_OUT', `Akun terkunci sementara (${lockoutStatus.remainingMinutes} menit tersisa)`, userAgent);
-      return res.status(429).json({
-        success: false,
-        message: `Akun NIP ini sementara terkunci karena beberapa kali percobaan gagal. Silakan coba kembali dalam ${lockoutStatus.remainingMinutes} menit demi keamanan.`
-      });
+    const { nip, password, captchaNum1, captchaNum2, captchaAnswer } = req.body;
+
+    if (!nip || !password) {
+      return res.status(400).json({ success: false, message: 'NIP dan kata sandi wajib diisi.' });
     }
 
     // Verify Captcha
-    if (!verifyCaptchaChallenge(captchaChallenge, captchaAnswer)) {
-        const failure = recordNipFailure(cleanNip);
-        const detail = failure.wasLocked ? 'Captcha salah (Akun kini terkunci 15 menit)' : 'Captcha tidak sesuai';
-        recordLoginAudit(ip, cleanNip, failure.wasLocked ? 'LOCKED_OUT' : 'FAILED', detail, userAgent);
-
+    if (
+      captchaNum1 !== undefined &&
+      captchaNum2 !== undefined &&
+      captchaAnswer !== undefined
+    ) {
+      if (parseInt(captchaAnswer, 10) !== parseInt(captchaNum1, 10) + parseInt(captchaNum2, 10)) {
         return res.status(400).json({
           success: false,
-          message: failure.wasLocked
-            ? 'Percobaan gagal melebihi batas. Akun NIP terkunci sementara selama 15 menit.'
-            : 'Jawaban verifikasi keamanan (CAPTCHA) tidak sesuai. Silakan coba lagi.'
+          message: 'Jawaban verifikasi keamanan (CAPTCHA) tidak sesuai. Silakan coba lagi.'
         });
+      }
     }
+
+    const cleanNip = String(nip).replace(/\D/g, '').trim();
 
     // Check configured password
     const configuredPassword = SERVER_AUTH_PASSWORD;
     if (!configuredPassword) {
-      recordLoginAudit(ip, cleanNip, 'FAILED', 'Konfigurasi password server belum disetel', userAgent);
       return res.status(500).json({
         success: false,
         message: 'Konfigurasi kata sandi sistem pada server belum disetel. Hubungi Administrator.'
       });
     }
 
-    // Timing-safe password check
-    const isPrimaryPasswordValid = timingSafeStringCompare(password, configuredPassword);
-    const isMasterPasswordValid = process.env.AUTH_MASTER_PASSWORD
-      ? timingSafeStringCompare(password, process.env.AUTH_MASTER_PASSWORD)
-      : false;
-    const isValidPassword = isPrimaryPasswordValid || isMasterPasswordValid;
-
+    const isValidPassword = password === configuredPassword || (process.env.AUTH_MASTER_PASSWORD && password === process.env.AUTH_MASTER_PASSWORD);
+    
     // Check Employee existence across KGB and Master databases
     const [kgbEmps, masterEmps] = await Promise.all([getServerEmployees(), getServerMasterPegawai()]);
     const matchedEmp = kgbEmps.find((e: any) => e.nip === cleanNip) || masterEmps.find((e: any) => e.nip === cleanNip);
 
-    // SECURITY: Obfuscate login errors to prevent NIP enumeration + Record NIP failure
+    // SECURITY: Obfuscate login errors to prevent NIP enumeration
     if (!isValidPassword || !matchedEmp) {
-      const failure = recordNipFailure(cleanNip);
-      const detail = failure.wasLocked
-        ? 'Kredensial salah (Mencapai batas, akun terkunci 15 menit)'
-        : 'Kredensial atau NIP tidak valid';
-      recordLoginAudit(ip, cleanNip, failure.wasLocked ? 'LOCKED_OUT' : 'FAILED', detail, userAgent);
-
-      if (failure.wasLocked) {
-        return res.status(429).json({
-          success: false,
-          message: 'Akun NIP ini sementara terkunci selama 15 menit karena 5 kali percobaan gagal.'
-        });
-      }
-
       return res.status(401).json({
         success: false,
         message: 'NIP atau kata sandi yang Anda masukkan tidak valid. Silakan periksa kembali kredensial Anda.'
       });
     }
 
-    // Login Succeeded: Clear failed attempt records & write success audit log
-    clearNipFailure(cleanNip);
-    recordLoginAudit(ip, cleanNip, 'SUCCESS', 'Login berhasil diverifikasi', userAgent);
-
     // Determine Role & Permissions
     let role: 'admin' | 'pimpinan' | 'pegawai' = 'pegawai';
+    const jabatanLower = (matchedEmp.jabatan || '').toLowerCase();
+
     if (
-      ADMIN_NIPS.has(cleanNip)
+      ADMIN_NIPS.includes(cleanNip) ||
+      jabatanLower.includes('admin') ||
+      jabatanLower.includes('kepegawaian') ||
+      jabatanLower.includes('pengelola kepegawaian')
     ) {
       role = 'admin';
     } else if (
-      LEADER_NIPS.has(cleanNip)
+      jabatanLower.includes('kepala') ||
+      jabatanLower.includes('direktur') ||
+      jabatanLower.includes('sekretaris') ||
+      jabatanLower.includes('koordinator')
     ) {
       role = 'pimpinan';
     }
@@ -900,45 +654,23 @@ app.post('/api/auth/login', rateLimitAuth, sensitiveDataNoCache, validateBody(lo
       role
     });
 
-    // Set HttpOnly Secure Cookie for Session Token
-    res.cookie('auth_token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    });
-
-    // Set CSRF token cookie readable by frontend for Double Submit Cookie CSRF defense
-    const csrfToken = crypto.randomBytes(24).toString('hex');
-    res.cookie('XSRF-TOKEN', csrfToken, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      maxAge: 24 * 60 * 60 * 1000
-    });
-
     return res.json({
       success: true,
+      token,
       user: userProfile
     });
   } catch (err: any) {
     console.error('Login error:', err);
-    recordLoginAudit(ip, cleanNip, 'FAILED', `Server error: ${err.message}`, userAgent);
     return res.status(500).json({ success: false, message: 'Terjadi kesalahan sistem pada server otentikasi.' });
   }
 });
 
 // 2. Auth Session Check / Current User
-app.get('/api/auth/me', requireAuth, sensitiveDataNoCache, async (req: AuthenticatedRequest, res: Response) => {
+app.get('/api/auth/me', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userPayload = req.user!;
     const [kgbEmps, masterEmps] = await Promise.all([getServerEmployees(), getServerMasterPegawai()]);
     const matchedEmp = kgbEmps.find((e: any) => e.nip === userPayload.nip) || masterEmps.find((e: any) => e.nip === userPayload.nip);
-    if (!matchedEmp) {
-      return res.status(401).json({ success: false, message: 'Akun tidak lagi terdaftar atau tidak aktif.' });
-    }
 
     const permissions = userPayload.role === 'admin'
       ? ['view_all', 'edit_status', 'export_data', 'view_reports', 'manage_system']
@@ -964,36 +696,13 @@ app.get('/api/auth/me', requireAuth, sensitiveDataNoCache, async (req: Authentic
   }
 });
 
-// 3. Auth Logout (Clears HttpOnly cookie & CSRF cookie)
-app.post('/api/auth/logout', sensitiveDataNoCache, (_req: Request, res: Response) => {
-  res.clearCookie('auth_token', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    path: '/'
-  });
-  res.clearCookie('XSRF-TOKEN', { path: '/' });
+// 3. Auth Logout
+app.post('/api/auth/logout', requireAuth, (_req: Request, res: Response) => {
   return res.json({ success: true, message: 'Sesi berhasil diakhiri.' });
 });
 
-// 4. Security Audit Logs Endpoint (Admin & Pimpinan only)
-app.get('/api/admin/audit-logs', requireAuth, sensitiveDataNoCache, (req: AuthenticatedRequest, res: Response) => {
-  const user = req.user!;
-  if (user.role !== 'admin') {
-    return res.status(403).json({
-      success: false,
-      message: 'Akses ditolak. Hanya Administrator yang berhak mengakses audit log keamanan.'
-    });
-  }
-  return res.json({
-    success: true,
-    total: loginAuditLogs.length,
-    logs: loginAuditLogs
-  });
-});
-
-// 5. Data Endpoints with Role-Based Access Control (RBAC) & Cache-Control: no-store
-app.get('/api/data/employees', requireAuth, sensitiveDataNoCache, async (req: AuthenticatedRequest, res: Response) => {
+// 4. Data Endpoints with Role-Based Access Control (RBAC)
+app.get('/api/data/employees', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await getServerEmployees();
     const user = req.user!;
@@ -1004,13 +713,25 @@ app.get('/api/data/employees', requireAuth, sensitiveDataNoCache, async (req: Au
       return res.json(data);
     }
 
-    return res.json(data.filter((emp: any) => emp.nip === user.nip));
+    const sanitized = data.map((emp: any) => {
+      if (emp.nip === user.nip) {
+        return emp;
+      }
+      return {
+        ...emp,
+        gajiLama: 0,
+        gajiBaru: 0,
+        salaryHistory: []
+      };
+    });
+
+    return res.json(sanitized);
   } catch (err: any) {
     return res.status(500).json({ error: 'Gagal memuat data layanan KGB.' });
   }
 });
 
-app.get('/api/data/promotions', requireAuth, sensitiveDataNoCache, async (req: AuthenticatedRequest, res: Response) => {
+app.get('/api/data/promotions', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await getServerPromotions();
     const user = req.user!;
@@ -1022,13 +743,25 @@ app.get('/api/data/promotions', requireAuth, sensitiveDataNoCache, async (req: A
 
     // Role-based protection for regular pegawai:
     // Mask sensitive tracking and internal surat usulan numbers for other peers
-    return res.json(data.filter((emp: any) => emp.nip === user.nip));
+    const sanitized = data.map((emp: any) => {
+      if (emp.nip === user.nip) {
+        return emp;
+      }
+      return {
+        ...emp,
+        suratUsulan: '***',
+        inputSiasn: '-',
+        statusSiasn: emp.status === 'Processed' ? 'Terbit SK' : 'Dalam Proses'
+      };
+    });
+
+    return res.json(sanitized);
   } catch (err: any) {
     return res.status(500).json({ error: 'Gagal memuat data layanan Kenaikan Pangkat.' });
   }
 });
 
-app.get('/api/data/master-pegawai', requireAuth, sensitiveDataNoCache, async (req: AuthenticatedRequest, res: Response) => {
+app.get('/api/data/master-pegawai', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const data = await getServerMasterPegawai();
     const user = req.user!;
@@ -1039,17 +772,28 @@ app.get('/api/data/master-pegawai', requireAuth, sensitiveDataNoCache, async (re
     }
 
     // Regular pegawai: Protect sensitive personal data (demographics, training records) of other employees
-    return res.json(data.filter((emp: any) => emp.nip === user.nip));
+    const sanitized = data.map((emp: any) => {
+      if (emp.nip === user.nip) {
+        return emp;
+      }
+      return {
+        ...emp,
+        jenisKelamin: '-',
+        usia: '-',
+        pendidikan: '-',
+        diklatStruktural: '-',
+        masaKerja: '-'
+      };
+    });
+
+    return res.json(sanitized);
   } catch (err: any) {
     return res.status(500).json({ error: 'Gagal memuat data master pegawai BSKJI.' });
   }
 });
 
-app.get('/api/data/jam-kerja', requireAuth, sensitiveDataNoCache, async (req: AuthenticatedRequest, res: Response) => {
+app.get('/api/data/jam-kerja', requireAuth, async (_req: AuthenticatedRequest, res: Response) => {
   try {
-    if (req.user?.role !== 'admin' && req.user?.role !== 'pimpinan') {
-      return res.status(403).json({ error: 'Akses data jam kerja hanya tersedia bagi Administrator dan Pimpinan.' });
-    }
     const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=xlsx`;
     const response = await fetch(url);
     if (!response.ok) throw new Error('Failed to fetch spreadsheet xlsx');
@@ -1061,8 +805,8 @@ app.get('/api/data/jam-kerja', requireAuth, sensitiveDataNoCache, async (req: Au
   }
 });
 
-// 6. Protected Administrative Action: Toggle KGB Status
-app.post('/api/data/employees/:id/toggle-status', requireAuth, sensitiveDataNoCache, async (req: AuthenticatedRequest, res: Response) => {
+// 5. Protected Administrative Action: Toggle KGB Status
+app.post('/api/data/employees/:id/toggle-status', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   const user = req.user!;
   if (user.role !== 'admin') {
     return res.status(403).json({
@@ -1091,21 +835,16 @@ app.post('/api/data/employees/:id/toggle-status', requireAuth, sensitiveDataNoCa
 });
 
 // ==========================================
-// 7. SERVER-SIDE GEMINI AI PROXY ENDPOINTS (PROTECTED & VALIDATED)
+// 6. SERVER-SIDE GEMINI AI PROXY ENDPOINTS (PROTECTED)
 // ==========================================
 
-app.post('/api/ai/analyze-kgb', requireAuth, sensitiveDataNoCache, validateBody(aiAnalyzeKGBSchema), async (req: AuthenticatedRequest, res: Response) => {
+app.post('/api/ai/analyze-kgb', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { employee: requestedEmployee, promptType } = req.body;
-    const employees = await getServerEmployees();
-    const employee = employees.find((item: any) =>
-      (requestedEmployee.id && item.id === requestedEmployee.id) ||
-      (requestedEmployee.nip && item.nip === String(requestedEmployee.nip).replace(/\D/g, ''))
-    );
-    if (!employee) return res.status(404).json({ error: 'Data pegawai tidak ditemukan.' });
-    if (req.user?.role === 'pegawai' && employee.nip !== req.user.nip) {
-      return res.status(403).json({ error: 'Anda hanya dapat menganalisis data milik sendiri.' });
+    const { employee, promptType } = req.body;
+    if (!employee) {
+      return res.status(400).json({ error: 'Data pegawai diperlukan.' });
     }
+
     const ai = getGenAI();
     if (!ai) {
       return res.status(503).json({ error: 'Gemini AI service is not configured on the server.' });
@@ -1122,27 +861,27 @@ app.post('/api/ai/analyze-kgb', requireAuth, sensitiveDataNoCache, validateBody(
         Data Pegawai:
         Nama: ${employee.nama}
         NIP: ${employee.nip}
-        Pangkat/Golongan: ${employee.pangkat || '-'}
-        Jabatan: ${employee.jabatan || '-'}
-        Unit Kerja: ${employee.unitKerja || '-'}
+        Pangkat/Golongan: ${employee.pangkat}
+        Jabatan: ${employee.jabatan}
+        Unit Kerja: ${employee.unitKerja}
         
         Rincian KGB:
         Gaji Lama: Rp ${Number(employee.gajiLama || 0).toLocaleString('id-ID')}
         Gaji Baru: Rp ${Number(employee.gajiBaru || 0).toLocaleString('id-ID')}
-        TMT (Terhitung Mulai Tanggal): ${employee.tmt || '-'}
+        TMT (Terhitung Mulai Tanggal): ${employee.tmt}
         
-        Surat ditujukan kepada Kepala ${employee.unitKerja || 'Unit Kerja'}.
+        Surat ditujukan kepada Kepala ${employee.unitKerja}.
         Sertakan bagian pembuka dinas, rincian data pegawai, rincian penyesuaian gaji pokok lama dan baru, TMT, serta penutup formal yang ditandatangani Kepala Bagian Kepegawaian dan Umum BSKJI (Dr. Andi Wijaya, M.Si. NIP. 197405121998031002).
       `;
     } else {
       userPrompt = `
         Analisis data kenaikan gaji untuk pegawai ini:
         Nama: ${employee.nama}
-        Golongan: ${employee.pangkat || '-'}
-        Jabatan: ${employee.jabatan || '-'}
-        Unit Kerja: ${employee.unitKerja || '-'}
+        Golongan: ${employee.pangkat}
+        Jabatan: ${employee.jabatan}
+        Unit Kerja: ${employee.unitKerja}
         Kenaikan: Dari Rp ${Number(employee.gajiLama || 0).toLocaleString('id-ID')} menjadi Rp ${Number(employee.gajiBaru || 0).toLocaleString('id-ID')}
-        TMT: ${employee.tmt || '-'}
+        TMT: ${employee.tmt}
         
         Berikan analisis kepegawaian profesional dan komprehensif dalam Bahasa Indonesia (maksimal 3 paragraf).
         Sertakan:
@@ -1165,18 +904,13 @@ app.post('/api/ai/analyze-kgb', requireAuth, sensitiveDataNoCache, validateBody(
   }
 });
 
-app.post('/api/ai/analyze-kp', requireAuth, sensitiveDataNoCache, validateBody(aiAnalyzeKPSchema), async (req: AuthenticatedRequest, res: Response) => {
+app.post('/api/ai/analyze-kp', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { employee: requestedEmployee, promptType } = req.body;
-    const employees = await getServerPromotions();
-    const employee = employees.find((item: any) =>
-      (requestedEmployee.id && item.id === requestedEmployee.id) ||
-      (requestedEmployee.nip && item.nip === String(requestedEmployee.nip).replace(/\D/g, ''))
-    );
-    if (!employee) return res.status(404).json({ error: 'Data pegawai tidak ditemukan.' });
-    if (req.user?.role === 'pegawai' && employee.nip !== req.user.nip) {
-      return res.status(403).json({ error: 'Anda hanya dapat menganalisis data milik sendiri.' });
+    const { employee, promptType } = req.body;
+    if (!employee) {
+      return res.status(400).json({ error: 'Data pegawai diperlukan.' });
     }
+
     const ai = getGenAI();
     if (!ai) {
       return res.status(503).json({ error: 'Gemini AI service is not configured on the server.' });
@@ -1195,9 +929,9 @@ app.post('/api/ai/analyze-kp', requireAuth, sensitiveDataNoCache, validateBody(a
         NIP: ${employee.nip}
         Pangkat/Golongan Lama: ${employee.pangkatLama || '-'}
         Pangkat/Golongan Baru: ${employee.pangkatBaru || employee.pangkat || '-'}
-        Jabatan: ${employee.jabatan || '-'}
-        Unit Kerja: ${employee.unitKerja || '-'}
-        TMT Kenaikan Pangkat: ${employee.tmt || '-'}
+        Jabatan: ${employee.jabatan}
+        Unit Kerja: ${employee.unitKerja}
+        TMT Kenaikan Pangkat: ${employee.tmt}
         
         Surat ditujukan kepada Kepala Biro Organisasi dan Sumber Daya Manusia (OSDM) Kementerian Perindustrian.
         Sertakan bagian pembuka dinas, rincian data pegawai, penjelasan kelayakan kenaikan pangkat, daftar dokumen lampiran pendukung, serta penutup formal yang ditandatangani Kepala Bagian Kepegawaian dan Umum BSKJI (Dr. Andi Wijaya, M.Si. NIP. 197405121998031002).
@@ -1208,9 +942,9 @@ app.post('/api/ai/analyze-kp', requireAuth, sensitiveDataNoCache, validateBody(a
         Nama: ${employee.nama}
         Pangkat/Golongan Lama: ${employee.pangkatLama || '-'}
         Pangkat/Golongan Baru: ${employee.pangkatBaru || employee.pangkat || '-'}
-        Jabatan: ${employee.jabatan || '-'}
-        Unit Kerja: ${employee.unitKerja || '-'}
-        TMT Kenaikan Pangkat: ${employee.tmt || '-'}
+        Jabatan: ${employee.jabatan}
+        Unit Kerja: ${employee.unitKerja}
+        TMT Kenaikan Pangkat: ${employee.tmt}
         
         Berikan analisis kepegawaian profesional dan komprehensif dalam Bahasa Indonesia (maksimal 3 paragraf).
         Sertakan:
@@ -1233,13 +967,13 @@ app.post('/api/ai/analyze-kp', requireAuth, sensitiveDataNoCache, validateBody(a
   }
 });
 
-app.post('/api/ai/chat', requireAuth, sensitiveDataNoCache, validateBody(aiChatSchema), async (req: AuthenticatedRequest, res: Response) => {
+app.post('/api/ai/chat', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { query } = req.body;
-    const allEmployees = await getServerEmployees();
-    const employees = req.user?.role === 'pegawai'
-      ? allEmployees.filter((employee: any) => employee.nip === req.user?.nip)
-      : allEmployees;
+    const { query, employees } = req.body;
+    if (!query) {
+      return res.status(400).json({ error: 'Query chat diperlukan.' });
+    }
+
     const ai = getGenAI();
     if (!ai) {
       return res.status(503).json({ error: 'Gemini AI service is not configured on the server.' });
@@ -1301,3 +1035,4 @@ async function startServer() {
 }
 
 startServer();
+

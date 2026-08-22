@@ -1,5 +1,5 @@
 import { Employee } from "../types";
-import { getAuthToken, getCsrfToken } from "./dataService";
+import { getAuthToken } from "./dataService";
 
 // Helper to get formatting right
 const formatCurrency = (amount: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount);
@@ -82,52 +82,46 @@ Disarankan agar operator Kepegawaian segera memproses berkas KGB ini ke dalam SI
 
 export const analyzeEmployeeKGB = async (employee: Employee, promptType: 'draft_sk' | 'analysis'): Promise<string> => {
   const token = getAuthToken();
-  const csrf = getCsrfToken();
-  try {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-    if (csrf) headers['X-XSRF-TOKEN'] = csrf;
-
-    const res = await fetch('/api/ai/analyze-kgb', {
-      method: 'POST',
-      credentials: 'include',
-      headers,
-      body: JSON.stringify({ employee, promptType })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.text) return data.text;
+  if (token) {
+    try {
+      const res = await fetch('/api/ai/analyze-kgb', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ employee, promptType })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.text) return data.text;
+      }
+    } catch (e) {
+      console.warn('Backend AI analysis endpoint unavailable, using smart template fallback:', e);
     }
-  } catch (e) {
-    console.warn('Backend AI analysis endpoint unavailable, using smart template fallback:', e);
   }
   return promptType === 'draft_sk' ? generateMockDraftSK(employee) : generateMockAnalysis(employee);
 };
 
 export const chatWithData = async (query: string, employees: Employee[]): Promise<string> => {
   const token = getAuthToken();
-  const csrf = getCsrfToken();
-  try {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-    if (csrf) headers['X-XSRF-TOKEN'] = csrf;
-
-    const res = await fetch('/api/ai/chat', {
-      method: 'POST',
-      credentials: 'include',
-      headers,
-      body: JSON.stringify({ query, employees })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.text) return data.text;
+  if (token) {
+    try {
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ query, employees })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.text) return data.text;
+      }
+    } catch (e) {
+      console.warn('Backend AI chat endpoint unavailable, using smart local chatbot:', e);
     }
-  } catch (e) {
-    console.warn('Backend AI chat endpoint unavailable, using smart local chatbot:', e);
   }
   return runMockChatEngine(query, employees);
 };
@@ -268,26 +262,23 @@ Disarankan agar Operator Kepegawaian Unit Kerja memastikan seluruh dokumen pendu
 
 export const analyzeEmployeeKP = async (employee: any, promptType: 'draft_sk_kp' | 'analysis_kp'): Promise<string> => {
   const token = getAuthToken();
-  const csrf = getCsrfToken();
-  try {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-    if (csrf) headers['X-XSRF-TOKEN'] = csrf;
-
-    const res = await fetch('/api/ai/analyze-kp', {
-      method: 'POST',
-      credentials: 'include',
-      headers,
-      body: JSON.stringify({ employee, promptType })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.text) return data.text;
+  if (token) {
+    try {
+      const res = await fetch('/api/ai/analyze-kp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ employee, promptType })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.text) return data.text;
+      }
+    } catch (e) {
+      console.warn('Backend KP AI endpoint unavailable, using smart template fallback:', e);
     }
-  } catch (e) {
-    console.warn('Backend KP AI endpoint unavailable, using smart template fallback:', e);
   }
   return promptType === 'draft_sk_kp' ? generateMockDraftSK_KP(employee) : generateMockAnalysis_KP(employee);
 };

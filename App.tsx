@@ -348,7 +348,7 @@ function App() {
         setPromotionEmployees(promotionData);
         setMasterEmployees(masterData);
         
-        const effectiveNip = user?.nip;
+        const effectiveNip = user?.nip || sessionStorage.getItem('kgb_user_nip');
         if (effectiveNip) {
           const matchedUser = data.find(e => e.nip === effectiveNip) || masterData.find(e => e.nip === effectiveNip);
           if (matchedUser) {
@@ -381,8 +381,28 @@ function App() {
     loadData();
   }, [isAuthenticated, user?.nip]);
 
-  const handleLogin = React.useCallback((authUser: AuthUser) => {
-    login(authUser);
+  // Prefetch all route chunks on idle for instant zero-delay navigation
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const prefetchRoutes = () => {
+      import('./components/DashboardPage');
+      import('./components/KGBDataPage');
+      import('./components/PromotionTable');
+      import('./components/PensiunTable');
+      import('./components/KPCalendar');
+      import('./components/ReportPage');
+      import('./components/FAQPage');
+      import('./components/JamKerjaPage');
+    };
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(prefetchRoutes);
+    } else {
+      setTimeout(prefetchRoutes, 200);
+    }
+  }, [isAuthenticated]);
+
+  const handleLogin = React.useCallback((authUser: AuthUser, token?: string) => {
+    login(authUser, token);
     setQuote(getRandomQuote());
     setCurrentView('dashboard');
     setNotification(`Selamat datang kembali, ${authUser.nama.split(' ')[0]}! (${authUser.role.toUpperCase()})`);

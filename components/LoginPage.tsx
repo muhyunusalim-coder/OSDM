@@ -32,7 +32,7 @@ const GovtBackground = () => {
   );
 };
 interface Props {
-  onLogin: (user: AuthUser) => void;
+  onLogin: (user: AuthUser, token?: string) => void;
 }
 const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
   const [nip, setNip] = useState("");
@@ -41,22 +41,19 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
   const [captchaAnswer, setCaptchaAnswer] = useState("");
   const [captchaNum1, setCaptchaNum1] = useState(0);
   const [captchaNum2, setCaptchaNum2] = useState(0);
-  const [captchaChallenge, setCaptchaChallenge] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const t = (key: string) => TRANSLATIONS["id"]?.[key] || key;
-  const generateCaptcha = async () => {
-    setCaptchaChallenge("");
+  const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    setCaptchaNum1(num1);
+    setCaptchaNum2(num2);
     setCaptchaAnswer("");
-    const response = await fetch('/api/auth/captcha', { credentials: 'include', cache: 'no-store' });
-    if (!response.ok) throw new Error('Verifikasi keamanan tidak dapat dimuat. Silakan coba lagi.');
-    const data = await response.json();
-    setCaptchaNum1(data.num1);
-    setCaptchaNum2(data.num2);
-    setCaptchaChallenge(data.challenge);
+    return { num1, num2 };
   };
   useEffect(() => {
-    generateCaptcha().catch(() => setError('Verifikasi keamanan tidak dapat dimuat. Muat ulang halaman.'));
+    generateCaptcha();
   }, []);
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,19 +70,20 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
         !captchaAnswer.trim() ||
         parseInt(captchaAnswer.trim(), 10) !== captchaNum1 + captchaNum2
       ) {
-        await generateCaptcha();
+        generateCaptcha();
         throw new Error(
           "Jawaban verifikasi keamanan (CAPTCHA) salah. Silakan coba lagi.",
         );
       }
 
       const res = await loginWithBackend(nip.trim(), password, {
-        challenge: captchaChallenge,
+        num1: captchaNum1,
+        num2: captchaNum2,
         answer: captchaAnswer.trim(),
       });
 
       if (res.success && res.user) {
-        onLogin(res.user);
+        onLogin(res.user, res.token);
       } else {
         throw new Error(res.message || "Autentikasi gagal.");
       }
@@ -94,7 +92,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
         err.message ||
           "Gagal masuk. Silakan periksa koneksi atau data input Anda.",
       );
-      generateCaptcha().catch(() => setError('Verifikasi keamanan tidak dapat dimuat. Muat ulang halaman.'));
+      generateCaptcha();
     } finally {
       setLoading(false);
     }
@@ -218,7 +216,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
             >
               {/* NIP Field */}
               <div className="space-y-1.5">
-                <label htmlFor="nip" className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider block ml-0.5">
+                <label className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider block ml-0.5">
                   {t("login_username")}
                 </label>
                 <div className="relative group">
@@ -226,7 +224,6 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     <CreditCard size={18} />
                   </div>
                   <input
-                    id="nip"
                     type="text"
                     maxLength={18}
                     inputMode="numeric"
@@ -247,7 +244,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
 
               {/* Password Field */}
               <div className="space-y-1.5">
-                <label htmlFor="password" className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider block ml-0.5">
+                <label className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider block ml-0.5">
                   {t("login_password")}
                 </label>
                 <div className="relative group">
@@ -255,7 +252,6 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     <Lock size={18} />
                   </div>
                   <input
-                    id="password"
                     type={showPassword ? "text" : "password"}
                     value={password}
                     autoComplete="current-password"
@@ -267,7 +263,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-200 transition-colors cursor-pointer"
-                    aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
+                    tabIndex={-1}
                     title={
                       showPassword
                         ? "Sembunyikan password"
@@ -282,13 +278,13 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
               {/* Captcha Section */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="captcha-answer" className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider flex items-center gap-1.5 ml-0.5">
+                  <label className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider flex items-center gap-1.5 ml-0.5">
                     <ShieldCheck size={14} className="text-primary-400" />
                     {t("login_captcha")}
                   </label>
                   <button
                     type="button"
-                    onClick={() => generateCaptcha().catch(() => setError('Verifikasi keamanan tidak dapat dimuat.'))}
+                    onClick={generateCaptcha}
                     className="text-[11px] text-primary-400 hover:text-primary-300 flex items-center gap-1 transition-colors font-medium px-2 py-0.5 bg-primary-500/10 hover:bg-primary-500/20 border border-primary-500/20 rounded-md touch-manipulation active:scale-95 cursor-pointer"
                     title="Acak ulang pertanyaan verifikasi"
                   >
@@ -302,7 +298,6 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     </span>
                   </div>
                   <input
-                    id="captcha-answer"
                     type="text"
                     inputMode="numeric"
                     pattern="[0-9]*"
@@ -322,7 +317,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
 
               {/* Error Message */}
               {error && (
-                <div className="overflow-hidden" role="alert" aria-live="polite">
+                <div className="overflow-hidden">
                   <div className="p-3 bg-rose-500/15 border border-rose-500/40 rounded-xl flex items-start gap-2.5 text-rose-200 text-xs shadow-sm">
                     <AlertCircle
                       size={16}
@@ -338,7 +333,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={loading || !captchaChallenge}
+                disabled={loading}
                 className="w-full h-11 sm:h-12 bg-primary-600 hover:bg-primary-500 text-white font-bold rounded-xl shadow-lg transition-all duration-200 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 mt-2 relative overflow-hidden text-xs sm:text-sm uppercase tracking-wider group cursor-pointer"
               >
                 <div className="relative z-10 flex items-center justify-center gap-2">

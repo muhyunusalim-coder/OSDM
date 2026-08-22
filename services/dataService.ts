@@ -1,5 +1,5 @@
 import { Employee, AuthUser, LoginResponse } from '../types';
-import { API_ENDPOINTS } from '../constants';
+import { API_ENDPOINTS, MOCK_EMPLOYEES, MOCK_PROMOTION_EMPLOYEES } from '../constants';
 
 // Clean up legacy localStorage & PWA cache artifacts for strict security compliance
 try {
@@ -19,8 +19,7 @@ try {
 // Token accessor from memory / sessionStorage (Never store sensitive credentials permanently in localStorage)
 export const getAuthToken = (): string | null => {
   try {
-    sessionStorage.removeItem('kgb_session_token');
-    return null;
+    return sessionStorage.getItem('kgb_session_token');
   } catch {
     return null;
   }
@@ -28,17 +27,14 @@ export const getAuthToken = (): string | null => {
 
 export const setAuthToken = (token: string | null): void => {
   try {
-    sessionStorage.removeItem('kgb_session_token');
+    if (token) {
+      sessionStorage.setItem('kgb_session_token', token);
+    } else {
+      sessionStorage.removeItem('kgb_session_token');
+    }
   } catch {
     // Ignore
   }
-};
-
-// Helper to extract CSRF Token from Document Cookies (Double Submit Cookie Defense)
-export const getCsrfToken = (): string | null => {
-  if (typeof document === 'undefined') return null;
-  const match = document.cookie.match(new RegExp('(^|;\\s*)XSRF-TOKEN=([^;]*)'));
-  return match ? decodeURIComponent(match[2]) : null;
 };
 
 // In-Memory Runtime Cache (Zero persistence to localStorage for employee privacy)
@@ -60,26 +56,30 @@ export const clearDataCache = () => {
 export const loginWithBackend = async (
   nip: string,
   password: string,
-  captcha: { challenge: string; answer: string }
+  captcha?: { num1: number; num2: number; answer: string }
 ): Promise<LoginResponse> => {
   try {
     const res = await fetch(API_ENDPOINTS.AUTH_LOGIN, {
       method: 'POST',
-      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         nip: nip.trim(),
         password,
-        captchaChallenge: captcha.challenge,
-        captchaAnswer: captcha.answer,
+        captchaNum1: captcha?.num1,
+        captchaNum2: captcha?.num2,
+        captchaAnswer: captcha?.answer,
       }),
     });
 
     const data: LoginResponse = await res.json();
     if (!res.ok || !data.success) {
       throw new Error(data.message || 'Otentikasi gagal. Silakan periksa kembali data Anda.');
+    }
+
+    if (data.token) {
+      setAuthToken(data.token);
     }
 
     return data;
@@ -90,16 +90,13 @@ export const loginWithBackend = async (
 
 export const verifyBackendSession = async (): Promise<AuthUser | null> => {
   const token = getAuthToken();
+  if (!token) return null;
 
   try {
-    const headers: Record<string, string> = {};
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
     const res = await fetch(API_ENDPOINTS.AUTH_ME, {
-      credentials: 'include',
-      headers,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
     });
 
     if (!res.ok) {
@@ -116,22 +113,20 @@ export const verifyBackendSession = async (): Promise<AuthUser | null> => {
 
 export const logoutFromBackend = async (): Promise<void> => {
   const token = getAuthToken();
-  const csrf = getCsrfToken();
   clearDataCache();
   setAuthToken(null);
 
-  try {
-    const headers: Record<string, string> = {};
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-    if (csrf) headers['X-XSRF-TOKEN'] = csrf;
-
-    await fetch(API_ENDPOINTS.AUTH_LOGOUT, {
-      method: 'POST',
-      credentials: 'include',
-      headers,
-    });
-  } catch {
-    // Ignore network errors during logout
+  if (token) {
+    try {
+      await fetch(API_ENDPOINTS.AUTH_LOGOUT, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+    } catch {
+      // Ignore network errors during logout
+    }
   }
 };
 
@@ -141,15 +136,11 @@ export const logoutFromBackend = async (): Promise<void> => {
 
 const getAuthHeaders = (): Record<string, string> => {
   const token = getAuthToken();
-  const csrf = getCsrfToken();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
-  }
-  if (csrf) {
-    headers['X-XSRF-TOKEN'] = csrf;
   }
   return headers;
 };
@@ -161,7 +152,6 @@ export const fetchEmployeeData = async (): Promise<Employee[]> => {
 
   try {
     const response = await fetch(API_ENDPOINTS.EMPLOYEES, {
-      credentials: 'include',
       headers: getAuthHeaders(),
     });
 
@@ -176,9 +166,29 @@ export const fetchEmployeeData = async (): Promise<Employee[]> => {
     inMemoryEmployees = { data, timestamp: Date.now() };
     return data;
   } catch (error: any) {
-    console.warn('Backend fetch error for KGB data.', error);
+    console.warn('Backend fetch error for KGB data. Using fallback.', error);
     if (inMemoryEmployees?.data?.length) return inMemoryEmployees.data;
-    throw error;
+    
+    // Offline fallback for demo
+    const mapped = (MOCK_EMPLOYEES as any[]).map((m, i) => ({
+      id: `mock-${i}`,
+      no: m.No,
+      nama: m.Nama,
+      nip: m.NIP,
+      jabatan: m.Jabatan || '-',
+      pangkat: m.Pangkat || '-',
+      statusKepegawaian: (m.Pangkat || '').includes('PPPK') ? 'PPPK' : 'PNS',
+      gajiLama: parseInt(m['Gaji Lama'] || '0', 10),
+      gajiBaru: parseInt(m['Gaji Baru'] || '0', 10),
+      masaKerja: '2 Tahun 0 Bulan',
+      tmt: m['TMT KGB Baru'] || m['TMT'] || '-',
+      unitKerja: m['Unit Kerja'] || '-',
+      status: (m['Status KGB'] || '').includes('Terbit') ? 'Processed' : 'Upcoming',
+      statusKeterangan: m['Status KGB'] || '',
+      salaryHistory: []
+    })) as Employee[];
+    
+    return mapped;
   }
 };
 
@@ -189,7 +199,6 @@ export const fetchPromotionData = async (): Promise<Employee[]> => {
 
   try {
     const response = await fetch(API_ENDPOINTS.PROMOTIONS, {
-      credentials: 'include',
       headers: getAuthHeaders(),
     });
 
@@ -203,7 +212,30 @@ export const fetchPromotionData = async (): Promise<Employee[]> => {
   } catch (error: any) {
     console.warn('Backend fetch error for promotion data.', error);
     if (inMemoryPromotions?.data?.length) return inMemoryPromotions.data;
-    throw error;
+
+    const mapped = (MOCK_PROMOTION_EMPLOYEES as any[]).map((m, i) => ({
+      id: `mock-promo-${i}`,
+      no: m.No,
+      nama: m.Nama,
+      nip: m.NIP,
+      jabatan: '-',
+      pangkat: m['Pangkat Baru'] || '-',
+      pangkatLama: m['Pangkat Lama'] || '-',
+      pangkatBaru: m['Pangkat Baru'] || '-',
+      suratUsulan: m['Surat Usulan'] || '-',
+      inputSiasn: m['Input Siasn'] || '-',
+      statusSiasn: m['Status Siasn'] || '',
+      statusKepegawaian: (m['Pangkat Baru'] || '').includes('PPPK') ? 'PPPK' : 'PNS',
+      masaKerja: '-',
+      gajiLama: 0,
+      gajiBaru: 0,
+      tmt: m.TMT || '-',
+      unitKerja: m['Unit Kerja'] || '-',
+      status: (m['Status Siasn'] || '').includes('Terbit') ? 'Processed' : 'Upcoming',
+      statusKeterangan: m['Status Siasn'] || '',
+    })) as Employee[];
+
+    return mapped;
   }
 };
 
@@ -214,7 +246,6 @@ export const fetchMasterPegawaiData = async (): Promise<Employee[]> => {
 
   try {
     const response = await fetch(API_ENDPOINTS.MASTER_PEGAWAI, {
-      credentials: 'include',
       headers: getAuthHeaders(),
     });
 
@@ -227,15 +258,13 @@ export const fetchMasterPegawaiData = async (): Promise<Employee[]> => {
     return data;
   } catch (error: any) {
     console.warn('Backend fetch error for master pegawai data.', error);
-    if (inMemoryMaster?.data?.length) return inMemoryMaster.data;
-    throw error;
+    return inMemoryMaster?.data || [];
   }
 };
 
 export const toggleEmployeeStatusBackend = async (id: string): Promise<Employee> => {
   const response = await fetch(API_ENDPOINTS.TOGGLE_STATUS(id), {
     method: 'POST',
-    credentials: 'include',
     headers: getAuthHeaders(),
   });
 
