@@ -1,167 +1,185 @@
 import React from "react";
 import {
   Users,
-  Calendar,
-  CheckCircle,
-  TrendingUp,
-  TrendingDown,
+  CalendarClock,
+  CheckCircle2,
   ArrowRight,
-  Clock,
+  TrendingUp,
+  AlertTriangle,
 } from "lucide-react";
 import { DashboardStats as StatsType } from "../types";
+
 interface Props {
   stats: StatsType;
+  onCardClick?: (type: string) => void;
 }
+
+type Tone = "blue" | "amber" | "rose" | "emerald";
+
+const toneMap: Record<
+  Tone,
+  {
+    icon: string;
+    glow: string;
+    pill: string;
+    bar: string;
+  }
+> = {
+  blue: {
+    icon: "bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:border-blue-500/20",
+    glow: "from-blue-500/15",
+    pill: "bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:border-blue-500/20",
+    bar: "bg-blue-500",
+  },
+  amber: {
+    icon: "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20",
+    glow: "from-amber-500/15",
+    pill: "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20",
+    bar: "bg-amber-500",
+  },
+  rose: {
+    icon: "bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-500/10 dark:text-rose-300 dark:border-rose-500/20",
+    glow: "from-rose-500/15",
+    pill: "bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-500/10 dark:text-rose-300 dark:border-rose-500/20",
+    bar: "bg-rose-500",
+  },
+  emerald: {
+    icon: "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20",
+    glow: "from-emerald-500/15",
+    pill: "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20",
+    bar: "bg-emerald-500",
+  },
+};
+
 const StatCard = React.memo(
   ({
     title,
     value,
+    description,
+    caption,
     icon: Icon,
-    color,
-    subtext,
-    trend,
+    tone,
     onClick,
   }: {
     title: string;
-    value: string;
-    icon: any;
-    color: "primary" | "warning" | "rose" | "success";
-    subtext: string;
-    trend?: { value: string; direction: "up" | "down" };
+    value: string | number;
+    description: string;
+    caption: string;
+    icon: React.ElementType;
+    tone: Tone;
     onClick?: () => void;
   }) => {
-    const colorClasses = {
-      primary: {
-        iconBg:
-          "bg-primary-50 dark:bg-primary-500/10 border-primary-100 dark:border-primary-800/40 text-primary-600 dark:text-primary-400",
-        dot: "bg-primary-500 dark:bg-primary-400",
-        borderHover:
-          "hover:border-primary-300 dark:hover:border-primary-700/60",
-      },
-      warning: {
-        iconBg:
-          "bg-amber-50 dark:bg-amber-500/10 border-amber-100 dark:border-amber-800/40 text-amber-600 dark:text-amber-400",
-        dot: "bg-amber-500 dark:bg-amber-400",
-        borderHover: "hover:border-amber-300 dark:hover:border-amber-700/60",
-      },
-      rose: {
-        iconBg:
-          "bg-rose-50 dark:bg-rose-500/10 border-rose-100 dark:border-rose-800/40 text-rose-600 dark:text-rose-400",
-        dot: "bg-rose-500 dark:bg-rose-400",
-        borderHover: "hover:border-rose-300 dark:hover:border-rose-700/60",
-      },
-      success: {
-        iconBg:
-          "bg-primary-50 dark:bg-primary-500/10 border-primary-100 dark:border-primary-800/40 text-primary-600 dark:text-primary-400",
-        dot: "bg-primary-500 dark:bg-primary-400",
-        borderHover:
-          "hover:border-primary-300 dark:hover:border-primary-700/60",
-      },
-    };
-    const theme = colorClasses[color];
+    const t = toneMap[tone];
+    const Component: React.ElementType = onClick ? "button" : "div";
+
     return (
-      <button
+      <Component
         onClick={onClick}
-        className={`group relative text-left w-full bg-white dark:bg-gray-900 rounded-2xl p-3.5 sm:p-5 border border-gray-200/90 dark:border-gray-800 shadow-sm ${theme.borderHover} hover:shadow-md transition-all duration-300 overflow-hidden ${onClick ? "cursor-pointer active:scale-[0.98]" : "cursor-default"}`}
+        className={`group relative w-full overflow-hidden rounded-3xl border border-gray-200/80 bg-white p-4 sm:p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-xl dark:border-gray-800/80 dark:bg-gray-900/90 dark:hover:border-gray-700 ${
+          onClick ? "cursor-pointer active:scale-[0.98]" : ""
+        }`}
       >
-        <div className="relative z-10 flex items-start justify-between gap-2 sm:gap-3 mb-2 sm:mb-3">
-          <div className="min-w-0 flex-1">
-            <span className="text-[10px] sm:text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase r block truncate">
+        <div
+          className={`pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br ${t.glow} to-transparent blur-2xl`}
+        />
+
+        <div className="relative flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
               {title}
-            </span>
-            <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2 mt-0.5 sm:mt-1">
-              <span className="text-xl sm:text-2xl lg:text-3xl font-normal text-gray-900 dark:text-gray-100 leading-none">
-                {value}
+            </p>
+
+            <div className="mt-3 flex items-end gap-2">
+              <span className="text-3xl font-semibold leading-none tracking-tight text-gray-950 dark:text-white sm:text-4xl">
+                {Number(value || 0).toLocaleString("id-ID")}
               </span>
-              {trend && (
-                <span
-                  title="Tren MoM"
-                  className={`inline-flex items-center gap-0.5 text-[9px] sm:text-[10px] font-bold px-1 sm:px-1.5 py-0.5 rounded border ${
-                    trend.direction === "up"
-                      ? "text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-500/10 border-primary-200/60 dark:border-primary-800/50"
-                      : "text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 border-amber-200/60 dark:border-amber-800/50"
-                  }`}
-                >
-                  {trend.direction === "up" ? (
-                    <TrendingUp size={9} strokeWidth={2.5} />
-                  ) : (
-                    <TrendingDown size={9} strokeWidth={2.5} />
-                  )}
-                  {trend.value}
-                </span>
-              )}
+
+              <span
+                className={`mb-1 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${t.pill}`}
+              >
+                <TrendingUp size={12} />
+                Live
+              </span>
             </div>
           </div>
 
-          <div
-            className={`p-2 sm:p-3 rounded-xl border ${theme.iconBg} shrink-0 transition-transform duration-300 group-hover:scale-105 shadow-sm`}
-          >
-            <Icon size={16} className="sm:w-5 sm:h-5" strokeWidth={2} />
+          <div className={`rounded-2xl border p-3 shadow-sm ${t.icon}`}>
+            <Icon size={22} />
           </div>
         </div>
 
-        <div className="relative z-10 flex items-center justify-between pt-2 sm:pt-3 border-t border-gray-100 dark:border-gray-800 text-[10px] sm:text-xs font-medium text-gray-600 dark:text-gray-300">
-          <div className="flex items-center gap-1.5 sm:gap-2 truncate">
-            <span
-              className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${theme.dot} shrink-0`}
-            ></span>
-            <span className="truncate">{subtext}</span>
-          </div>
-          {onClick && (
-            <div className="text-gray-400 dark:text-gray-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors shrink-0 ml-1 sm:ml-2">
-              <ArrowRight
-                size={12}
-                className="sm:w-3.5 sm:h-3.5 group-hover:translate-x-1 transition-transform duration-200"
-              />
-            </div>
+        <p className="relative mt-4 min-h-10 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+          {description}
+        </p>
+
+        <div className="relative mt-4 flex items-center justify-between border-t border-gray-100 pt-3 dark:border-gray-800">
+          <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+            {caption}
+          </span>
+
+          {onClick ? (
+            <ArrowRight
+              size={16}
+              className="text-gray-400 transition-transform group-hover:translate-x-1 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+            />
+          ) : (
+            <span className={`h-2 w-2 rounded-full ${t.bar}`} />
           )}
         </div>
-      </button>
+      </Component>
     );
-  },
+  }
 );
-const DashboardStats: React.FC<
-  Props & { onCardClick?: (type: string) => void }
-> = React.memo(({ stats, onCardClick }) => {
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-        <StatCard
-          title="Total Pegawai"
-          value={stats.totalEmployees.toString()}
-          icon={Users}
-          color="primary"
-          subtext="Total Keseluruhan"
-          trend={{ value: "+2%", direction: "up" }}
-        />
-        <StatCard
-          title="Mendatang"
-          value={stats.upcomingKGB.toString()}
-          icon={Calendar}
-          color="warning"
-          subtext="KP Bulan Depan"
-          trend={{ value: "-4%", direction: "down" }}
-          onClick={() => onCardClick?.("upcoming")}
-        />
-        <StatCard
-          title="Tertunda"
-          value={stats.pendingKGB.toString()}
-          icon={Clock}
-          color="rose"
-          subtext="Berkas Belum Lengkap"
-          onClick={() => onCardClick?.("pending")}
-        />
-        <StatCard
-          title="Selesai"
-          value={stats.processedKGB.toString()}
-          icon={CheckCircle}
-          color="success"
-          subtext="Dokumen SK Terbit"
-          trend={{ value: "+12%", direction: "up" }}
-          onClick={() => onCardClick?.("processed")}
-        />
-      </div>
-    </div>
-  );
-});
+
+StatCard.displayName = "StatCard";
+
+const DashboardStats: React.FC<Props> = React.memo(({ stats, onCardClick }) => (
+  <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4 sm:gap-4">
+    <StatCard
+      title="Total Pegawai"
+      value={stats.totalEmployees}
+      icon={Users}
+      tone="blue"
+      description="Seluruh data ASN/pegawai yang termuat dalam sistem monitoring kepegawaian."
+      caption="Basis data aktif"
+    />
+
+    <StatCard
+      title="KGB Mendatang"
+      value={stats.upcomingKGB}
+      icon={CalendarClock}
+      tone="amber"
+      description={`Agenda KGB terdekat${
+        stats.nextMonthName
+          ? ` periode ${stats.nextMonthName} ${stats.nextMonthYear || ""}`
+          : ""
+      }.`}
+      caption="Klik untuk filter"
+      onClick={() => onCardClick?.("upcoming")}
+    />
+
+    <StatCard
+      title="Perlu Tindak Lanjut"
+      value={stats.pendingKGB}
+      icon={AlertTriangle}
+      tone="rose"
+      description="Berkas atau layanan yang masih perlu diperiksa agar tidak melewati tenggat."
+      caption="Prioritas layanan"
+      onClick={() => onCardClick?.("pending")}
+    />
+
+    <StatCard
+      title="Selesai Diproses"
+      value={stats.processedKGB}
+      icon={CheckCircle2}
+      tone="emerald"
+      description="Dokumen/layanan yang sudah selesai dan dapat ditindaklanjuti untuk arsip."
+      caption="Riwayat selesai"
+      onClick={() => onCardClick?.("processed")}
+    />
+  </section>
+));
+
+DashboardStats.displayName = "DashboardStats";
+
 export default DashboardStats;
