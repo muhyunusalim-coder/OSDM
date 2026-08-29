@@ -80,7 +80,7 @@ const FAQ_ITEMS = [
     category: "kp",
     question: "Kapan periode usulan Kenaikan Pangkat (KP) PNS dilaksanakan?",
     answer:
-      "Mulai tahun 2024, BKN memberlakukan penyederhanaan layanan kepegawaian dengan menyediakan 6 (enam) periode Kenaikan Pangkat PNS dalam setahun, yaitu pada tanggal: 1 Februari, 1 April, 1 Juni, 1 Agustus, 1 Oktober, dan 1 Desember. Hal ini mempermudah pegawai mengajukan usulan begitu memenuhi syarat tanpa perlu menunggu lama.",
+      "Mulai tahun 2024, Badan Standardisasi dan Kebijakan Jasa Industri memberlakukan penyederhanaan layanan kepegawaian dengan menyediakan 6 (enam) periode Kenaikan Pangkat PNS dalam setahun, yaitu pada tanggal: 1 Februari, 1 April, 1 Juni, 1 Agustus, 1 Oktober, dan 1 Desember. Hal ini mempermudah pegawai mengajukan usulan begitu memenuhi syarat tanpa perlu menunggu lama.",
   },
   {
     category: "kp",
@@ -127,16 +127,16 @@ const FAQ_ITEMS = [
   {
     category: "siasn",
     question:
-      "Apa itu SIASN BKN dan bagaimana perannya dalam administrasi kepegawaian?",
+      "Apa itu SIASN Badan Standardisasi dan Kebijakan Jasa Industri dan bagaimana perannya dalam administrasi kepegawaian?",
     answer:
-      "SIASN (Sistem Informasi Aparatur Sipil Negara) adalah aplikasi resmi BKN yang digunakan untuk mengintegrasikan seluruh layanan administrasi kepegawaian secara nasional dan digital (paperless). Semua penerbitan SK KGB, KP, dan Pensiun di lingkungan BSKJI wajib disinkronkan melalui portal SIASN agar data ASN terupdate secara real-time.",
+      "SIASN (Sistem Informasi Aparatur Sipil Negara) adalah aplikasi resmi Badan Standardisasi dan Kebijakan Jasa Industri yang digunakan untuk mengintegrasikan seluruh layanan administrasi kepegawaian secara nasional dan digital (paperless). Semua penerbitan SK KGB, KP, dan Pensiun di lingkungan BSKJI wajib disinkronkan melalui portal SIASN agar data ASN terupdate secara real-time.",
   },
   {
     category: "siasn",
     question:
       "Bagaimana jika data profil saya di sistem kepegawaian atau SIASN berbeda?",
     answer:
-      "Jika terdapat perbedaan data (seperti nama, tanggal lahir, pangkat, atau jabatan), pegawai dapat mengajukan Pemutakhiran Data Mandiri (PDM) melalui portal MyASN BKN, atau berkoordinasi langsung dengan Operator Kepegawaian BSKJI dengan melampirkan berkas bukti autentik berupa SK terkait.",
+      "Jika terdapat perbedaan data (seperti nama, tanggal lahir, pangkat, atau jabatan), pegawai dapat mengajukan Pemutakhiran Data Mandiri (PDM) melalui portal MyASN Badan Standardisasi dan Kebijakan Jasa Industri, atau berkoordinasi langsung dengan Operator Kepegawaian BSKJI dengan melampirkan berkas bukti autentik berupa SK terkait.",
   },
   {
     category: "siasn",
@@ -172,12 +172,12 @@ const REGULATIONS: Regulation[] = [
     url: "https://jdih.bkn.go.id/assets/produk/PP_Nomor_11_Tahun_2017.pdf",
   },
   {
-    code: "SE Kepala BKN No. 16 Tahun 2023",
+    code: "SE Kepala Badan Standardisasi dan Kebijakan Jasa Industri No. 16 Tahun 2023",
     title: "Administrasi Terintegrasi SIASN",
     desc: "Instruksi pelaksanaan layanan kepegawaian digital secara paperless dan pemutakhiran data terpadu.",
     size: "820 KB",
     type: "PDF Document",
-    url: "https://jdih.bkn.go.id/assets/produk/SE_BKN_16_2023.pdf",
+    url: "https://jdih.bkn.go.id/assets/produk/SE_Badan Standardisasi dan Kebijakan Jasa Industri_16_2023.pdf",
   },
   {
     code: "Permenpan-RB No. 1 Tahun 2023",

@@ -74,7 +74,7 @@ const StatCard = React.memo(
     return (
       <Component
         onClick={onClick}
-        className={`group flex items-center gap-4 w-full rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition-all duration-300 hover:border-gray-200 dark:border-gray-800 dark:bg-gray-900 ${
+        className={`group flex items-center gap-5 w-full rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition-all duration-300 hover:border-gray-200 dark:border-gray-800 dark:bg-gray-900 ${
           onClick ? "cursor-pointer active:scale-95 hover:bg-gray-50 dark:hover:bg-gray-800/50" : ""
         }`}
       >
@@ -101,7 +101,7 @@ const StatCard = React.memo(
 StatCard.displayName = "StatCard";
 
 const DashboardStats: React.FC<Props> = React.memo(({ stats, onCardClick }) => (
-  <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4 sm:gap-4">
+  <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4 sm:gap-5">
     <StatCard
       title="Total Pegawai"
       value={stats.totalEmployees}

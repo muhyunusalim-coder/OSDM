@@ -113,8 +113,8 @@ const REGULATIONS: Regulation[] = [
   },
   {
     id: "se16",
-    code: "SE Kepala BKN No. 16 Tahun 2023",
-    title: "Administrasi Terintegrasi BKN",
+    code: "SE Kepala Badan Standardisasi dan Kebijakan Jasa Industri No. 16 Tahun 2023",
+    title: "Administrasi Terintegrasi Badan Standardisasi dan Kebijakan Jasa Industri",
     subtitle: "Implementasi Penuh SIASN untuk KGB & KP",
     summary:
       "Surat Edaran ini mewajibkan seluruh instansi pusat dan daerah melakukan sinkronisasi data KGB dan Kenaikan Pangkat secara real-time via web service SIASN.",
@@ -319,7 +319,7 @@ const DashboardPage: React.FC<Props> = React.memo(
             <h2 className="text-[14px] font-bold flex items-center gap-2 mb-4 text-gray-800 dark:text-white">
               <Activity size={18} className="text-[#2f9ed6]" /> Aksi Cepat
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
               <button onClick={() => handleQuickNavigate("jam-kerja")} className="bg-white rounded-lg p-5 flex flex-col items-center justify-center gap-3 border border-gray-100 border-t-[3px] border-t-[#2f9ed6] hover:bg-blue-50/50 transition-colors cursor-pointer shadow-sm">
                  <Clock size={24} strokeWidth={2} className="text-[#2f9ed6]" />
                  <span className="text-[13px] font-bold text-[#2f9ed6]">Jam Kerja</span>
@@ -374,7 +374,7 @@ const DashboardPage: React.FC<Props> = React.memo(
                 </button>
               </div>
 
-              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {systemAlerts.slice(0, 3).map((alert) => (
                   <div
                     key={alert.id}
@@ -470,14 +470,14 @@ const DashboardPage: React.FC<Props> = React.memo(
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
                 {latestProcessed.map((emp) => {
                   return (
                     <div
                       key={emp.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-[20px] border border-gray-100 bg-white p-4 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.03)] transition-transform hover:-translate-y-1 hover:border-gray-200 hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.06)] dark:border-gray-800/60 dark:bg-gray-900/60"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 rounded-[20px] border border-gray-100 bg-white p-4 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.03)] transition-transform hover:-translate-y-1 hover:border-gray-200 hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.06)] dark:border-gray-800/60 dark:bg-gray-900/60"
                     >
-                      <div className="flex items-center gap-4 min-w-0">
+                      <div className="flex items-center gap-5 min-w-0">
                         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-emerald-50 bg-emerald-50/80 text-emerald-600 font-bold text-[13px] transition-transform duration-300 group-hover:scale-105 dark:border-emerald-900/50 dark:bg-emerald-900/30 dark:text-emerald-400">
                           {emp.nama.charAt(0)}
                         </div>

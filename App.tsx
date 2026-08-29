@@ -115,7 +115,7 @@ const MenuItem = React.memo(({
         setCurrentView(view as any);
         setMobileMenuOpen(false);
       }}
-      className={`w-full flex items-center gap-3 pl-12 pr-5 py-3 transition-colors border-b border-gray-100/50 dark:border-gray-800/50 last:border-none ${
+      className={`w-[calc(100%-24px)] flex items-center gap-3 mx-3 my-1 pl-10 pr-3 py-2.5 rounded-lg transition-colors ${
         isActive
           ? 'bg-[#eaf5fa] text-[#2f9ed6] font-bold dark:bg-blue-900/20'
           : 'text-gray-600 hover:bg-white dark:text-gray-400 dark:hover:bg-gray-800 font-medium'
@@ -346,26 +346,6 @@ function App() {
       }
     };
     loadData();
-  }, [isAuthenticated]);
-
-  // Prefetch all route chunks on idle for instant zero-delay navigation
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    const prefetchRoutes = () => {
-      import('./components/DashboardPage');
-      import('./components/KGBDataPage');
-      import('./components/PromotionTable');
-      import('./components/PensiunTable');
-      import('./components/KPCalendar');
-      import('./components/ReportPage');
-      import('./components/FAQPage');
-      import('./components/JamKerjaPage');
-    };
-    if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(prefetchRoutes);
-    } else {
-      setTimeout(prefetchRoutes, 200);
-    }
   }, [isAuthenticated]);
 
   const handleLogin = React.useCallback((nip: string) => {
@@ -693,7 +673,7 @@ function App() {
                   setIsPensiunExpanded(false);
                   setIsJamKerjaExpanded(false);
                 }}
-                className={`w-full flex items-center gap-3 px-5 py-4 font-bold transition-colors border-b border-gray-100 dark:border-gray-800 ${
+                className={`w-[calc(100%-24px)] mx-3 my-1 rounded-lg flex items-center gap-3 px-4 py-3.5 font-bold transition-colors ${
                   currentView === 'dashboard' 
                     ? 'bg-[#2f9ed6] text-white' 
                     : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
@@ -713,7 +693,7 @@ function App() {
                 setIsPensiunExpanded(false);
                 setIsJamKerjaExpanded(false);
               }}
-              className={`w-full flex items-center gap-3 px-5 py-4 font-bold transition-colors border-b border-gray-100 dark:border-gray-800 ${
+              className={`w-[calc(100%-24px)] mx-3 my-1 rounded-lg flex items-center gap-3 px-4 py-3.5 font-bold transition-colors ${
                 currentView === 'susunan-pegawai' 
                   ? 'bg-[#2f9ed6] text-white' 
                   : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
@@ -737,7 +717,7 @@ function App() {
                     setMobileMenuOpen(false);
                   }
                 }}
-                className={`w-full flex items-center justify-between px-5 py-4 font-bold transition-colors ${
+                className={`w-[calc(100%-24px)] mx-3 my-1 rounded-lg flex items-center justify-between px-4 py-3.5 font-bold transition-colors ${
                   (isKenaikanPangkatExpanded || isKPAreaActive) 
                     ? 'bg-[#2f9ed6] text-white' 
                     : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
@@ -751,7 +731,7 @@ function App() {
               </button>
                   
               {isKenaikanPangkatExpanded && (
-                <div className="flex flex-col bg-gray-50/50 dark:bg-gray-900 py-1">
+                <div className="flex flex-col py-1">
                   <MenuItem view="kenaikan-pangkat" icon={ClipboardList} label={t('sidebar_promotion_service')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
                   <MenuItem view="kalender-kp" icon={Calendar} label={t('sidebar_promotion_calendar')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
                   <MenuItem view="report-kp" icon={BarChart2} label={t('sidebar_promotion_report')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
@@ -773,7 +753,7 @@ function App() {
                     setMobileMenuOpen(false);
                   }
                 }}
-                className={`w-full flex items-center justify-between px-5 py-4 font-bold transition-colors ${
+                className={`w-[calc(100%-24px)] mx-3 my-1 rounded-lg flex items-center justify-between px-4 py-3.5 font-bold transition-colors ${
                   (isLayananKgbExpanded || isKGBAreaActive) 
                     ? 'bg-[#2f9ed6] text-white' 
                     : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
@@ -794,7 +774,7 @@ function App() {
               </button>
                   
               {isLayananKgbExpanded && (
-                <div className="flex flex-col bg-gray-50/50 dark:bg-gray-900 py-1">
+                <div className="flex flex-col py-1">
                   <MenuItem view="data-kgb" icon={ClipboardList} label={t('sidebar_kgb_service')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested badge={stats.upcomingKGB > 0 ? stats.upcomingKGB : null} />
                   <MenuItem view="report" icon={BarChart2} label={t('sidebar_kgb_report')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
                 </div>
@@ -815,7 +795,7 @@ function App() {
                     setMobileMenuOpen(false);
                   }
                 }}
-                className={`w-full flex items-center justify-between px-5 py-4 font-bold transition-colors ${
+                className={`w-[calc(100%-24px)] mx-3 my-1 rounded-lg flex items-center justify-between px-4 py-3.5 font-bold transition-colors ${
                   (isPensiunExpanded || isPensiunAreaActive) 
                     ? 'bg-[#2f9ed6] text-white' 
                     : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
@@ -836,7 +816,7 @@ function App() {
               </button>
                   
               {isPensiunExpanded && (
-                <div className="flex flex-col bg-gray-50/50 dark:bg-gray-900 py-1">
+                <div className="flex flex-col py-1">
                   <MenuItem view="pensiun" icon={ClipboardList} label={t('sidebar_retirement_service')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
                 </div>
               )}
@@ -856,7 +836,7 @@ function App() {
                     setMobileMenuOpen(false);
                   }
                 }}
-                className={`w-full flex items-center justify-between px-5 py-4 font-bold transition-colors ${
+                className={`w-[calc(100%-24px)] mx-3 my-1 rounded-lg flex items-center justify-between px-4 py-3.5 font-bold transition-colors ${
                   (isJamKerjaExpanded || isJamKerjaAreaActive) 
                     ? 'bg-[#2f9ed6] text-white' 
                     : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
@@ -870,7 +850,7 @@ function App() {
               </button>
                   
               {isJamKerjaExpanded && (
-                <div className="flex flex-col bg-gray-50/50 dark:bg-gray-900 py-1">
+                <div className="flex flex-col py-1">
                   <MenuItem view="jam-kerja" icon={ClipboardList} label={t('sidebar_work_hours_service')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
                 </div>
               )}
@@ -881,7 +861,7 @@ function App() {
                 setCurrentView('faq');
                 setMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-5 py-4 font-bold transition-colors border-b border-gray-100 dark:border-gray-800 mt-2 ${
+              className={`w-[calc(100%-24px)] mx-3 my-2 rounded-lg flex items-center gap-3 px-4 py-3.5 font-bold transition-colors ${
                 currentView === 'faq' 
                   ? 'bg-[#2f9ed6] text-white' 
                   : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
@@ -893,7 +873,7 @@ function App() {
             
             <button 
               onClick={handleLogout} 
-              className="w-full flex items-center gap-3 px-5 py-4 font-bold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors cursor-pointer mt-auto"
+              className="w-[calc(100%-24px)] mx-3 mb-3 rounded-lg flex items-center gap-3 px-4 py-3.5 font-bold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors cursor-pointer mt-auto"
             >
               <LogOut size={20} />
               <span className="text-[13px]">Keluar Aplikasi</span>

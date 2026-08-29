@@ -38,34 +38,33 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
     <div className="min-h-screen flex items-center justify-center relative bg-[#f4f7f9] overflow-hidden p-4 font-sans">
       
       {/* Decorative Background Elements */}
-      <div className="absolute top-0 w-full h-[40vh] bg-gradient-to-b from-[#0a3a70] to-[#125ba3] z-0"></div>
-      <div className="absolute top-0 w-full h-[40vh] opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
+      <div className="absolute top-0 w-full h-[60vh] bg-gradient-to-b from-[#0a3a70] via-[#125ba3] to-transparent z-0"></div>
+      <div className="absolute top-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
 
       {/* Login Container */}
       <div className="relative z-10 w-full max-w-[420px]">
         {/* Logos & Headings */}
-        <div className="flex flex-col items-center mb-6 text-center">
-           <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 shadow-md p-3">
-             {/* BKN Garuda approximation / Shield for placeholder */}
-             <Shield size={40} className="text-[#e2a829]" strokeWidth={1.5} />
+        <div className="flex flex-col items-center mb-8 text-center">
+           <div className="w-[84px] h-[84px] bg-white rounded-2xl flex items-center justify-center mb-5 shadow-lg p-3">
+             <Shield size={46} className="text-[#e2a829]" strokeWidth={1.5} />
            </div>
-           <h1 className="text-2xl font-bold text-white mb-1 drop-shadow-md">
+           <h1 className="text-2xl md:text-[26px] font-bold text-white mb-2 drop-shadow-md">
              Selamat Datang di ASN DIGITAL
            </h1>
-           <p className="text-[13px] text-blue-100 font-medium">
+           <p className="text-[14px] text-blue-50 font-medium opacity-90">
              Platform Digital Manajemen ASN Terpadu
            </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-white/50 overflow-hidden">
           <div className="p-8 md:p-10">
-            <h2 className="text-[16px] font-bold text-gray-800 mb-6 text-center">
+            <h2 className="text-[17px] font-bold text-gray-800 mb-8 text-center">
               Masuk ke Akun Anda
             </h2>
 
             <form onSubmit={handleLogin} className="space-y-5">
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <label className="text-[13px] font-semibold text-gray-700 block">
                   Username (NIP)
                 </label>
@@ -73,14 +72,14 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                   type="text"
                   value={nip}
                   onChange={(e) => setNip(e.target.value.replace(/\D/g, ""))}
-                  className="w-full h-[46px] px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#125ba3] focus:border-[#125ba3] outline-none transition-all text-gray-800 text-[14px]"
+                  className="w-full h-12 px-4 bg-gray-50/50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#125ba3]/20 focus:border-[#125ba3] outline-none transition-all text-gray-800 text-[14px]"
                   placeholder="Masukkan 18 digit NIP"
                   autoFocus
                   required
                 />
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <label className="text-[13px] font-semibold text-gray-700 block">
                   Kata Sandi
                 </label>
@@ -88,23 +87,23 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-[46px] px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#125ba3] focus:border-[#125ba3] outline-none transition-all text-gray-800 text-[14px]"
+                  className="w-full h-12 px-4 bg-gray-50/50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#125ba3]/20 focus:border-[#125ba3] outline-none transition-all text-gray-800 text-[14px] tracking-wide"
                   placeholder="Masukkan kata sandi"
                   required
                 />
               </div>
 
               {error && (
-                <div className="text-red-500 bg-red-50 rounded-lg p-3 text-[13px] text-center border border-red-100">
+                <div className="text-red-600 bg-red-50 rounded-xl p-3 text-[13px] text-center border border-red-100 font-medium">
                   {error}
                 </div>
               )}
 
-              <div className="pt-3">
+              <div className="pt-4">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-[46px] bg-[#0a58ca] hover:bg-[#084298] text-white font-bold rounded-lg transition-colors cursor-pointer text-[14px] shadow-sm flex items-center justify-center gap-2"
+                  className="w-full h-12 bg-[#0a58ca] hover:bg-[#084298] text-white font-bold rounded-xl transition-all cursor-pointer text-[14px] shadow-sm hover:shadow flex items-center justify-center gap-2 active:scale-[0.98]"
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
@@ -121,16 +120,16 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
           </div>
           
           {/* Footer Info */}
-          <div className="bg-gray-50 p-4 border-t border-gray-100 text-center">
-             <p className="text-[12px] text-gray-500">
+          <div className="bg-gray-50/80 p-5 border-t border-gray-100 text-center">
+             <p className="text-[12px] text-gray-500 font-medium">
                 Gunakan otentikasi MFA untuk keamanan akun Anda.
              </p>
           </div>
         </div>
         
-        <div className="text-center mt-8">
-           <p className="text-[11px] text-gray-500 font-medium">
-             &copy; {new Date().getFullYear()} Badan Kepegawaian Negara
+        <div className="text-center mt-10">
+           <p className="text-[12px] text-[#0a3a70]/60 font-semibold tracking-wide">
+             &copy; {new Date().getFullYear()} Badan Standardisasi dan Kebijakan Jasa Industri
            </p>
         </div>
       </div>

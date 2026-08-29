@@ -342,7 +342,7 @@ Unit Kerja: ${employee.unitKerja}
 
 Pegawai tersebut di atas telah memenuhi syarat masa kerja golongan, prestasi kerja, dan persyaratan administratif lainnya untuk diusulkan Kenaikan Pangkat setingkat lebih tinggi terhitung mulai tanggal ${formatIndoDateLocal(employee.tmt)}.
 
-Sebagai bahan pertimbangan Bapak, bersama ini kami lampirkan dokumen kelengkapan berupa SK Pangkat terakhir, penilaian kinerja (SKP) 2 tahun terakhir, serta dokumen pendukung lainnya yang telah disinkronkan ke dalam aplikasi SIASN BKN.
+Sebagai bahan pertimbangan Bapak, bersama ini kami lampirkan dokumen kelengkapan berupa SK Pangkat terakhir, penilaian kinerja (SKP) 2 tahun terakhir, serta dokumen pendukung lainnya yang telah disinkronkan ke dalam aplikasi SIASN Badan Standardisasi dan Kebijakan Jasa Industri.
 
 Demikian usulan ini kami sampaikan, atas perhatian dan kerja sama Bapak diucapkan terima kasih.
 
@@ -366,7 +366,7 @@ Pegawai atas nama ${employee.nama} saat ini diusulkan naik pangkat dari ${employ
 Dengan pangkat baru, pegawai diharapkan dapat mengambil peran kepemimpinan atau keahlian fungsional yang lebih kompleks. Hal ini akan memperkuat kapabilitas tim di ${employee.unitKerja} serta memberikan motivasi internal bagi pegawai bersangkutan untuk meningkatkan kualitas kinerjanya dalam mencapai sasaran strategis instansi BSKJI.
 
 3. Rekomendasi Administratif:
-Disarankan agar Operator Kepegawaian Unit Kerja memastikan seluruh dokumen pendukung (terutama penilaian kinerja 2 tahun terakhir yang bernilai minimal Baik) telah diunggah dan disinkronkan sepenuhnya ke dalam portal SIASN BKN agar verifikasi oleh tim penilai Biro OSDM Kementerian Perindustrian berjalan mulus dan bebas kendala.`;
+Disarankan agar Operator Kepegawaian Unit Kerja memastikan seluruh dokumen pendukung (terutama penilaian kinerja 2 tahun terakhir yang bernilai minimal Baik) telah diunggah dan disinkronkan sepenuhnya ke dalam portal SIASN Badan Standardisasi dan Kebijakan Jasa Industri agar verifikasi oleh tim penilai Biro OSDM Kementerian Perindustrian berjalan mulus dan bebas kendala.`;
 };
 
 export const analyzeEmployeeKP = async (employee: any, promptType: 'draft_sk_kp' | 'analysis_kp') => {
@@ -412,7 +412,7 @@ export const analyzeEmployeeKP = async (employee: any, promptType: 'draft_sk_kp'
         Sertakan:
         1. Analisis kualifikasi pangkat, kesesuaian masa kerja golongan (MKG), dan jenjang karier pegawai.
         2. Pengaruh pangkat baru terhadap struktur organisasi dan peningkatan motivasi pegawai di unit kerjanya.
-        3. Rekomendasi langkah administratif kepegawaian (seperti kelengkapan berkas SIASN BKN).
+        3. Rekomendasi langkah administratif kepegawaian (seperti kelengkapan berkas SIASN Badan Standardisasi dan Kebijakan Jasa Industri).
         JANGAN gunakan formatting markdown tebal seperti tanda bintang ganda (**). Gunakan spasi paragraf yang rapi dan bahasa yang sangat elegan serta santun.
       `;
     }
