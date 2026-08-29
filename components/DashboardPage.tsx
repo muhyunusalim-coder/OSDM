@@ -19,6 +19,7 @@ import {
   ArrowRight,
   TrendingUp,
   Briefcase,
+  User,
   Users,
   UserCheck,
   Search,
@@ -287,304 +288,216 @@ const DashboardPage: React.FC<Props> = React.memo(
     }, [employees]);
 
     return (
-      <div className="space-y-6 pb-8">
-        {/* Simple & Clean Hero Welcome Banner */}
-        <div className="relative overflow-hidden rounded-3xl border border-gray-200/80 bg-gradient-to-br from-white via-blue-50/20 to-indigo-50/10 p-6 sm:p-8 shadow-sm dark:border-gray-800 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-900/90 dark:to-gray-950">
-          <div className="relative z-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
-            {/* Left Welcome Area */}
-            <div className="flex-1 space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/80 bg-blue-50/80 px-3 py-1 text-xs font-bold text-blue-700 backdrop-blur-sm dark:border-blue-800/60 dark:bg-blue-900/30 dark:text-blue-300">
-                <Building size={13} className="text-blue-600 dark:text-blue-400" />
-                <span>BSKJI Kemenperin</span>
+      <div className="flex flex-col xl:flex-row gap-6 pb-8">
+        {/* Left Column (Main Content) */}
+        <div className="flex-1 min-w-0 space-y-6">
+          
+          {/* Welcome Card */}
+          <div className="bg-white rounded-[24px] border border-gray-100 p-6 flex flex-col md:flex-row md:items-center justify-between shadow-[0_2px_12px_-4px_rgba(0,0,0,0.02)] dark:bg-gray-900 dark:border-gray-800">
+            <div className="flex items-center gap-5">
+              <div className="w-16 h-16 rounded-full border-4 border-[#2f9ed6] bg-gray-50 flex items-center justify-center text-2xl font-bold text-[#2f9ed6] dark:bg-gray-800 shadow-sm shrink-0">
+                 {currentUser ? currentUser.nama.charAt(0).toUpperCase() : "A"}
               </div>
-
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-                {greeting},{" "}
-                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-indigo-400">
-                  {currentUser
-                    ? currentUser.nama.split(",")[0]
-                    : "Pegawai BSKJI"}
-                </span>
-              </h1>
-
-              <p className="max-w-2xl text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-medium leading-relaxed">
-                Pusat layanan administrasi Kenaikan Gaji Berkala (KGB), Kenaikan Pangkat (KP), dan Pensiun ASN BSKJI.
-              </p>
-
-              {/* Quick Navigation Action Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
-                <button
-                  onClick={() => handleQuickNavigate("data-kgb")}
-                  className="group flex items-center gap-2.5 rounded-2xl border border-gray-200/90 bg-white/90 p-3 text-left shadow-sm transition-all hover:border-blue-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-800/80 dark:hover:border-blue-700/60 cursor-pointer"
-                >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-600 shadow-sm transition-transform group-hover:scale-105 dark:border-blue-900/50 dark:bg-blue-900/40 dark:text-blue-300">
-                    <Banknote size={16} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-bold text-gray-900 dark:text-white">
-                      Data KGB
-                    </p>
-                    <p className="truncate text-[10px] text-gray-500 dark:text-gray-400 font-medium">
-                      Gaji Berkala
-                    </p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => handleQuickNavigate("kenaikan-pangkat")}
-                  className="group flex items-center gap-2.5 rounded-2xl border border-gray-200/90 bg-white/90 p-3 text-left shadow-sm transition-all hover:border-emerald-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-800/80 dark:hover:border-emerald-700/60 cursor-pointer"
-                >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-600 shadow-sm transition-transform group-hover:scale-105 dark:border-emerald-900/50 dark:bg-emerald-950/50 dark:text-emerald-300">
-                    <Award size={16} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-bold text-gray-900 dark:text-white">
-                      Kenaikan Pangkat
-                    </p>
-                    <p className="truncate text-[10px] text-gray-500 dark:text-gray-400 font-medium">
-                      KP Periode
-                    </p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => handleQuickNavigate("pensiun")}
-                  className="group flex items-center gap-2.5 rounded-2xl border border-gray-200/90 bg-white/90 p-3 text-left shadow-sm transition-all hover:border-rose-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-800/80 dark:hover:border-rose-700/60 cursor-pointer"
-                >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-rose-100 bg-rose-50 text-rose-600 shadow-sm transition-transform group-hover:scale-105 dark:border-rose-900/50 dark:bg-rose-950/50 dark:text-rose-300">
-                    <Archive size={16} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-bold text-gray-900 dark:text-white">
-                      Pensiun
-                    </p>
-                    <p className="truncate text-[10px] text-gray-500 dark:text-gray-400 font-medium">
-                      BUP ASN
-                    </p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => handleQuickNavigate("jam-kerja")}
-                  className="group flex items-center gap-2.5 rounded-2xl border border-gray-200/90 bg-white/90 p-3 text-left shadow-sm transition-all hover:border-amber-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-800/80 dark:hover:border-amber-700/60 cursor-pointer"
-                >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-amber-100 bg-amber-50 text-amber-600 shadow-sm transition-transform group-hover:scale-105 dark:border-amber-900/50 dark:bg-amber-950/50 dark:text-amber-300">
-                    <Clock size={16} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-bold text-gray-900 dark:text-white">
-                      Jam Kerja
-                    </p>
-                    <p className="truncate text-[10px] text-gray-500 dark:text-gray-400 font-medium">
-                      Presensi & Jam
-                    </p>
-                  </div>
-                </button>
+              <div className="min-w-0">
+                 <h1 className="text-xl md:text-2xl font-extrabold text-[#2f9ed6] truncate">
+                   Selamat Datang, {currentUser ? currentUser.nama.split(",")[0] : "Pegawai"}
+                 </h1>
+                 <p className="text-[13px] font-semibold text-gray-500 dark:text-gray-400 mt-1 truncate">
+                   NIP: {currentUser ? currentUser.nip : "-"}
+                 </p>
               </div>
             </div>
-
-            {/* Right Rotatable Announcement Box */}
-            <div className="w-full shrink-0 lg:max-w-[340px]">
-              <div className="relative overflow-hidden rounded-2xl border border-gray-200/90 bg-white/90 p-4 shadow-sm backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/90">
-                <div className="flex items-center justify-between pb-2.5 border-b border-gray-100 dark:border-gray-800">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300">
-                      <Sparkles size={13} />
-                    </div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      Inspirasi BerAKHLAK
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={handleNewQuote}
-                    title="Ganti Inspirasi"
-                    className="flex h-6 w-6 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
-                  >
-                    <RotateCw size={12} />
-                  </button>
-                </div>
-
-                <div className="mt-2.5 min-h-[52px] flex items-center">
-                  <p
-                    key={activeMessageIndex}
-                    className="text-xs leading-relaxed font-medium text-gray-700 dark:text-gray-200 transition-opacity duration-300"
-                  >
-                    {messages[activeMessageIndex]}
-                  </p>
-                </div>
-              </div>
+            <div className="mt-4 md:mt-0 shrink-0">
+              <span className="inline-block bg-[#2f9ed6] text-white px-5 py-1.5 rounded-full text-xs font-extrabold tracking-wider shadow-md shadow-[#2f9ed6]/20">
+                PNS
+              </span>
             </div>
           </div>
-        </div>
 
-        {/* Section: Kartu Statistik Utama */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-              <Activity size={18} className="text-blue-600 dark:text-blue-400" />
-              Ringkasan Layanan Kepegawaian
+          {/* Aksi Cepat */}
+          <div className="bg-white rounded-[24px] border border-gray-100 p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.02)] dark:bg-gray-900 dark:border-gray-800">
+            <h2 className="text-[14px] font-bold flex items-center gap-2 mb-4 text-gray-800 dark:text-white">
+              <Activity size={18} className="text-[#2f9ed6]" /> Aksi Cepat
             </h2>
-          </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <button onClick={() => handleQuickNavigate("jam-kerja")} className="bg-white rounded-lg p-5 flex flex-col items-center justify-center gap-3 border border-gray-100 border-t-[3px] border-t-[#2f9ed6] hover:bg-blue-50/50 transition-colors cursor-pointer shadow-sm">
+                 <Clock size={24} strokeWidth={2} className="text-[#2f9ed6]" />
+                 <span className="text-[13px] font-bold text-[#2f9ed6]">Jam Kerja</span>
+              </button>
 
-          <DashboardStats stats={stats} onCardClick={onCardClick} />
-        </div>
-
-        {/* System Alerts / Prioritas Layanan (if any) */}
-        {systemAlerts && systemAlerts.length > 0 && (
-          <div className="rounded-3xl border border-amber-200/80 bg-amber-50/50 p-4 shadow-sm dark:border-amber-900/40 dark:bg-amber-950/20">
-            <div className="flex items-center justify-between pb-3 border-b border-amber-200/50 dark:border-amber-900/30">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50">
-                  <ShieldAlert size={16} />
-                </div>
-                <div>
-                  <h3 className="text-xs font-bold text-gray-900 dark:text-white">
-                    Peringatan TMT ({systemAlerts.length})
-                  </h3>
-                  <p className="text-[10px] text-gray-600 dark:text-gray-400 font-medium">
-                    Pegawai mendekati jatuh tempo TMT KGB atau pensiun
-                  </p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => handleQuickNavigate("data-kgb")}
-                className="inline-flex items-center gap-1 text-xs font-bold text-amber-700 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 transition-colors cursor-pointer"
-              >
-                <span>Lihat Semua</span>
-                <ArrowRight size={13} />
+              <button onClick={() => handleQuickNavigate("data-kgb")} className="bg-white rounded-lg p-5 flex flex-col items-center justify-center gap-3 border border-gray-100 border-t-[3px] border-t-emerald-500 hover:bg-emerald-50/50 transition-colors cursor-pointer shadow-sm">
+                 <Banknote size={24} strokeWidth={2} className="text-emerald-500" />
+                 <span className="text-[13px] font-bold text-emerald-500">Data KGB</span>
+              </button>
+              
+              <button onClick={() => handleQuickNavigate("kenaikan-pangkat")} className="bg-white rounded-lg p-5 flex flex-col items-center justify-center gap-3 border border-gray-100 border-t-[3px] border-t-purple-500 hover:bg-purple-50/50 transition-colors cursor-pointer shadow-sm">
+                 <Award size={24} strokeWidth={2} className="text-purple-500" />
+                 <span className="text-[13px] font-bold text-purple-500">Kenaikan Pangkat</span>
+              </button>
+              
+              <button onClick={() => handleQuickNavigate("pensiun")} className="bg-white rounded-lg p-5 flex flex-col items-center justify-center gap-3 border border-gray-100 border-t-[3px] border-t-orange-500 hover:bg-orange-50/50 transition-colors cursor-pointer shadow-sm">
+                 <Archive size={24} strokeWidth={2} className="text-orange-500" />
+                 <span className="text-[13px] font-bold text-orange-500">Data Pensiun</span>
               </button>
             </div>
+          </div>
 
-            <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-              {systemAlerts.slice(0, 3).map((alert) => (
-                <div
-                  key={alert.id}
-                  className="flex flex-col justify-between rounded-2xl border border-gray-200/80 bg-white p-3 shadow-sm dark:border-gray-800 dark:bg-gray-900"
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-1">
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                          alert.severity === "critical"
-                            ? "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-900"
-                            : "bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-900"
-                        }`}
-                      >
-                        <AlertTriangle size={10} />
-                        {alert.title}
-                      </span>
-                      <span className="text-[10px] font-mono text-gray-400">
-                        NIP: {alert.employee.nip}
-                      </span>
-                    </div>
+          {/* Section: Kartu Statistik Utama */}
+          <div className="space-y-3">
+            <DashboardStats stats={stats} onCardClick={onCardClick} />
+          </div>
 
-                    <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
-                      {alert.employee.nama}
-                    </p>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed mt-0.5 line-clamp-1">
-                      {alert.message}
-                    </p>
+          {/* System Alerts / Prioritas Layanan (if any) */}
+          {systemAlerts && systemAlerts.length > 0 && (
+            <div className="rounded-[24px] border border-amber-100 bg-gradient-to-r from-amber-50/80 to-orange-50/30 p-5 sm:p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.02)] dark:border-amber-900/30 dark:bg-gradient-to-r dark:from-amber-950/20 dark:to-gray-900/50">
+              <div className="flex items-center justify-between pb-4 border-b border-amber-100 dark:border-amber-900/40">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-amber-600 shadow-[0_2px_10px_-2px_rgba(0,0,0,0.05)] dark:bg-amber-900/30 dark:text-amber-400 dark:shadow-none">
+                    <ShieldAlert size={20} strokeWidth={2} />
                   </div>
-
-                  <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-[10px]">
-                    <span className="text-gray-500 dark:text-gray-400 truncate">
-                      {alert.employee.unitKerja}
-                    </span>
-                    <button
-                      onClick={() => handleQuickNavigate(alert.type === "pensiun" ? "pensiun" : "data-kgb")}
-                      className="font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 cursor-pointer shrink-0 ml-2"
-                    >
-                      Proses &rarr;
-                    </button>
+                  <div>
+                    <h3 className="text-[13px] font-bold text-gray-900 dark:text-white">
+                      Peringatan TMT ({systemAlerts.length})
+                    </h3>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">
+                      Pegawai mendekati jatuh tempo
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
 
-        {/* Section: Analitik & Visualisasi Data Layanan */}
-        <div className="space-y-3 pt-2">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-                <Activity size={18} className="text-blue-600 dark:text-blue-400" />
-                {t("chart_overview_title") || "Analitik Layanan Kepegawaian"}
-              </h2>
-            </div>
-          </div>
+                <button
+                  onClick={() => handleQuickNavigate("data-kgb")}
+                  className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 transition-colors cursor-pointer"
+                >
+                  <span>Lihat Semua</span>
+                  <ArrowRight size={14} />
+                </button>
+              </div>
 
-          <DeferredView minHeight="300px">
-            <div className="space-y-6">
-              <ServiceOverviewCharts
-                employees={employees}
-                promotionEmployees={promotionEmployees || []}
-                stats={stats}
-                language={language}
-              />
-              <ComparisonChart employees={employees} language={language} />
-              <PensionProjectionDashboardChart
-                employees={employees}
-                language={language}
-              />
-            </div>
-          </DeferredView>
-        </div>
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {systemAlerts.slice(0, 3).map((alert) => (
+                  <div
+                    key={alert.id}
+                    className="flex flex-col justify-between rounded-[20px] border border-white/50 bg-white/70 p-4 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.02)] backdrop-blur-sm transition-transform hover:-translate-y-1 hover:bg-white dark:border-gray-800/60 dark:bg-gray-900/60 dark:hover:bg-gray-900"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide border ${
+                            alert.severity === "critical"
+                              ? "bg-red-50 text-red-600 border-red-100 dark:bg-red-900/30 dark:text-red-400 dark:border-red-900/50"
+                              : "bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-900/50"
+                          }`}
+                        >
+                          <AlertTriangle size={12} strokeWidth={2.5} />
+                          {alert.title}
+                        </span>
+                        <span className="text-[10px] font-semibold font-mono text-gray-400">
+                          NIP: {alert.employee.nip}
+                        </span>
+                      </div>
 
-        {/* Section: Riwayat Layanan Terakhir Diproses */}
-        {latestProcessed && latestProcessed.length > 0 && (
+                      <p className="text-[13px] font-bold text-gray-900 dark:text-white truncate">
+                        {alert.employee.nama}
+                      </p>
+                      <p className="text-[12px] text-gray-500 dark:text-gray-400 leading-relaxed mt-1 line-clamp-1">
+                        {alert.message}
+                      </p>
+                    </div>
+
+                    <div className="mt-3 pt-3 border-t border-gray-100/60 dark:border-gray-800/60 flex items-center justify-between text-[11px] font-medium">
+                      <span className="text-gray-400 dark:text-gray-500 truncate max-w-[120px]">
+                        {alert.employee.unitKerja}
+                      </span>
+                      <button
+                        onClick={() => handleQuickNavigate(alert.type === "pensiun" ? "pensiun" : "data-kgb")}
+                        className="font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors"
+                      >
+                        Proses &rarr;
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Section: Analitik & Visualisasi Data Layanan */}
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-base font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-                  <UserCheck size={18} className="text-emerald-600 dark:text-emerald-400" />
-                  SK Selesai Diproses Terbaru
+                  <Activity size={18} className="text-[#2f9ed6]" />
+                  {t("chart_overview_title") || "Analitik Layanan Kepegawaian"}
                 </h2>
               </div>
-
-              <button
-                onClick={() => handleQuickNavigate("data-kgb")}
-                className="text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors flex items-center gap-1 cursor-pointer"
-              >
-                <span>Kelola Data KGB</span>
-                <ChevronRight size={14} />
-              </button>
             </div>
 
-            <div className="overflow-hidden rounded-3xl border border-gray-200/80 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              <div className="divide-y divide-gray-100 dark:divide-gray-800">
+            <DeferredView minHeight="300px">
+              <div className="space-y-6">
+                <ServiceOverviewCharts
+                  employees={employees}
+                  promotionEmployees={promotionEmployees || []}
+                  stats={stats}
+                  language={language}
+                />
+                <ComparisonChart employees={employees} language={language} />
+                <PensionProjectionDashboardChart
+                  employees={employees}
+                  language={language}
+                />
+              </div>
+            </DeferredView>
+          </div>
+
+          {/* Section: Riwayat Layanan Terakhir Diproses */}
+          {latestProcessed && latestProcessed.length > 0 && (
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-base font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
+                    <UserCheck size={18} className="text-emerald-600 dark:text-emerald-400" />
+                    SK Selesai Diproses Terbaru
+                  </h2>
+                </div>
+
+                <button
+                  onClick={() => handleQuickNavigate("data-kgb")}
+                  className="text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Kelola Data</span>
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 {latestProcessed.map((emp) => {
-                  const lastHistory = emp.salaryHistory?.[emp.salaryHistory.length - 1];
                   return (
                     <div
                       key={emp.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 transition-colors hover:bg-gray-50/80 dark:hover:bg-gray-800/50"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-[20px] border border-gray-100 bg-white p-4 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.03)] transition-transform hover:-translate-y-1 hover:border-gray-200 hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.06)] dark:border-gray-800/60 dark:bg-gray-900/60"
                     >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-700 font-bold text-xs shadow-sm dark:border-emerald-900/50 dark:bg-emerald-950/50 dark:text-emerald-300">
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-emerald-50 bg-emerald-50/80 text-emerald-600 font-bold text-[13px] transition-transform duration-300 group-hover:scale-105 dark:border-emerald-900/50 dark:bg-emerald-900/30 dark:text-emerald-400">
                           {emp.nama.charAt(0)}
                         </div>
 
                         <div className="min-w-0">
-                          <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                          <p className="text-[13px] font-bold text-gray-900 dark:text-white truncate">
                             {emp.nama}
                           </p>
-                          <div className="flex flex-wrap items-center gap-2 text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">
+                          <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400 mt-1">
                             <span className="font-mono">NIP: {emp.nip}</span>
                             <span>•</span>
                             <span>Gol: {emp.pangkat || emp.golonganRaw || "-"}</span>
-                            <span>•</span>
-                            <span className="truncate">{emp.unitKerja}</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
+                      <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-0 border-gray-100/80 dark:border-gray-800/80">
                         <div className="text-left sm:text-right">
-                          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/50 dark:text-emerald-300">
-                            <CheckCircle size={10} />
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-600 dark:border-emerald-900/50 dark:bg-emerald-900/30 dark:text-emerald-400">
+                            <CheckCircle size={12} strokeWidth={2.5} />
                             Selesai Diproses
                           </span>
                         </div>
@@ -594,8 +507,73 @@ const DashboardPage: React.FC<Props> = React.memo(
                 })}
               </div>
             </div>
+          )}
+        </div>
+
+        {/* Right Column (Sidebar-like info) */}
+        <div className="w-full xl:w-80 shrink-0 space-y-6">
+          <div className="bg-white rounded-[24px] border border-gray-100 p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.02)] dark:bg-gray-900 dark:border-gray-800 text-center relative overflow-hidden">
+             {/* Decorative Background blob */}
+             <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-[#f3f9fc] dark:bg-blue-900/20 opacity-50 blur-2xl"></div>
+             
+             <div className="flex justify-center mb-5 relative z-10">
+                <div className="w-16 h-16 rounded-2xl bg-[#eaf5fa] flex items-center justify-center text-[#2f9ed6] dark:bg-blue-900/30">
+                   <Building size={32} strokeWidth={2} />
+                </div>
+             </div>
+             <h2 className="text-lg font-black text-[#2f9ed6] mb-3 uppercase tracking-wide relative z-10">Selamat Datang di MYASN</h2>
+             <p className="text-[13px] font-medium text-gray-500 mb-6 text-justify leading-relaxed dark:text-gray-400 relative z-10">
+                Aplikasi portal kepegawaian resmi untuk mempermudah pegawai BSKJI dalam memantau dan mengelola data Kenaikan Gaji Berkala (KGB), Kenaikan Pangkat, dan Pensiun.
+             </p>
+             
+             <div className="text-left space-y-3.5 relative z-10 pt-4 border-t border-gray-100 dark:border-gray-800">
+               <h3 className="text-[11px] font-extrabold text-gray-700 dark:text-gray-300 uppercase tracking-widest mb-3">Fitur Utama:</h3>
+               <div className="flex items-start gap-3">
+                  <CheckCircle size={16} strokeWidth={2.5} className="text-emerald-500 mt-0.5 shrink-0" />
+                  <span className="text-[12px] font-semibold text-gray-600 dark:text-gray-400 leading-tight">Notifikasi otomatis jatuh tempo layanan kepegawaian.</span>
+               </div>
+               <div className="flex items-start gap-3">
+                  <CheckCircle size={16} strokeWidth={2.5} className="text-emerald-500 mt-0.5 shrink-0" />
+                  <span className="text-[12px] font-semibold text-gray-600 dark:text-gray-400 leading-tight">Dashboard analitik terintegrasi untuk pimpinan.</span>
+               </div>
+               <div className="flex items-start gap-3">
+                  <CheckCircle size={16} strokeWidth={2.5} className="text-emerald-500 mt-0.5 shrink-0" />
+                  <span className="text-[12px] font-semibold text-gray-600 dark:text-gray-400 leading-tight">Pelacakan progres SK pegawai secara real-time.</span>
+               </div>
+             </div>
           </div>
-        )}
+
+          {/* Right Rotatable Announcement Box */}
+          <div className="relative overflow-hidden rounded-[24px] border border-gray-100/80 bg-white p-5 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.02)] dark:border-gray-800 dark:bg-gray-900">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100/80 dark:border-gray-800/80">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-blue-50/80 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300">
+                  <Sparkles size={14} />
+                </div>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+                  Inspirasi BerAKHLAK
+                </span>
+              </div>
+
+              <button
+                onClick={handleNewQuote}
+                title="Ganti Inspirasi"
+                className="flex h-7 w-7 items-center justify-center rounded-xl text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
+              >
+                <RotateCw size={14} />
+              </button>
+            </div>
+
+            <div className="mt-4 min-h-[80px] flex items-center">
+              <p
+                key={activeMessageIndex}
+                className="text-[13px] leading-relaxed font-medium text-gray-600 dark:text-gray-300 transition-opacity duration-300 italic"
+              >
+                "{messages[activeMessageIndex]}"
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
