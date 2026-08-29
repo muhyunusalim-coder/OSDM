@@ -129,7 +129,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
         
         <div className="text-center mt-10">
            <p className="text-[12px] text-[#0a3a70]/60 font-semibold tracking-wide">
-             &copy; {new Date().getFullYear()} Badan Standardisasi dan Kebijakan Jasa Industri
+             &copy; {new Date().getFullYear()} Badan Kepegawaian Negara
            </p>
         </div>
       </div>

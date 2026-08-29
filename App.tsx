@@ -348,6 +348,26 @@ function App() {
     loadData();
   }, [isAuthenticated]);
 
+  // Prefetch all route chunks on idle for instant zero-delay navigation
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const prefetchRoutes = () => {
+      import('./components/DashboardPage');
+      import('./components/KGBDataPage');
+      import('./components/PromotionTable');
+      import('./components/PensiunTable');
+      import('./components/KPCalendar');
+      import('./components/ReportPage');
+      import('./components/FAQPage');
+      import('./components/JamKerjaPage');
+    };
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(prefetchRoutes);
+    } else {
+      setTimeout(prefetchRoutes, 200);
+    }
+  }, [isAuthenticated]);
+
   const handleLogin = React.useCallback((nip: string) => {
     login(nip);
     setQuote(getRandomQuote());

@@ -425,7 +425,7 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
               </div>
               <div className="mt-4 pt-3 border-t border-primary-100/40 dark:border-gray-800">
                 <span className="text-[10px] text-primary-700 dark:text-primary-400 font-bold flex items-center gap-1">
-                  <TrendingUp size={12} /> Sinkronisasi SIASN Badan Standardisasi dan Kebijakan Jasa Industri Aktif
+                  <TrendingUp size={12} /> Sinkronisasi SIASN BKN Aktif
                 </span>
               </div>
             </div>
