@@ -314,6 +314,37 @@ const DashboardPage: React.FC<Props> = React.memo(
             </div>
           </div>
 
+          {/* Inspirasi BerAKHLAK Box (Ditempatkan di atas Aksi Cepat) */}
+          <div className="relative overflow-hidden rounded-[24px] border border-gray-100/80 bg-white p-5 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.02)] dark:border-gray-800 dark:bg-gray-900">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100/80 dark:border-gray-800/80">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-blue-50/80 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300">
+                  <Sparkles size={14} />
+                </div>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+                  Inspirasi BerAKHLAK
+                </span>
+              </div>
+
+              <button
+                onClick={handleNewQuote}
+                title="Ganti Inspirasi"
+                className="flex h-7 w-7 items-center justify-center rounded-xl text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
+              >
+                <RotateCw size={14} />
+              </button>
+            </div>
+
+            <div className="mt-3.5 min-h-[40px] flex items-center">
+              <p
+                key={activeMessageIndex}
+                className="text-[13px] leading-relaxed font-medium text-gray-600 dark:text-gray-300 transition-opacity duration-300 italic"
+              >
+                "{messages[activeMessageIndex]}"
+              </p>
+            </div>
+          </div>
+
           {/* Aksi Cepat */}
           <div className="bg-white rounded-[24px] border border-gray-100 p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.02)] dark:bg-gray-900 dark:border-gray-800">
             <h2 className="text-[14px] font-bold flex items-center gap-2 mb-4 text-gray-800 dark:text-white">
@@ -541,37 +572,6 @@ const DashboardPage: React.FC<Props> = React.memo(
                   <span className="text-[12px] font-semibold text-gray-600 dark:text-gray-400 leading-tight">Pelacakan progres SK pegawai secara real-time.</span>
                </div>
              </div>
-          </div>
-
-          {/* Right Rotatable Announcement Box */}
-          <div className="relative overflow-hidden rounded-[24px] border border-gray-100/80 bg-white p-5 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.02)] dark:border-gray-800 dark:bg-gray-900">
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100/80 dark:border-gray-800/80">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-blue-50/80 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300">
-                  <Sparkles size={14} />
-                </div>
-                <span className="text-[11px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
-                  Inspirasi BerAKHLAK
-                </span>
-              </div>
-
-              <button
-                onClick={handleNewQuote}
-                title="Ganti Inspirasi"
-                className="flex h-7 w-7 items-center justify-center rounded-xl text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
-              >
-                <RotateCw size={14} />
-              </button>
-            </div>
-
-            <div className="mt-4 min-h-[80px] flex items-center">
-              <p
-                key={activeMessageIndex}
-                className="text-[13px] leading-relaxed font-medium text-gray-600 dark:text-gray-300 transition-opacity duration-300 italic"
-              >
-                "{messages[activeMessageIndex]}"
-              </p>
-            </div>
           </div>
         </div>
       </div>
