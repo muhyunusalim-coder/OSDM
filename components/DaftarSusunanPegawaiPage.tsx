@@ -35,9 +35,7 @@ import {
   PieChart as PieChartIcon,
   Activity,
   Zap,
-  Target,
-  CheckCircle,
-  Building
+  Target
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -2092,133 +2090,116 @@ export const DaftarSusunanPegawaiPage: React.FC<Props> = ({ employees, currentUs
       {/* 6. MODAL DETAIL PEGAWAI (COMPREHENSIVE PROFILE DRAWER) */}
       {selectedEmployee && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-fadeIn"
           onClick={() => setSelectedEmployee(null)}
         >
           <div
-            className="bg-[#f4f6f9] dark:bg-gray-900 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col"
+            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-5 sm:p-6 space-y-5 text-gray-900 dark:text-white"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Header */}
-            <div className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center sticky top-0 z-10">
-              <h3 className="font-bold text-gray-800 dark:text-white">Profil Pegawai</h3>
+            {/* Header Modal */}
+            <div className="flex items-start justify-between gap-3 border-b border-gray-200 dark:border-gray-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-base ${
+                  selectedEmployee.statusKepegawaian === 'PPPK'
+                    ? 'bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-700/50'
+                    : 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700/50'
+                }`}>
+                  {(selectedEmployee.nama || 'A').slice(0, 1).toUpperCase()}
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900 dark:text-white">{selectedEmployee.nama}</h2>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    <span className="font-mono">{selectedEmployee.nip}</span>
+                    <button
+                      onClick={(e) => handleCopyNip(selectedEmployee.nip, e)}
+                      className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold cursor-pointer"
+                    >
+                      {copiedField === selectedEmployee.nip ? 'Tersalin!' : 'Salin NIP'}
+                    </button>
+                    <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-primary-50 dark:bg-primary-500/20 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-500/30">
+                      {selectedEmployee.statusKepegawaian}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               <button
                 onClick={() => setSelectedEmployee(null)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors cursor-pointer"
+                className="p-1.5 text-gray-400 hover:text-gray-700 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
             </div>
 
-            {/* Modal Body */}
-            <div className="p-6 space-y-6">
-              
-              {/* Top Profile Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-100 dark:border-gray-700 shadow-sm flex items-start gap-4 relative">
-                <div className="w-16 h-16 rounded-full bg-[#2f9ed6] flex items-center justify-center shrink-0">
-                  <User size={32} className="text-white" />
-                </div>
-                <div className="flex-1 mt-1">
-                  <h2 className="text-xl font-bold text-[#2f9ed6] mb-1">{selectedEmployee.nama}</h2>
-                  <p className="text-sm text-gray-500 font-mono">NIP: {selectedEmployee.nip}</p>
-                </div>
-                <div className="absolute top-6 right-6">
-                  <span className="px-4 py-1.5 text-xs font-bold rounded-full bg-[#2f9ed6] text-white tracking-widest">
-                    {selectedEmployee.statusKepegawaian}
-                  </span>
+            {/* Content Details Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
+              {/* Jabatan */}
+              <div className="p-3.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200/80 dark:border-gray-800 rounded-xl space-y-1">
+                <span className="text-gray-500 dark:text-gray-400 text-[11px] font-medium flex items-center gap-1.5">
+                  <Briefcase size={13} className="text-primary-600 dark:text-primary-400" /> Jabatan
+                </span>
+                <div className="font-semibold text-gray-900 dark:text-white">{selectedEmployee.jabatan || '-'}</div>
+              </div>
+
+              {/* Pangkat & Golongan */}
+              <div className="p-3.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200/80 dark:border-gray-800 rounded-xl space-y-1">
+                <span className="text-gray-500 dark:text-gray-400 text-[11px] font-medium flex items-center gap-1.5">
+                  <Award size={13} className="text-amber-600 dark:text-amber-400" /> Pangkat / Golongan Ruang
+                </span>
+                <div className="font-semibold text-gray-900 dark:text-white">{selectedEmployee.pangkat || '-'}</div>
+              </div>
+
+              {/* Gender & Usia */}
+              <div className="p-3.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200/80 dark:border-gray-800 rounded-xl space-y-1">
+                <span className="text-gray-500 dark:text-gray-400 text-[11px] font-medium flex items-center gap-1.5">
+                  <User size={13} className="text-cyan-600 dark:text-cyan-400" /> Gender & Usia
+                </span>
+                <div className="font-semibold text-gray-900 dark:text-white">
+                  {selectedEmployee.jenisKelamin || '-'} {selectedEmployee.usia ? `(${selectedEmployee.usia} tahun)` : ''}
                 </div>
               </div>
 
-              {/* Four Status Chips */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-100 dark:border-gray-700 shadow-sm flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
-                    <CheckCircle size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400">Gender & Usia</p>
-                    <p className="text-[13px] font-bold text-emerald-600">
-                      {selectedEmployee.jenisKelamin || '-'} {selectedEmployee.usia ? `(${selectedEmployee.usia} th)` : ''}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-100 dark:border-gray-700 shadow-sm flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
-                    <Briefcase size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400">Pangkat/Golongan</p>
-                    <p className="text-[13px] font-bold text-blue-600 line-clamp-1" title={selectedEmployee.pangkat}>
-                      {selectedEmployee.pangkat || '-'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-100 dark:border-gray-700 shadow-sm flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center shrink-0">
-                    <Clock size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400">Masa Kerja</p>
-                    <p className="text-[13px] font-bold text-purple-600">
-                      {selectedEmployee.masaKerja || '-'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-100 dark:border-gray-700 shadow-sm flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
-                    <Building size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400">Unit Kerja</p>
-                    <p className="text-[13px] font-bold text-orange-600 line-clamp-1" title={selectedEmployee.unitKerja}>
-                      {selectedEmployee.unitKerja || 'BSKJI'}
-                    </p>
-                  </div>
+              {/* TMT & Masa Kerja */}
+              <div className="p-3.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200/80 dark:border-gray-800 rounded-xl space-y-1">
+                <span className="text-gray-500 dark:text-gray-400 text-[11px] font-medium flex items-center gap-1.5">
+                  <Clock size={13} className="text-emerald-600 dark:text-emerald-400" /> TMT & Masa Kerja
+                </span>
+                <div className="font-semibold text-gray-900 dark:text-white">
+                  TMT: {selectedEmployee.tmt || '-'} | MK: {selectedEmployee.masaKerja || '-'}
                 </div>
               </div>
+            </div>
 
-              {/* Details Sections */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Informasi Jabatan */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
-                  <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center gap-2">
-                    <Briefcase size={18} className="text-[#2f9ed6]" />
-                    <h4 className="font-bold text-gray-800 dark:text-white text-[15px]">Informasi Jabatan</h4>
-                  </div>
-                  <div className="p-5 space-y-4 flex-1">
-                    <div>
-                      <p className="text-[12px] text-gray-500 dark:text-gray-400 mb-1">Jabatan Saat Ini</p>
-                      <p className="font-bold text-gray-800 dark:text-gray-200 text-[14px]">{selectedEmployee.jabatan || '-'}</p>
-                    </div>
-                    <div>
-                      <p className="text-[12px] text-gray-500 dark:text-gray-400 mb-1">TMT Jabatan</p>
-                      <p className="font-bold text-gray-800 dark:text-gray-200 text-[14px]">{selectedEmployee.tmt || '-'}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pendidikan Terakhir */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
-                  <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center gap-2">
-                    <GraduationCap size={18} className="text-[#2f9ed6]" />
-                    <h4 className="font-bold text-gray-800 dark:text-white text-[15px]">Informasi Pendidikan & Diklat</h4>
-                  </div>
-                  <div className="p-5 space-y-4 flex-1">
-                    <div>
-                      <p className="text-[12px] text-gray-500 dark:text-gray-400 mb-1">Pendidikan</p>
-                      <p className="font-bold text-gray-800 dark:text-gray-200 text-[14px] whitespace-pre-line leading-relaxed">{selectedEmployee.pendidikan || '-'}</p>
-                    </div>
-                    <div>
-                      <p className="text-[12px] text-gray-500 dark:text-gray-400 mb-1">Riwayat Diklat Struktural</p>
-                      <p className="font-bold text-gray-800 dark:text-gray-200 text-[14px] whitespace-pre-line leading-relaxed">{selectedEmployee.diklatStruktural || '-'}</p>
-                    </div>
-                  </div>
-                </div>
+            {/* Riwayat Pendidikan Lengkap */}
+            <div className="p-4 bg-gray-50/80 dark:bg-gray-800/40 border border-gray-200/80 dark:border-gray-800 rounded-xl space-y-2">
+              <span className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                <GraduationCap size={15} className="text-emerald-600 dark:text-emerald-400" /> Riwayat Pendidikan
+              </span>
+              <div className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed font-mono">
+                {selectedEmployee.pendidikan || 'Tidak ada riwayat pendidikan tercatat.'}
               </div>
+            </div>
 
+            {/* Diklat Struktural */}
+            <div className="p-4 bg-gray-50/80 dark:bg-gray-800/40 border border-gray-200/80 dark:border-gray-800 rounded-xl space-y-2">
+              <span className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                <BookOpen size={15} className="text-blue-600 dark:text-blue-400" /> Riwayat Diklat Struktural & Kepemimpinan
+              </span>
+              <div className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">
+                {selectedEmployee.diklatStruktural || 'Belum ada diklat struktural yang tercatat.'}
+              </div>
+            </div>
+
+            {/* Footer Modal Actions */}
+            <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-800 pt-3 text-xs">
+              <span className="text-gray-500">Nomor Urut DSP: #{selectedEmployee.no}</span>
+              <button
+                onClick={() => setSelectedEmployee(null)}
+                className="px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white font-semibold rounded-xl transition-colors cursor-pointer"
+              >
+                Tutup
+              </button>
             </div>
           </div>
         </div>

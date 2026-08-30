@@ -69,29 +69,62 @@ const StatCard = React.memo(
     tone: Tone;
     onClick?: () => void;
   }) => {
+    const t = toneMap[tone];
     const Component: React.ElementType = onClick ? "button" : "div";
 
     return (
       <Component
         onClick={onClick}
-        className={`group flex items-center gap-5 w-full rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition-all duration-300 hover:border-gray-200 dark:border-gray-800 dark:bg-gray-900 ${
-          onClick ? "cursor-pointer active:scale-95 hover:bg-gray-50 dark:hover:bg-gray-800/50" : ""
+        className={`group relative w-full overflow-hidden rounded-3xl border border-gray-200/80 bg-white p-4 sm:p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-xl dark:border-gray-800/80 dark:bg-gray-900/90 dark:hover:border-gray-700 ${
+          onClick ? "cursor-pointer active:scale-[0.98]" : ""
         }`}
       >
-        <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${tone === 'blue' ? 'bg-blue-50 text-blue-600' : tone === 'emerald' ? 'bg-emerald-50 text-emerald-600' : tone === 'amber' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'}`}>
-          <Icon size={24} strokeWidth={2} />
-        </div>
-        
-        <div className="flex flex-col min-w-0 flex-1">
-          <p className="text-[12px] font-medium text-gray-500 dark:text-gray-400 mb-0.5 truncate">
-            {title}
-          </p>
-          <div className="flex items-center gap-2">
-            <h3 className={`text-base font-bold truncate ${tone === 'blue' ? 'text-blue-700' : tone === 'emerald' ? 'text-emerald-700' : tone === 'amber' ? 'text-amber-700' : 'text-rose-700'}`}>
-              {value} {title === 'Total Pegawai' ? 'Pegawai' : 'Berkas'}
-            </h3>
+        <div
+          className={`pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br ${t.glow} to-transparent blur-2xl`}
+        />
+
+        <div className="relative flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
+              {title}
+            </p>
+
+            <div className="mt-3 flex items-end gap-2">
+              <span className="text-3xl font-semibold leading-none tracking-tight text-gray-950 dark:text-white sm:text-4xl">
+                {Number(value || 0).toLocaleString("id-ID")}
+              </span>
+
+              <span
+                className={`mb-1 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${t.pill}`}
+              >
+                <TrendingUp size={12} />
+                Live
+              </span>
+            </div>
           </div>
-          <p className="text-[10px] text-gray-400 mt-1 line-clamp-1">{description}</p>
+
+          <div className={`rounded-2xl border p-3 shadow-sm ${t.icon}`}>
+            <Icon size={22} />
+          </div>
+        </div>
+
+        <p className="relative mt-4 min-h-10 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+          {description}
+        </p>
+
+        <div className="relative mt-4 flex items-center justify-between border-t border-gray-100 pt-3 dark:border-gray-800">
+          <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+            {caption}
+          </span>
+
+          {onClick ? (
+            <ArrowRight
+              size={16}
+              className="text-gray-400 transition-transform group-hover:translate-x-1 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+            />
+          ) : (
+            <span className={`h-2 w-2 rounded-full ${t.bar}`} />
+          )}
         </div>
       </Component>
     );
@@ -101,7 +134,7 @@ const StatCard = React.memo(
 StatCard.displayName = "StatCard";
 
 const DashboardStats: React.FC<Props> = React.memo(({ stats, onCardClick }) => (
-  <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4 sm:gap-5">
+  <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4 sm:gap-4">
     <StatCard
       title="Total Pegawai"
       value={stats.totalEmployees}

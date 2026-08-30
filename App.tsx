@@ -23,9 +23,7 @@ import {
   CheckCircle,
   Sun,
   Moon,
-  Users,
-  Search,
-  Printer
+  Users
 } from 'lucide-react';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -115,16 +113,16 @@ const MenuItem = React.memo(({
         setCurrentView(view as any);
         setMobileMenuOpen(false);
       }}
-      className={`w-[calc(100%-24px)] flex items-center gap-3 mx-3 my-1 pl-10 pr-3 py-2.5 rounded-lg transition-colors ${
+      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
         isActive
-          ? 'bg-[#eaf5fa] text-[#2f9ed6] font-bold dark:bg-blue-900/20'
-          : 'text-gray-600 hover:bg-white dark:text-gray-400 dark:hover:bg-gray-800 font-medium'
+          ? 'bg-primary-500/10 text-primary-400 font-medium'
+          : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'
       }`}
     >
-      <Icon size={16} strokeWidth={isActive ? 2.5 : 2} />
-      <span className="text-[12px] flex-1 text-left">{label}</span>
+      <Icon size={isNested ? 16 : 18} strokeWidth={isActive ? 2.5 : 2} />
+      <span className="text-sm flex-1 text-left">{label}</span>
       {badge !== null && badge !== undefined && (
-        <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-[#2f9ed6] text-white">
+        <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-primary-500/20 text-primary-400">
           {badge}
         </span>
       )}
@@ -591,359 +589,427 @@ function App() {
   const isJamKerjaAreaActive = ['jam-kerja'].includes(currentView);
 
   return (
-    <div className="flex flex-col h-screen h-[100dvh] w-full bg-[#f4f6f9] text-gray-800 dark:bg-gray-900 dark:text-gray-200 overflow-hidden transition-colors duration-300">
+    <div className="flex h-screen h-[100dvh] w-full bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 selection:bg-primary-500 selection:text-white overflow-hidden transition-colors duration-300">
       
       {/* Overlay */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 bg-gray-900/50 z-30 md:hidden transition-opacity duration-300" onClick={() => setMobileMenuOpen(false)}></div>
       )}
 
-      {/* Top Header Full Width */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-3 flex items-center justify-between sticky top-0 z-40 w-full shrink-0 print:hidden shadow-sm h-[60px]">
-        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-          <button 
-            onClick={() => setMobileMenuOpen(true)} 
-            className="md:hidden p-2 -ml-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800 rounded-xl transition-colors shrink-0 active:scale-95 cursor-pointer"
-            title="Buka Menu"
-            aria-label="Buka Navigasi"
+      {/* Modern Sidebar */}
+      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-gray-900 text-gray-300 transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static flex flex-col border-r border-gray-800 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} print:hidden pwa-safe-sidebar`}>
+        {/* Brand Area */}
+        <div className="px-5 py-4 border-b border-gray-800 flex items-center justify-between">
+          <button
+            type="button"
+            className="flex items-center gap-3 cursor-pointer p-1.5 -ml-1.5 rounded-xl hover:bg-gray-800/80 transition-all text-left group active:scale-95 focus:outline-none"
+            onClick={() => {
+              setCurrentView('dashboard');
+              setMobileMenuOpen(false);
+              setIsKenaikanPangkatExpanded(false);
+              setIsLayananKgbExpanded(false);
+              setIsPensiunExpanded(false);
+              setIsJamKerjaExpanded(false);
+            }}
+            title="Ke Beranda Utama"
           >
-            <Menu size={24} />
+            <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary-600 group-hover:bg-primary-500 flex items-center justify-center shadow-sm transition-colors">
+              <Landmark size={20} className="text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h1 className="font-bold text-lg text-white group-hover:text-primary-300 leading-tight transition-colors">BSKJI</h1>
+              <p className="text-[11px] font-medium text-gray-400 group-hover:text-gray-300 transition-colors">Portal Kepegawaian</p>
+            </div>
           </button>
-          
-          {/* MYASN Logo */}
-          <div className="flex items-center gap-1">
-            <span className="text-2xl font-black tracking-tighter text-[#2f9ed6]">MY</span>
-            <span className="text-2xl font-black tracking-tighter text-[#e83e8c]">ASN</span>
-            <span className="ml-2 px-2 py-0.5 rounded bg-[#eaf5fa] text-[#2f9ed6] text-[10px] font-bold tracking-widest uppercase dark:bg-blue-900/30 hidden sm:inline-block">BSKJI</span>
-          </div>
-
-          <div className="min-w-0 flex flex-col justify-center md:hidden ml-4">
-            <h2 className="font-extrabold text-gray-900 dark:text-white text-lg sm:text-xl truncate leading-tight tracking-tight">
-              {viewTitle}
-            </h2>
-          </div>
+          <button onClick={() => setMobileMenuOpen(false)} className="md:hidden p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800 rounded-lg transition-colors cursor-pointer">
+            <X size={20} />
+          </button>
         </div>
 
-        <div className="flex items-center gap-4 shrink-0">
-          {/* Search Icon */}
-          <button className="flex items-center justify-center w-10 h-10 text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 transition-colors cursor-pointer rounded-full">
-            <Search size={20} strokeWidth={2.5} />
+        {/* Navigation */}
+        <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
+          <button
+            onClick={() => {
+              setCurrentView('dashboard');
+              setMobileMenuOpen(false);
+              setIsKenaikanPangkatExpanded(false);
+              setIsLayananKgbExpanded(false);
+              setIsPensiunExpanded(false);
+              setIsJamKerjaExpanded(false);
+            }}
+            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-colors ${
+              currentView === 'dashboard' 
+                ? 'bg-primary-500/10 text-primary-400' 
+                : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'
+            }`}
+          >
+            <LayoutDashboard size={18} strokeWidth={currentView === 'dashboard' ? 2.5 : 2} />
+            <span className="text-sm flex-1 text-left">{t('sidebar_dashboard')}</span>
           </button>
 
-          {/* Profile Picture in Header */}
-          <div className="w-9 h-9 rounded-full border-2 border-[#2f9ed6] overflow-hidden flex items-center justify-center bg-gray-100 text-[#2f9ed6] font-bold">
-            {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
-          </div>
-        </div>
-      </header>
+          {/* Menu Daftar Susunan Pegawai */}
+          <button
+            onClick={() => {
+              setCurrentView('susunan-pegawai');
+              setMobileMenuOpen(false);
+              setIsKenaikanPangkatExpanded(false);
+              setIsLayananKgbExpanded(false);
+              setIsPensiunExpanded(false);
+              setIsJamKerjaExpanded(false);
+            }}
+            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-colors ${
+              currentView === 'susunan-pegawai' 
+                ? 'bg-primary-500/10 text-primary-400 font-semibold' 
+                : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'
+            }`}
+          >
+            <Users size={18} strokeWidth={currentView === 'susunan-pegawai' ? 2.5 : 2} />
+            <span className="text-sm flex-1 text-left">Daftar Susunan Pegawai</span>
+            <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-primary-500/20 text-primary-400">
+              {masterEmployees.length > 0 ? masterEmployees.length.toLocaleString('id-ID') : '2.593'}
+            </span>
+          </button>
 
-      {/* Main Container below Header */}
-      <div className="flex flex-1 overflow-hidden relative">
-        {/* Modern Sidebar */}
-        <aside className={`absolute md:relative z-30 w-[280px] h-full transform transition-transform duration-300 ease-in-out md:translate-x-0 flex flex-col ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} print:hidden p-4`}>
-          {/* Profile Area */}
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm mb-4 border border-gray-200 dark:border-gray-800">
-            <div className="p-6 flex flex-col items-center relative">
-              <button onClick={() => setMobileMenuOpen(false)} className="md:hidden absolute top-3 right-3 p-1.5 text-gray-400 hover:text-gray-600 rounded-lg transition-colors cursor-pointer">
-                <X size={20} />
-              </button>
-              
-              <button className="absolute top-4 right-4 text-[#2f9ed6] border border-[#2f9ed6] hover:bg-[#2f9ed6] hover:text-white p-1.5 rounded transition-colors dark:hover:bg-blue-900/30">
-                 <Printer size={16} />
-              </button>
-              
-              <div className="relative mb-4 mt-2">
-                <div className="w-24 h-24 rounded-full border-[3px] border-[#2f9ed6] bg-gray-50 dark:bg-gray-800 flex items-center justify-center overflow-hidden text-3xl font-bold text-[#2f9ed6]">
-                  {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
-                </div>
+          <div className="pt-4 pb-2">
+            <p className="px-3 text-xs font-semibold text-gray-400 uppercase r">{t('sidebar_monitoring_services')}</p>
+          </div>
+            
+          {/* Layanan Kenaikan Pangkat */}
+          <div className="space-y-1">
+            <button
+              onClick={() => {
+                const newState = !isKenaikanPangkatExpanded;
+                setIsKenaikanPangkatExpanded(newState);
+                if (newState) {
+                  setIsLayananKgbExpanded(false);
+                  setIsPensiunExpanded(false);
+                  setIsJamKerjaExpanded(false);
+                  setCurrentView('kenaikan-pangkat');
+                  setMobileMenuOpen(false);
+                }
+              }}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isKenaikanPangkatExpanded || isKPAreaActive) ? 'bg-primary-500/10 text-primary-400' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}
+            >
+              <div className="flex items-center gap-3">
+                <Award size={18} strokeWidth={(isKenaikanPangkatExpanded || isKPAreaActive) ? 2.5 : 2} />
+                <span className="text-sm">{t('sidebar_promotion')}</span>
               </div>
-              <h2 className="font-extrabold text-sm text-gray-900 dark:text-white text-center mb-2 uppercase tracking-wide">
-                {currentUser?.nama || 'PEGAWAI BSKJI'}
-              </h2>
-              <div className="bg-[#eaf5fa] text-[#2f9ed6] px-4 py-1 rounded-full text-xs font-bold mb-4">
-                {currentUser?.nip || '198001012000121001'}
+              <ChevronRight size={16} className={`transition-transform duration-200 ${isKenaikanPangkatExpanded ? 'rotate-90' : ''}`} />
+            </button>
+                
+            {isKenaikanPangkatExpanded && (
+              <div className="pl-9 space-y-1 mt-1">
+                <MenuItem view="kenaikan-pangkat" icon={ClipboardList} label={t('sidebar_promotion_service')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                <MenuItem view="kalender-kp" icon={Calendar} label={t('sidebar_promotion_calendar')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+                <MenuItem view="report-kp" icon={BarChart2} label={t('sidebar_promotion_report')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
               </div>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 text-center leading-relaxed">
-                {currentUser?.unitKerja || 'Sekretariat Badan Standardisasi dan Kebijakan Jasa Industri'}
-                <br />Kementerian Perindustrian
+            )}
+          </div>
+            
+          {/* Layanan KGB */}
+          <div className="space-y-1">
+            <button
+              onClick={() => {
+                const newState = !isLayananKgbExpanded;
+                setIsLayananKgbExpanded(newState);
+                if (newState) {
+                  setIsKenaikanPangkatExpanded(false);
+                  setIsPensiunExpanded(false);
+                  setIsJamKerjaExpanded(false);
+                  setCurrentView('data-kgb');
+                  setMobileMenuOpen(false);
+                }
+              }}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isLayananKgbExpanded || isKGBAreaActive) ? 'bg-primary-500/10 text-primary-400' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}
+            >
+              <div className="flex items-center gap-3">
+                <Banknote size={18} strokeWidth={(isLayananKgbExpanded || isKGBAreaActive) ? 2.5 : 2} />
+                <span className="text-sm flex-1 text-left">{t('sidebar_kgb')}</span>
+                {stats.upcomingKGB > 0 && (
+                  <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-primary-100 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400 mr-2">
+                    {stats.upcomingKGB}
+                  </span>
+                )}
+              </div>
+              <ChevronRight size={16} className={`transition-transform duration-200 ${isLayananKgbExpanded ? 'rotate-90' : ''}`} />
+            </button>
+                
+            {isLayananKgbExpanded && (
+              <div className="pl-9 space-y-1 mt-1">
+                <MenuItem view="data-kgb" icon={ClipboardList} label={t('sidebar_kgb_service')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested badge={stats.upcomingKGB > 0 ? stats.upcomingKGB : null} />
+                <MenuItem view="report" icon={BarChart2} label={t('sidebar_kgb_report')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+              </div>
+            )}
+          </div>
+
+          {/* Layanan Pensiun */}
+          <div className="space-y-1">
+            <button
+              onClick={() => {
+                const newState = !isPensiunExpanded;
+                setIsPensiunExpanded(newState);
+                if (newState) {
+                  setIsKenaikanPangkatExpanded(false);
+                  setIsLayananKgbExpanded(false);
+                  setIsJamKerjaExpanded(false);
+                  setCurrentView('pensiun');
+                  setMobileMenuOpen(false);
+                }
+              }}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isPensiunExpanded || isPensiunAreaActive) ? 'bg-primary-500/10 text-primary-400' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}
+            >
+              <div className="flex items-center gap-3">
+                <Archive size={18} strokeWidth={(isPensiunExpanded || isPensiunAreaActive) ? 2.5 : 2} />
+                <span className="text-sm flex-1 text-left">{t('sidebar_retirement')}</span>
+                {systemAlerts.filter(a => a.type === 'pensiun').length > 0 && (
+                  <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-primary-100 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400 mr-2">
+                    {systemAlerts.filter(a => a.type === 'pensiun').length}
+                  </span>
+                )}
+              </div>
+              <ChevronRight size={16} className={`transition-transform duration-200 ${isPensiunExpanded ? 'rotate-90' : ''}`} />
+            </button>
+                
+            {isPensiunExpanded && (
+              <div className="pl-9 space-y-1 mt-1">
+                <MenuItem view="pensiun" icon={ClipboardList} label={t('sidebar_retirement_service')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+              </div>
+            )}
+          </div>
+
+          {/* Layanan Jam Kerja */}
+          <div className="space-y-1">
+            <button
+              onClick={() => {
+                const newState = !isJamKerjaExpanded;
+                setIsJamKerjaExpanded(newState);
+                if (newState) {
+                  setIsKenaikanPangkatExpanded(false);
+                  setIsLayananKgbExpanded(false);
+                  setIsPensiunExpanded(false);
+                  setCurrentView('jam-kerja');
+                  setMobileMenuOpen(false);
+                }
+              }}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${(isJamKerjaExpanded || isJamKerjaAreaActive) ? 'bg-primary-500/10 text-primary-400' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}
+            >
+              <div className="flex items-center gap-3">
+                <Clock size={18} strokeWidth={(isJamKerjaExpanded || isJamKerjaAreaActive) ? 2.5 : 2} />
+                <span className="text-sm">{t('sidebar_work_hours')}</span>
+              </div>
+              <ChevronRight size={16} className={`transition-transform duration-200 ${isJamKerjaExpanded ? 'rotate-90' : ''}`} />
+            </button>
+                
+            {isJamKerjaExpanded && (
+              <div className="pl-9 space-y-1 mt-1">
+                <MenuItem view="jam-kerja" icon={ClipboardList} label={t('sidebar_work_hours_service')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
+              </div>
+            )}
+          </div>
+
+          <div className="pt-4 pb-2">
+            <p className="px-3 text-xs font-semibold text-gray-400 uppercase r">{t('sidebar_help')}</p>
+          </div>
+          <div>
+            <MenuItem view="faq" icon={BookOpen} label={t('sidebar_info_center')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} />
+          </div>
+        </nav>
+
+        {/* Sidebar Footer User Card */}
+        <div className="p-4 border-t border-gray-800 bg-gray-900/50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gray-800 text-gray-300 font-semibold text-sm flex items-center justify-center shrink-0">
+              {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-gray-100 truncate">
+                {currentUser ? currentUser.nama.split(' ')[0] : 'Pegawai'}
               </p>
-              
-              <div className="w-full flex gap-2 mt-5">
-                <button className="flex-1 py-1.5 px-2 flex items-center justify-center gap-1.5 text-[11px] font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors">
-                  <User size={12} />
-                  Lihat Profil
-                </button>
-                <button className="flex-1 py-1.5 px-2 flex items-center justify-center gap-1.5 text-[11px] font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors">
-                  <LayoutDashboard size={12} />
-                  Edit Profil
-                </button>
+              <p className="text-xs text-gray-400 truncate">
+                {currentUser?.nip || 'BSKJI ASN'}
+              </p>
+            </div>
+            <button onClick={handleLogout} title="Keluar / Log Out" className="p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800 rounded-lg transition-colors shrink-0">
+              <LogOut size={18} />
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col h-full min-w-0 overflow-hidden relative z-10 print:h-auto print:overflow-visible print:block">
+        <>
+          {notification && (
+            <div className="absolute top-4 right-4 z-50 bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 w-max">
+              <CheckCircle size={18} className="text-primary-400" />
+              <p className="text-sm font-medium">{notification}</p>
+              <button onClick={() => setNotification(null)} className="ml-2 text-gray-400 hover:text-white">
+                <X size={16} />
+              </button>
+            </div>
+          )}
+        </>
+        
+        {/* Top Header */}
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between sticky top-0 z-30 w-full shrink-0 print:hidden shadow-xs pwa-safe-top">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <button 
+              onClick={() => setMobileMenuOpen(true)} 
+              className="md:hidden p-2 -ml-1 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800 rounded-xl transition-colors shrink-0 active:scale-95 cursor-pointer"
+              title="Buka Menu"
+              aria-label="Buka Navigasi"
+            >
+              <Menu size={22} />
+            </button>
+            <div className="md:hidden flex items-center gap-2 shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center shadow-xs">
+                <Landmark size={17} className="text-white" />
               </div>
             </div>
-          </div>
-
-          {/* Navigation */}
-          <div className="flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col">
-            <nav className="flex flex-col">
+            <div className="min-w-0 flex flex-col justify-center">
               <button
+                type="button"
                 onClick={() => {
                   setCurrentView('dashboard');
-                  setMobileMenuOpen(false);
                   setIsKenaikanPangkatExpanded(false);
                   setIsLayananKgbExpanded(false);
                   setIsPensiunExpanded(false);
                   setIsJamKerjaExpanded(false);
                 }}
-                className={`w-[calc(100%-24px)] mx-3 my-1 rounded-lg flex items-center gap-3 px-4 py-3.5 font-bold transition-colors ${
-                  currentView === 'dashboard' 
-                    ? 'bg-[#2f9ed6] text-white' 
-                    : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
-                }`}
+                className="text-[10px] sm:text-xs font-bold text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 uppercase tracking-wider block mb-0.5 transition-colors cursor-pointer text-left truncate leading-tight"
+                title="Ke Beranda"
               >
-                <LayoutDashboard size={18} strokeWidth={currentView === 'dashboard' ? 2.5 : 2} />
-                <span className="text-[13px] flex-1 text-left">Dashboard</span>
+                BSKJI Kepegawaian
               </button>
-
-            {/* Menu Daftar Susunan Pegawai */}
-            <button
-              onClick={() => {
-                setCurrentView('susunan-pegawai');
-                setMobileMenuOpen(false);
-                setIsKenaikanPangkatExpanded(false);
-                setIsLayananKgbExpanded(false);
-                setIsPensiunExpanded(false);
-                setIsJamKerjaExpanded(false);
-              }}
-              className={`w-[calc(100%-24px)] mx-3 my-1 rounded-lg flex items-center gap-3 px-4 py-3.5 font-bold transition-colors ${
-                currentView === 'susunan-pegawai' 
-                  ? 'bg-[#2f9ed6] text-white' 
-                  : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
-              }`}
-            >
-              <Users size={20} strokeWidth={currentView === 'susunan-pegawai' ? 2.5 : 2} />
-              <span className="text-[13px] flex-1 text-left">Daftar Susunan Pegawai</span>
-            </button>
-            
-            {/* Layanan Kenaikan Pangkat */}
-            <div className="flex flex-col border-b border-gray-100 dark:border-gray-800">
-              <button
-                onClick={() => {
-                  const newState = !isKenaikanPangkatExpanded;
-                  setIsKenaikanPangkatExpanded(newState);
-                  if (newState) {
-                    setIsLayananKgbExpanded(false);
-                    setIsPensiunExpanded(false);
-                    setIsJamKerjaExpanded(false);
-                    setCurrentView('kenaikan-pangkat');
-                    setMobileMenuOpen(false);
-                  }
-                }}
-                className={`w-[calc(100%-24px)] mx-3 my-1 rounded-lg flex items-center justify-between px-4 py-3.5 font-bold transition-colors ${
-                  (isKenaikanPangkatExpanded || isKPAreaActive) 
-                    ? 'bg-[#2f9ed6] text-white' 
-                    : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Award size={20} strokeWidth={(isKenaikanPangkatExpanded || isKPAreaActive) ? 2.5 : 2} />
-                  <span className="text-[13px]">{t('sidebar_promotion')}</span>
-                </div>
-                <ChevronRight size={16} className={`transition-transform duration-200 ${isKenaikanPangkatExpanded ? 'rotate-90' : ''}`} />
-              </button>
-                  
-              {isKenaikanPangkatExpanded && (
-                <div className="flex flex-col py-1">
-                  <MenuItem view="kenaikan-pangkat" icon={ClipboardList} label={t('sidebar_promotion_service')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
-                  <MenuItem view="kalender-kp" icon={Calendar} label={t('sidebar_promotion_calendar')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
-                  <MenuItem view="report-kp" icon={BarChart2} label={t('sidebar_promotion_report')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
-                </div>
-              )}
-            </div>
-              
-            {/* Layanan KGB */}
-            <div className="flex flex-col border-b border-gray-100 dark:border-gray-800">
-              <button
-                onClick={() => {
-                  const newState = !isLayananKgbExpanded;
-                  setIsLayananKgbExpanded(newState);
-                  if (newState) {
-                    setIsKenaikanPangkatExpanded(false);
-                    setIsPensiunExpanded(false);
-                    setIsJamKerjaExpanded(false);
-                    setCurrentView('data-kgb');
-                    setMobileMenuOpen(false);
-                  }
-                }}
-                className={`w-[calc(100%-24px)] mx-3 my-1 rounded-lg flex items-center justify-between px-4 py-3.5 font-bold transition-colors ${
-                  (isLayananKgbExpanded || isKGBAreaActive) 
-                    ? 'bg-[#2f9ed6] text-white' 
-                    : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Banknote size={20} strokeWidth={(isLayananKgbExpanded || isKGBAreaActive) ? 2.5 : 2} />
-                  <span className="text-[13px] flex-1 text-left">{t('sidebar_kgb')}</span>
-                  {stats.upcomingKGB > 0 && (
-                    <span className={`px-2 py-0.5 text-[10px] font-extrabold rounded-full mr-1 ${
-                      (isLayananKgbExpanded || isKGBAreaActive) ? 'bg-white/20 text-white' : 'bg-[#eaf5fa] text-[#2f9ed6]'
-                    }`}>
-                      {stats.upcomingKGB}
-                    </span>
-                  )}
-                </div>
-                <ChevronRight size={16} className={`transition-transform duration-200 ${isLayananKgbExpanded ? 'rotate-90' : ''}`} />
-              </button>
-                  
-              {isLayananKgbExpanded && (
-                <div className="flex flex-col py-1">
-                  <MenuItem view="data-kgb" icon={ClipboardList} label={t('sidebar_kgb_service')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested badge={stats.upcomingKGB > 0 ? stats.upcomingKGB : null} />
-                  <MenuItem view="report" icon={BarChart2} label={t('sidebar_kgb_report')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
-                </div>
-              )}
-            </div>
-
-            {/* Layanan Pensiun */}
-            <div className="flex flex-col border-b border-gray-100 dark:border-gray-800">
-              <button
-                onClick={() => {
-                  const newState = !isPensiunExpanded;
-                  setIsPensiunExpanded(newState);
-                  if (newState) {
-                    setIsKenaikanPangkatExpanded(false);
-                    setIsLayananKgbExpanded(false);
-                    setIsJamKerjaExpanded(false);
-                    setCurrentView('pensiun');
-                    setMobileMenuOpen(false);
-                  }
-                }}
-                className={`w-[calc(100%-24px)] mx-3 my-1 rounded-lg flex items-center justify-between px-4 py-3.5 font-bold transition-colors ${
-                  (isPensiunExpanded || isPensiunAreaActive) 
-                    ? 'bg-[#2f9ed6] text-white' 
-                    : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Archive size={20} strokeWidth={(isPensiunExpanded || isPensiunAreaActive) ? 2.5 : 2} />
-                  <span className="text-[13px] flex-1 text-left">{t('sidebar_retirement')}</span>
-                  {systemAlerts.filter(a => a.type === 'pensiun').length > 0 && (
-                    <span className={`px-2 py-0.5 text-[10px] font-extrabold rounded-full mr-1 ${
-                      (isPensiunExpanded || isPensiunAreaActive) ? 'bg-red-400 text-white' : 'bg-red-100 text-red-600'
-                    }`}>
-                      {systemAlerts.filter(a => a.type === 'pensiun').length}
-                    </span>
-                  )}
-                </div>
-                <ChevronRight size={16} className={`transition-transform duration-200 ${isPensiunExpanded ? 'rotate-90' : ''}`} />
-              </button>
-                  
-              {isPensiunExpanded && (
-                <div className="flex flex-col py-1">
-                  <MenuItem view="pensiun" icon={ClipboardList} label={t('sidebar_retirement_service')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
-                </div>
-              )}
-            </div>
-
-            {/* Layanan Jam Kerja */}
-            <div className="flex flex-col border-b border-gray-100 dark:border-gray-800">
-              <button
-                onClick={() => {
-                  const newState = !isJamKerjaExpanded;
-                  setIsJamKerjaExpanded(newState);
-                  if (newState) {
-                    setIsKenaikanPangkatExpanded(false);
-                    setIsLayananKgbExpanded(false);
-                    setIsPensiunExpanded(false);
-                    setCurrentView('jam-kerja');
-                    setMobileMenuOpen(false);
-                  }
-                }}
-                className={`w-[calc(100%-24px)] mx-3 my-1 rounded-lg flex items-center justify-between px-4 py-3.5 font-bold transition-colors ${
-                  (isJamKerjaExpanded || isJamKerjaAreaActive) 
-                    ? 'bg-[#2f9ed6] text-white' 
-                    : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Clock size={20} strokeWidth={(isJamKerjaExpanded || isJamKerjaAreaActive) ? 2.5 : 2} />
-                  <span className="text-[13px]">{t('sidebar_work_hours')}</span>
-                </div>
-                <ChevronRight size={16} className={`transition-transform duration-200 ${isJamKerjaExpanded ? 'rotate-90' : ''}`} />
-              </button>
-                  
-              {isJamKerjaExpanded && (
-                <div className="flex flex-col py-1">
-                  <MenuItem view="jam-kerja" icon={ClipboardList} label={t('sidebar_work_hours_service')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} isNested />
-                </div>
-              )}
-            </div>
-
-            <button
-              onClick={() => {
-                setCurrentView('faq');
-                setMobileMenuOpen(false);
-              }}
-              className={`w-[calc(100%-24px)] mx-3 my-2 rounded-lg flex items-center gap-3 px-4 py-3.5 font-bold transition-colors ${
-                currentView === 'faq' 
-                  ? 'bg-[#2f9ed6] text-white' 
-                  : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800/50'
-              }`}
-            >
-              <BookOpen size={20} strokeWidth={currentView === 'faq' ? 2.5 : 2} />
-              <span className="text-[13px] flex-1 text-left">{t('sidebar_info_center')}</span>
-            </button>
-            
-            <button 
-              onClick={handleLogout} 
-              className="w-[calc(100%-24px)] mx-3 mb-3 rounded-lg flex items-center gap-3 px-4 py-3.5 font-bold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors cursor-pointer mt-auto"
-            >
-              <LogOut size={20} />
-              <span className="text-[13px]">Keluar Aplikasi</span>
-            </button>
-          </nav>
-        </div>
-      </aside>
-
-        {/* Main Content Area */}
-        <main className="flex-1 flex flex-col h-full min-w-0 overflow-hidden relative z-10 print:h-auto print:overflow-visible print:block">
-          <>
-            {notification && (
-              <div className="absolute top-4 right-4 z-50 bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 w-max">
-                <CheckCircle size={18} className="text-primary-400" />
-                <p className="text-sm font-medium">{notification}</p>
-                <button onClick={() => setNotification(null)} className="ml-2 text-gray-400 hover:text-white">
-                  <X size={16} />
-                </button>
-              </div>
-            )}
-          </>
-
-          <div className="flex-1 overflow-y-auto overscroll-y-contain p-2.5 sm:p-5 md:p-6 scroll-smooth custom-scrollbar print:overflow-visible print:h-auto print:p-0">
-            <div className="w-full space-y-4 sm:space-y-6 pb-4 print:space-y-0 print:pb-0">
-              {loading ? (
-                <DashboardSkeleton />
-              ) : (
-                <ErrorBoundary>
-                  <Suspense fallback={<PageLoader />}>
-                    <>
-                      <div key={currentView} className="w-full">
-                        {currentView === 'susunan-pegawai' && <DaftarSusunanPegawaiPage employees={masterEmployees.length > 0 ? masterEmployees : employees} currentUser={currentUser} />}
-                        {currentView === 'kenaikan-pangkat' && <PromotionTable employees={promotionEmployees} language={language} />}
-                        {currentView === 'kalender-kp' && <KPCalendar language={language} />}
-                        {currentView === 'report' && <ReportPage employees={employees} currentUser={currentUser} language={language} />}
-                        {currentView === 'report-kp' && <ReportPage employees={promotionEmployees} currentUser={currentUser} isKP={true} language={language} />}
-                        {currentView === 'pensiun' && <PensiunTable employees={employees} language={language} />}
-                        {currentView === 'jam-kerja' && <JamKerjaPage language={language} />}
-                        {currentView === 'dashboard' && <DashboardPage {...dashboardProps} />}
-                        {currentView === 'data-kgb' && <KGBDataPage {...dashboardProps} />}
-                        {currentView === 'faq' && <FAQPage employees={employees} language={language} />}
-                      </div>
-                    </>
-                  </Suspense>
-                </ErrorBoundary>
-              )}
+              <h2 className="font-bold text-gray-900 dark:text-white text-sm sm:text-2xl truncate leading-tight">
+                {viewTitle}
+              </h2>
             </div>
           </div>
-        </main>
-      </div> {/* Close the flex-1 container */}
+
+          <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
+            <HeaderClock />
+            
+            {/* Notification Center Trigger */}
+            <div className="relative z-50">
+              <button 
+                id="notification-bell" 
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} 
+                className="p-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative cursor-pointer active:scale-95"
+                title="Notifikasi Sistem"
+                aria-label="Notifikasi"
+              >
+                {systemAlerts.length > 0 ? (
+                  <>
+                    <BellRing size={20} className="text-primary-600 dark:text-primary-400" />
+                    <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-red-500 border-2 border-white dark:border-gray-900"></span>
+                  </>
+                ) : (
+                  <Bell size={20} />
+                )}
+              </button>
+
+              {/* Notification Overlay Panel */}
+              {isNotificationsOpen && (
+                <>
+                  <div className="fixed inset-0 z-40 bg-black/20 sm:bg-transparent backdrop-blur-[1px] sm:backdrop-blur-none" onClick={() => setIsNotificationsOpen(false)}></div>
+                  <div className="fixed sm:absolute right-2 sm:right-0 top-16 sm:top-auto mt-0 sm:mt-2 w-[calc(100vw-1rem)] sm:w-80 md:w-96 max-w-sm bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-2xl rounded-2xl z-50 overflow-hidden">
+                    <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50 dark:bg-gray-800/50">
+                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white">Notifikasi</h3>
+                      {systemAlerts.length > 0 && (
+                        <div className="flex gap-3 items-center">
+                          <button onClick={() => setDismissedAlertIds(prev => [...prev, ...systemAlerts.map(a => a.id)])} className="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer">
+                            Tandai Dibaca
+                          </button>
+                          <span className="px-2 py-0.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-semibold">
+                            {systemAlerts.length}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="max-h-80 overflow-y-auto p-2">
+                      {systemAlerts.length === 0 ? (
+                        <div className="py-8 px-4 text-center">
+                          <CheckCircle size={24} className="mx-auto text-primary-500 mb-2" />
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">Semua Terpantau Aman!</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Tidak ada peringatan saat ini.</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          {systemAlerts.map(alert => (
+                            <div
+                              key={alert.id}
+                              onClick={() => {
+                                setIsNotificationsOpen(false);
+                                setCurrentView(alert.type === 'kgb' ? 'data-kgb' : 'pensiun');
+                              }}
+                              className={`p-3 rounded-lg border transition-colors cursor-pointer flex gap-3 ${
+                                alert.severity === 'critical'
+                                  ? 'bg-red-50/50 border-red-100 hover:bg-red-50 dark:bg-red-900/10 dark:border-red-900/30 dark:hover:bg-red-900/20'
+                                  : 'bg-yellow-50/50 border-yellow-100 hover:bg-yellow-50 dark:bg-yellow-900/10 dark:border-yellow-900/30 dark:hover:bg-yellow-900/20'
+                              }`}
+                            >
+                              <div className={`mt-0.5 shrink-0 ${alert.severity === 'critical' ? 'text-red-500' : 'text-yellow-500'}`}>
+                                {alert.type === 'kgb' ? <Banknote size={16} /> : <Archive size={16} />}
+                              </div>
+                              <div>
+                                <p className={`text-sm font-semibold ${alert.severity === 'critical' ? 'text-red-700 dark:text-red-400' : 'text-yellow-700 dark:text-yellow-400'}`}>
+                                  {alert.title}
+                                </p>
+                                <p className="text-xs text-gray-600 dark:text-gray-300 mt-0.5">
+                                  {alert.message}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Mobile User Avatar & Menu Trigger */}
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="md:hidden flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white font-bold text-xs shadow-xs active:scale-95 transition-transform cursor-pointer"
+              title="Buka Profil & Menu"
+              aria-label="Profil Pengguna"
+            >
+              {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
+            </button>
+          </div>
+        </header>
+
+        <div className="flex-1 overflow-y-auto overscroll-y-contain p-2.5 sm:p-5 md:p-6 scroll-smooth custom-scrollbar print:overflow-visible print:h-auto print:p-0">
+          <div className="w-full space-y-4 sm:space-y-6 pb-4 print:space-y-0 print:pb-0">
+            {loading ? (
+              <DashboardSkeleton />
+            ) : (
+              <ErrorBoundary>
+                <Suspense fallback={<PageLoader />}>
+                  <>
+                    <div key={currentView} className="w-full">
+                      {currentView === 'susunan-pegawai' && <DaftarSusunanPegawaiPage employees={masterEmployees.length > 0 ? masterEmployees : employees} currentUser={currentUser} />}
+                      {currentView === 'kenaikan-pangkat' && <PromotionTable employees={promotionEmployees} language={language} />}
+                      {currentView === 'kalender-kp' && <KPCalendar language={language} />}
+                      {currentView === 'report' && <ReportPage employees={employees} currentUser={currentUser} language={language} />}
+                      {currentView === 'report-kp' && <ReportPage employees={promotionEmployees} currentUser={currentUser} isKP={true} language={language} />}
+                      {currentView === 'pensiun' && <PensiunTable employees={employees} language={language} />}
+                      {currentView === 'jam-kerja' && <JamKerjaPage language={language} />}
+                      {currentView === 'dashboard' && <DashboardPage {...dashboardProps} />}
+                      {currentView === 'data-kgb' && <KGBDataPage {...dashboardProps} />}
+                      {currentView === 'faq' && <FAQPage employees={employees} language={language} />}
+                    </div>
+                  </>
+                </Suspense>
+              </ErrorBoundary>
+            )}
+          </div>
+        </div>
+      </main>
       
       <ScrollToTop />
     </div>
