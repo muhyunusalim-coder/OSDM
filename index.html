@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>Monitoring Layanan Kepegawaian</title>
+    <title>Layanan Administrasi Kepegawaian</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -45,8 +45,22 @@
 
     <!-- Content Security Policy (CSP) -->
 
+    <!-- Theme Initialization Script -->
+    <script>
+      (function() {
+        try {
+          var savedTheme = localStorage.getItem('kgb_theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <style>
-      #root { background-color: #020817; min-height: 100vh; color: #f8fafc; }
+      #root { min-height: 100vh; }
     </style>
 
   </head>

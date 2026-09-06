@@ -12,6 +12,7 @@ import {
   Eye,
   EyeOff,
   RefreshCw,
+  Sparkles,
 } from "lucide-react";
 import { fetchEmployeeData } from "../services/dataService";
 import { TRANSLATIONS } from "../utils/translationHelper";
@@ -53,6 +54,13 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
   useEffect(() => {
     generateCaptcha();
   }, []);
+  const handleQuickDemo = () => {
+    setNip("198501012010011001");
+    setPassword("bskji");
+    setCaptchaAnswer(String(captchaNum1 + captchaNum2));
+    setError("");
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -342,6 +350,24 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                   )}
                 </div>
               </button>
+
+              {/* Quick Demo Access Helper */}
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={handleQuickDemo}
+                  className="w-full py-2 px-3 bg-gray-900/60 hover:bg-gray-800/90 border border-dashed border-gray-700 hover:border-primary-500/60 rounded-xl text-gray-300 hover:text-white text-xs font-medium transition-all flex items-center justify-between group cursor-pointer"
+                  title="Klik untuk mengisi akun demo Budi Santoso secara otomatis"
+                >
+                  <span className="flex items-center gap-1.5 text-gray-400 group-hover:text-primary-400">
+                    <Sparkles size={13} className="text-primary-400" />
+                    <span>Akun Demo / Uji Coba</span>
+                  </span>
+                  <span className="text-[10px] font-mono text-primary-400 bg-primary-500/10 px-2 py-0.5 rounded border border-primary-500/20 group-hover:bg-primary-500/20">
+                    Isi Otomatis &rarr;
+                  </span>
+                </button>
+              </div>
             </form>
           </div>
 

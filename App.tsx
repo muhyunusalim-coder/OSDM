@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, Suspense, lazy } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, Suspense, lazy } from 'react';
 import { useAppStore } from './src/store/useAppStore';
 import {
   LayoutDashboard,
@@ -23,7 +23,8 @@ import {
   CheckCircle,
   Sun,
   Moon,
-  Users
+  Users,
+  HelpCircle
 } from 'lucide-react';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -197,6 +198,39 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  
+  // Theme state with instant persistence & system fallback
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('kgb_theme');
+      if (saved === 'dark' || saved === 'light') return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return 'light';
+  });
+
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('kgb_theme', next);
+        if (next === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
   const [currentView, setCurrentView] = useState<'dashboard' | 'data-kgb' | 'kenaikan-pangkat' | 'faq' | 'report' | 'report-kp' | 'pensiun' | 'kalender-kp' | 'jam-kerja' | 'susunan-pegawai'>('dashboard');
   const [isLayananKgbExpanded, setIsLayananKgbExpanded] = useState(false);
   const [isKenaikanPangkatExpanded, setIsKenaikanPangkatExpanded] = useState(false);
@@ -887,25 +921,39 @@ function App() {
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <HeaderClock />
             
+            {/* Theme Switcher */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative cursor-pointer active:scale-95 border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+              title={theme === 'dark' ? "Beralih ke Mode Terang (Light)" : "Beralih ke Mode Gelap (Dark)"}
+              aria-label="Ganti Tema"
+            >
+              {theme === 'dark' ? (
+                <Sun size={19} className="text-amber-400 hover:rotate-45 transition-transform" />
+              ) : (
+                <Moon size={19} className="text-gray-600 dark:text-gray-300 hover:-rotate-12 transition-transform" />
+              )}
+            </button>
+
             {/* Notification Center Trigger */}
             <div className="relative z-50">
               <button 
                 id="notification-bell" 
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} 
-                className="p-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative cursor-pointer active:scale-95"
+                className="p-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative cursor-pointer active:scale-95 border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
                 title="Notifikasi Sistem"
                 aria-label="Notifikasi"
               >
                 {systemAlerts.length > 0 ? (
                   <>
-                    <BellRing size={20} className="text-primary-600 dark:text-primary-400" />
+                    <BellRing size={19} className="text-primary-600 dark:text-primary-400" />
                     <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-red-500 border-2 border-white dark:border-gray-900"></span>
                   </>
                 ) : (
-                  <Bell size={20} />
+                  <Bell size={19} />
                 )}
               </button>
 
@@ -971,15 +1019,122 @@ function App() {
               )}
             </div>
 
-            {/* Mobile User Avatar & Menu Trigger */}
-            <button
-              onClick={() => setMobileMenuOpen(true)}
-              className="md:hidden flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white font-bold text-xs shadow-xs active:scale-95 transition-transform cursor-pointer"
-              title="Buka Profil & Menu"
-              aria-label="Profil Pengguna"
-            >
-              {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
-            </button>
+            {/* Desktop & Mobile User Profile Pill & Dropdown */}
+            <div className="relative z-50">
+              <button
+                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                className="flex items-center gap-2 p-1 sm:px-2.5 sm:py-1.5 rounded-xl border border-gray-200/90 dark:border-gray-700/80 bg-gray-50/90 dark:bg-gray-800/80 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer text-left active:scale-95 shadow-2xs"
+                title="Menu Pengguna"
+                aria-label="Profil Pengguna"
+              >
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary-600 text-white font-bold text-xs flex items-center justify-center shadow-xs shrink-0">
+                  {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
+                </div>
+                <div className="hidden lg:block min-w-0 max-w-[130px]">
+                  <p className="text-xs font-bold text-gray-900 dark:text-white truncate leading-tight">
+                    {currentUser?.nama?.split(',')[0] || 'Pegawai'}
+                  </p>
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400 font-mono truncate leading-tight mt-0.5">
+                    {currentUser?.nip ? currentUser.nip.slice(0, 8) + '...' : 'BSKJI'}
+                  </p>
+                </div>
+                <ChevronDown size={14} className={`hidden lg:block text-gray-400 transition-transform duration-200 ${isProfileMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* User Profile Dropdown Menu */}
+              {isProfileMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-40 bg-black/20 sm:bg-transparent" onClick={() => setIsProfileMenuOpen(false)}></div>
+                  <div className="fixed sm:absolute right-2 sm:right-0 top-16 sm:top-auto mt-0 sm:mt-2 w-[calc(100vw-1rem)] sm:w-72 max-w-xs bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-2xl rounded-2xl z-50 overflow-hidden py-1">
+                    {/* User Card Header */}
+                    <div className="p-3.5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/70 dark:bg-gray-800/50">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-primary-600 text-white font-bold text-sm flex items-center justify-center shadow-xs shrink-0">
+                          {(currentUser?.nama || 'A').slice(0, 1).toUpperCase()}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                            {currentUser?.nama || 'Pegawai BSKJI'}
+                          </p>
+                          <p className="text-[10px] text-gray-500 dark:text-gray-400 font-mono truncate mt-0.5">
+                            NIP: {currentUser?.nip || '-'}
+                          </p>
+                          <div className="flex items-center gap-1.5 mt-1.5">
+                            <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-primary-50 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300 border border-primary-200 dark:border-primary-800">
+                              {currentUser?.statusKepegawaian || 'PNS'}
+                            </span>
+                            <span className="text-[10px] text-gray-500 dark:text-gray-400 truncate">
+                              {currentUser?.unitKerja || 'BSKJI'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Navigation Shortcuts */}
+                    <div className="p-1 space-y-0.5 text-xs">
+                      <button
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
+                          setCurrentView('dashboard');
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors cursor-pointer text-left font-medium"
+                      >
+                        <LayoutDashboard size={15} className="text-primary-500 shrink-0" />
+                        <span>Dashboard Utama</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
+                          setCurrentView('data-kgb');
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors cursor-pointer text-left font-medium"
+                      >
+                        <Banknote size={15} className="text-blue-500 shrink-0" />
+                        <span>Data Layanan KGB</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
+                          setCurrentView('susunan-pegawai');
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors cursor-pointer text-left font-medium"
+                      >
+                        <Users size={15} className="text-indigo-500 shrink-0" />
+                        <span>Daftar Susunan Pegawai</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
+                          setCurrentView('faq');
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors cursor-pointer text-left font-medium"
+                      >
+                        <HelpCircle size={15} className="text-emerald-500 shrink-0" />
+                        <span>Panduan & Regulasi</span>
+                      </button>
+                    </div>
+
+                    {/* Logout Option */}
+                    <div className="p-1 border-t border-gray-100 dark:border-gray-800">
+                      <button
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
+                          handleLogout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-xl transition-colors cursor-pointer text-left font-medium"
+                      >
+                        <LogOut size={15} className="shrink-0" />
+                        <span>Keluar Sistem</span>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </header>
 

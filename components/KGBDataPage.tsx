@@ -56,21 +56,21 @@ const KGBDataPage: React.FC<Props> = React.memo(
         </div>
 
         {(selectedMonth || selectedYear) && (
-          <div className="flex items-center justify-between bg-primary-600 text-white p-4 rounded-xl shadow-md transform transition-all mb-6 relative overflow-hidden">
-            <div className="absolute inset-0 bg-primary-50 dark:bg-gray-800"></div>
-
-            <div className="flex items-center gap-4 relative z-10">
-              <div className="p-3 bg-white dark:bg-gray-900/20 rounded-2xl shadow-inner">
-                <Calendar size={24} />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/60 p-4 rounded-2xl shadow-xs mb-6 transition-all">
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
+                <Calendar size={20} />
               </div>
               <div>
-                <p className="font-bold text-lg">
+                <p className="font-bold text-base text-gray-900 dark:text-white">
                   Filter Aktif:{" "}
-                  {selectedMonth === "Riwayat TMT Selesai"
-                    ? "Riwayat Selesai (Sejak Jan 2026)"
-                    : `${selectedMonth || ""} ${selectedYear || ""}`.trim()}
+                  <span className="text-blue-600 dark:text-blue-400">
+                    {selectedMonth === "Riwayat TMT Selesai"
+                      ? "Riwayat Selesai (Sejak Jan 2026)"
+                      : `${selectedMonth || ""} ${selectedYear || ""}`.trim()}
+                  </span>
                 </p>
-                <p className="text-primary-100 text-sm font-medium opacity-90">
+                <p className="text-xs text-gray-600 dark:text-gray-300 font-medium">
                   Menampilkan {displayedEmployees.length} pegawai terseleksi
                 </p>
               </div>
@@ -80,9 +80,9 @@ const KGBDataPage: React.FC<Props> = React.memo(
                 setSelectedMonth(null);
                 setSelectedYear(null);
               }}
-              className="relative z-10 px-5 py-2.5 bg-white dark:bg-gray-900 text-primary-600 rounded-xl text-sm font-bold hover:bg-primary-50 transition-colors flex items-center gap-2 shadow-sm"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-800/60 rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer"
             >
-              <X size={16} />
+              <X size={14} />
               Reset Filter
             </button>
           </div>
