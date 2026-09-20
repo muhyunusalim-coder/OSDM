@@ -51,3 +51,32 @@ export interface ChartData {
   name: string;
   value: number;
 }
+
+export type TaskStatus = 'todo' | 'in_progress' | 'review' | 'done';
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
+export type NoteColor = 'yellow' | 'blue' | 'green' | 'purple' | 'pink' | 'orange' | 'gray';
+export type LabelColor = 'red' | 'orange' | 'amber' | 'green' | 'blue' | 'purple' | 'pink' | 'teal' | 'gray';
+
+export interface TaskChecklistItem {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+export interface StickyTask {
+  id: string;
+  title: string;
+  content: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  category: string;
+  color: NoteColor;
+  labelColor?: LabelColor;
+  labelText?: string;
+  dueDate?: string;
+  assignee?: string;
+  checklist: TaskChecklistItem[];
+  pinned: boolean;
+  createdAt: string;
+  updatedAt: string;
+}

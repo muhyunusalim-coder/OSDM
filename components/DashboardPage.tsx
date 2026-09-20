@@ -30,6 +30,7 @@ import {
   FileSpreadsheet,
   Building2,
   ExternalLink,
+  StickyNote,
 } from "lucide-react";
 import { Employee } from "../types";
 import { Language, TRANSLATIONS } from "../utils/translationHelper";
@@ -312,7 +313,7 @@ const DashboardPage: React.FC<Props> = React.memo(
               </p>
 
               {/* Quick Navigation Action Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 pt-2">
                 <button
                   onClick={() => handleQuickNavigate("data-kgb")}
                   className="group flex items-center gap-2.5 rounded-2xl border border-gray-200/90 bg-white/90 p-3 text-left shadow-sm transition-all hover:border-blue-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-800/80 dark:hover:border-blue-700/60 cursor-pointer"
@@ -377,6 +378,23 @@ const DashboardPage: React.FC<Props> = React.memo(
                     </p>
                     <p className="truncate text-[10px] text-gray-500 dark:text-gray-400 font-medium">
                       Presensi & Jam
+                    </p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => handleQuickNavigate("sticky-notes")}
+                  className="group flex items-center gap-2.5 rounded-2xl border border-amber-200/90 bg-amber-50/50 p-3 text-left shadow-sm transition-all hover:border-amber-400 hover:shadow-md dark:border-amber-800/60 dark:bg-amber-950/30 dark:hover:border-amber-600 cursor-pointer col-span-2 sm:col-span-1"
+                >
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-amber-200 bg-amber-100 text-amber-700 shadow-sm transition-transform group-hover:scale-105 dark:border-amber-800 dark:bg-amber-900/60 dark:text-amber-300">
+                    <StickyNote size={16} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-bold text-gray-900 dark:text-white">
+                      Sticky Notes
+                    </p>
+                    <p className="truncate text-[10px] text-amber-600 dark:text-amber-400 font-bold">
+                      Bagan Kanban
                     </p>
                   </div>
                 </button>

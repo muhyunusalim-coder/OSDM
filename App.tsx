@@ -24,7 +24,8 @@ import {
   Sun,
   Moon,
   Users,
-  HelpCircle
+  HelpCircle,
+  StickyNote
 } from 'lucide-react';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -45,6 +46,7 @@ import ReportPage from './components/ReportPage';
 import FAQPage from './components/FAQPage';
 import JamKerjaPage from './components/JamKerjaPage';
 import DaftarSusunanPegawaiPage from './components/DaftarSusunanPegawaiPage';
+import StickyNotesKanbanPage from './components/StickyNotesKanbanPage';
 
 // Lightweight Loading Component for Suspense
 const PageLoader = () => (
@@ -231,7 +233,7 @@ function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [theme]);
-  const [currentView, setCurrentView] = useState<'dashboard' | 'data-kgb' | 'kenaikan-pangkat' | 'faq' | 'report' | 'report-kp' | 'pensiun' | 'kalender-kp' | 'jam-kerja' | 'susunan-pegawai'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'data-kgb' | 'kenaikan-pangkat' | 'faq' | 'report' | 'report-kp' | 'pensiun' | 'kalender-kp' | 'jam-kerja' | 'susunan-pegawai' | 'sticky-notes'>('dashboard');
   const [isLayananKgbExpanded, setIsLayananKgbExpanded] = useState(false);
   const [isKenaikanPangkatExpanded, setIsKenaikanPangkatExpanded] = useState(false);
   const [isPensiunExpanded, setIsPensiunExpanded] = useState(false);
@@ -578,6 +580,7 @@ function App() {
       case 'report-kp': return 'Laporan Kenaikan Pangkat';
       case 'pensiun': return 'Layanan Pensiun (BUP)';
       case 'jam-kerja': return 'Layanan Jam Kerja ASN';
+      case 'sticky-notes': return 'Sticky Notes & Kanban Tugas';
       case 'faq': return 'Pusat Informasi & FAQ';
       default: return 'Portal Kepegawaian BSKJI';
     }
@@ -701,6 +704,29 @@ function App() {
             <span className="text-sm flex-1 text-left">Daftar Susunan Pegawai</span>
             <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-primary-500/20 text-primary-400">
               {masterEmployees.length > 0 ? masterEmployees.length.toLocaleString('id-ID') : '2.593'}
+            </span>
+          </button>
+
+          {/* Menu Sticky Notes & Kanban */}
+          <button
+            onClick={() => {
+              setCurrentView('sticky-notes');
+              setMobileMenuOpen(false);
+              setIsKenaikanPangkatExpanded(false);
+              setIsLayananKgbExpanded(false);
+              setIsPensiunExpanded(false);
+              setIsJamKerjaExpanded(false);
+            }}
+            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition-colors ${
+              currentView === 'sticky-notes' 
+                ? 'bg-amber-500/10 text-amber-400 font-semibold' 
+                : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'
+            }`}
+          >
+            <StickyNote size={18} strokeWidth={currentView === 'sticky-notes' ? 2.5 : 2} className={currentView === 'sticky-notes' ? 'text-amber-400' : 'text-gray-400'} />
+            <span className="text-sm flex-1 text-left">{t('sidebar_sticky_notes') || 'Sticky Notes & Tugas'}</span>
+            <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-500/20 text-amber-300">
+              Notion
             </span>
           </button>
 
@@ -1109,6 +1135,17 @@ function App() {
                       <button
                         onClick={() => {
                           setIsProfileMenuOpen(false);
+                          setCurrentView('sticky-notes');
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors cursor-pointer text-left font-medium"
+                      >
+                        <StickyNote size={15} className="text-amber-500 shrink-0" />
+                        <span>Sticky Notes & Kanban</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
                           setCurrentView('faq');
                         }}
                         className="w-full flex items-center gap-2.5 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors cursor-pointer text-left font-medium"
@@ -1148,6 +1185,7 @@ function App() {
                   <>
                     <div key={currentView} className="w-full">
                       {currentView === 'susunan-pegawai' && <DaftarSusunanPegawaiPage employees={masterEmployees.length > 0 ? masterEmployees : employees} currentUser={currentUser} />}
+                      {currentView === 'sticky-notes' && <StickyNotesKanbanPage currentUser={currentUser} language={language} />}
                       {currentView === 'kenaikan-pangkat' && <PromotionTable employees={promotionEmployees} language={language} />}
                       {currentView === 'kalender-kp' && <KPCalendar language={language} />}
                       {currentView === 'report' && <ReportPage employees={employees} currentUser={currentUser} language={language} />}

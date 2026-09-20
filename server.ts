@@ -1,6 +1,6 @@
 import express from 'express';
 import path from 'path';
-import { createServer as createViteServer } from 'vite';
+import fs from 'fs';
 
 async function startServer() {
   const app = express();
@@ -13,15 +13,25 @@ async function startServer() {
     res.json({ status: 'ok' });
   });
 
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== 'production') {
+  const isProduction =
+    process.env.NODE_ENV === 'production' ||
+    process.argv[1]?.includes('server.cjs') ||
+    Boolean(process.env.K_SERVICE);
+
+  // Vite middleware for development only
+  if (!isProduction) {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
+    const cwd = process.cwd();
+    const distPath = fs.existsSync(path.join(cwd, 'dist', 'index.html'))
+      ? path.join(cwd, 'dist')
+      : (fs.existsSync(path.join(cwd, 'index.html')) ? cwd : path.join(cwd, 'dist'));
+
     app.use(express.static(distPath));
     app.get('*all', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
@@ -33,4 +43,7 @@ async function startServer() {
   });
 }
 
-startServer();
+startServer().catch((err) => {
+  console.error('Server startup error:', err);
+  process.exit(1);
+});
