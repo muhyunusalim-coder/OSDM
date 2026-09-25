@@ -18,6 +18,8 @@ import {
   ChevronsRight,
   Download,
   FileDown,
+  FileSpreadsheet,
+  Loader2,
   ArrowUpDown,
   Sparkles,
   FileText,
@@ -147,7 +149,7 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
 
       return matchesSearch && matchesUnit && matchesGol && matchesType && matchesMonth && matchesYear && matchesMasaKerja;
     });
-  }, [employees, debouncedSearchTerm, unitFilter, golFilter, typeFilter, monthFilter, yearFilter, masaKerjaFilter, months]);
+  }, [employees, debouncedSearchTerm, unitFilter, golFilter, typeFilter, monthFilter, yearFilter, masaKerjaFilter]);
 
   const sortedFiltered = useMemo(() => {
     let sortableItems = [...filtered];
@@ -344,6 +346,64 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                   ))}
                 </select>
               </div>
+            </div>
+
+            {/* Action Buttons: Export & View Options */}
+            <div className="flex items-center gap-1.5 w-full md:w-auto flex-wrap">
+              <button
+                type="button"
+                onClick={handleExportExcel}
+                disabled={isExporting || filtered.length === 0}
+                className="flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white rounded-lg font-bold text-xs transition-all shadow-xs active:scale-95 whitespace-nowrap cursor-pointer"
+                title="Ekspor data KGB ke file Excel (.xlsx)"
+              >
+                {isExporting ? <Loader2 size={13} className="animate-spin" /> : <FileSpreadsheet size={13} />}
+                <span>{isExporting ? "Memproses..." : "Excel"}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleExportPdf}
+                disabled={isExportingPdf || filtered.length === 0}
+                className="flex items-center justify-center gap-1.5 px-3 py-2 bg-rose-600 hover:bg-rose-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white rounded-lg font-bold text-xs transition-all shadow-xs active:scale-95 whitespace-nowrap cursor-pointer"
+                title="Cetak atau unduh dokumen daftar nominatif KGB (.pdf)"
+              >
+                {isExportingPdf ? <Loader2 size={13} className="animate-spin" /> : <FileDown size={13} />}
+                <span>{isExportingPdf ? "Memproses..." : "PDF"}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsCompact(!isCompact)}
+                className={`flex items-center justify-center gap-1.5 px-3 py-2 border rounded-lg font-bold text-xs transition-all shadow-xs active:scale-95 whitespace-nowrap cursor-pointer ${
+                  isCompact
+                    ? "bg-primary-50 dark:bg-primary-900/30 border-primary-200 dark:border-primary-800 text-primary-700 dark:text-primary-300"
+                    : "bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+                title={isCompact ? "Beralih ke Tampilan Normal" : "Beralih ke Tampilan Ringkas (Lebih Banyak Baris)"}
+              >
+                <SlidersHorizontal size={13} className={isCompact ? "text-primary-600 dark:text-primary-400" : "text-gray-500 dark:text-gray-400"} />
+                <span>{isCompact ? "Normal" : "Ringkas"}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsAdvancedFilterOpen(!isAdvancedFilterOpen)}
+                className={`flex items-center justify-center gap-1.5 px-3 py-2 border rounded-lg font-bold text-xs transition-all shadow-xs active:scale-95 whitespace-nowrap cursor-pointer ${
+                  isAdvancedFilterOpen
+                    ? "bg-primary-600 border-primary-600 text-white hover:bg-primary-700"
+                    : "bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+                title="Tampilkan filter lanjutan berdasarkan unit kerja, golongan, dan masa kerja"
+              >
+                <SlidersHorizontal size={13} className={isAdvancedFilterOpen ? "text-white" : "text-gray-500 dark:text-gray-400"} />
+                <span>Filter Lanjutan</span>
+                {(unitFilter !== "All" || golFilter !== "All" || masaKerjaFilter !== "All") && (
+                  <span className={`w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-extrabold ${isAdvancedFilterOpen ? "bg-white text-primary-600" : "bg-primary-600 text-white"}`}>
+                    {(unitFilter !== "All" ? 1 : 0) + (golFilter !== "All" ? 1 : 0) + (masaKerjaFilter !== "All" ? 1 : 0)}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
         </div>

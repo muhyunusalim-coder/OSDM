@@ -1,9 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import {
   Sparkles,
-  X,
   CheckCircle,
-  CheckCircle2,
   Activity,
   Banknote,
   Archive,
@@ -11,25 +9,11 @@ import {
   Building,
   Award,
   Clock,
-  BookOpen,
   AlertTriangle,
   RotateCw,
-  FileText,
   ShieldAlert,
   ArrowRight,
-  TrendingUp,
-  Briefcase,
-  Users,
   UserCheck,
-  Search,
-  Zap,
-  ShieldCheck,
-  HeartPulse,
-  Calendar,
-  Layers,
-  FileSpreadsheet,
-  Building2,
-  ExternalLink,
   StickyNote,
 } from "lucide-react";
 import { Employee } from "../types";
@@ -39,15 +23,6 @@ import ServiceOverviewCharts from "./ServiceOverviewCharts";
 import ComparisonChart from "./ComparisonChart";
 import PensionProjectionDashboardChart from "./PensionProjectionDashboardChart";
 import { DeferredView } from "./DeferredView";
-
-interface Regulation {
-  id: string;
-  code: string;
-  title: string;
-  subtitle: string;
-  summary: string;
-  points: string[];
-}
 
 interface Props {
   language: Language;
@@ -82,51 +57,6 @@ interface Props {
   }>;
 }
 
-const REGULATIONS: Regulation[] = [
-  {
-    id: "uu20",
-    code: "UU No. 20 Tahun 2023",
-    title: "Aparatur Sipil Negara",
-    subtitle: "Pokok Reformasi Manajemen & Pola Karier PNS",
-    summary:
-      "Undang-Undang ini menyederhanakan jenjang jabatan, mempercepat mobilitas talenta, serta memantapkan integrasi sistem informasi kepegawaian secara nasional.",
-    points: [
-      "Penyederhanaan klasifikasi jabatan menjadi Jabatan Manajerial dan Nonmanajerial.",
-      "Kemudahan mobilitas talenta secara nasional guna mengatasi kesenjangan kapasitas.",
-      "Sanksi tegas bagi pelanggaran netralitas ASN dalam kontestasi politik.",
-      "Sistem jaminan pensiun dan hari tua berbasis iuran pasti (defined contribution).",
-    ],
-  },
-  {
-    id: "pp15",
-    code: "PP No. 15 Tahun 2024",
-    title: "Penyesuaian Gaji Pokok PNS",
-    subtitle: "Tabel Gaji Pokok & Hak Kesejahteraan Terbaru",
-    summary:
-      "Peraturan Pemerintah ini menetapkan kenaikan gaji pokok PNS sebesar 8% guna meningkatkan kesejahteraan dan produktivitas kinerja pelayanan publik.",
-    points: [
-      "Kenaikan nominal gaji pokok rata-rata sebesar 8% untuk seluruh Golongan I hingga IV.",
-      "Penyesuaian nilai tunjangan melekat (suami/istri, anak, pangan) mengikuti gaji pokok baru.",
-      "Rapelan kekurangan pembayaran gaji terhitung sejak tanggal 1 Januari 2024.",
-      "Penyelarasan standar iuran jaminan kesehatan dan jaminan pensiun berkala.",
-    ],
-  },
-  {
-    id: "se16",
-    code: "SE Kepala BKN No. 16 Tahun 2023",
-    title: "Administrasi Terintegrasi BKN",
-    subtitle: "Implementasi Penuh SIASN untuk KGB & KP",
-    summary:
-      "Surat Edaran ini mewajibkan seluruh instansi pusat dan daerah melakukan sinkronisasi data KGB dan Kenaikan Pangkat secara real-time via web service SIASN.",
-    points: [
-      "Penetapan Kenaikan Pangkat (KP) dilakukan secara digital tanpa berkas fisik (paperless).",
-      "Data KGB diintegrasikan otomatis guna pembaharuan basis data penggajian Kementerian.",
-      "Kewajiban verifikasi berlapis oleh Admin Kepegawaian Unit Kerja sebelum disubmit.",
-      "Sinkronisasi berkas pendukung (SKP, SK Pangkat terakhir) maksimal 14 hari sebelum TMT.",
-    ],
-  },
-];
-
 const DashboardPage: React.FC<Props> = React.memo(
   ({
     language,
@@ -160,8 +90,6 @@ const DashboardPage: React.FC<Props> = React.memo(
     );
 
     const [activeMessageIndex, setActiveMessageIndex] = useState(0);
-    const [selectedReg, setSelectedReg] = useState<Regulation | null>(null);
-    const [quickSearch, setQuickSearch] = useState("");
 
     const messages = useMemo(
       () => [
@@ -216,50 +144,6 @@ const DashboardPage: React.FC<Props> = React.memo(
       }
       setCurrentView(view);
     };
-
-    // Filtered search results for instant lookup
-    const searchResults = useMemo(() => {
-      if (!quickSearch.trim()) return [];
-      const query = quickSearch.toLowerCase();
-      return employees
-        .filter(
-          (emp) =>
-            emp.nama.toLowerCase().includes(query) ||
-            emp.nip.includes(query) ||
-            emp.unitKerja.toLowerCase().includes(query) ||
-            emp.jabatan.toLowerCase().includes(query)
-        )
-        .slice(0, 5);
-    }, [quickSearch, employees]);
-
-    // Unit Kerja aggregated supervision stats
-    const unitKerjaStats = useMemo(() => {
-      const map: Record<string, { total: number; pending: number; processed: number }> = {};
-      employees.forEach((emp) => {
-        const unit = emp.unitKerja || "Balai / Unit Kerja BSKJI";
-        if (!map[unit]) {
-          map[unit] = { total: 0, pending: 0, processed: 0 };
-        }
-        map[unit].total += 1;
-        if (emp.status === "Pending") map[unit].pending += 1;
-        if (emp.status === "Processed") map[unit].processed += 1;
-      });
-
-      return Object.entries(map)
-        .map(([unit, data]) => ({ unit, ...data }))
-        .sort((a, b) => b.total - a.total)
-        .slice(0, 5);
-    }, [employees]);
-
-    // Calculate PNS / PPPK Ratio
-    const pnsCount = useMemo(
-      () => employees.filter((e) => e.statusKepegawaian === "PNS").length,
-      [employees]
-    );
-    const pppkCount = useMemo(
-      () => employees.filter((e) => e.statusKepegawaian === "PPPK").length,
-      [employees]
-    );
 
     const latestProcessed = useMemo(() => {
       return employees

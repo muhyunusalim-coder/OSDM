@@ -1,13 +1,11 @@
-import React, { useEffect, useState, useMemo, useCallback, Suspense, lazy } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, Suspense } from 'react';
 import { useAppStore } from './src/store/useAppStore';
 import {
   LayoutDashboard,
   Calendar,
   X,
   LogOut,
-  User,
   Clock,
-  AlertTriangle,
   Menu,
   BookOpen,
   BarChart2,
@@ -382,26 +380,6 @@ function App() {
     loadData();
   }, [isAuthenticated]);
 
-  // Prefetch all route chunks on idle for instant zero-delay navigation
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    const prefetchRoutes = () => {
-      import('./components/DashboardPage');
-      import('./components/KGBDataPage');
-      import('./components/PromotionTable');
-      import('./components/PensiunTable');
-      import('./components/KPCalendar');
-      import('./components/ReportPage');
-      import('./components/FAQPage');
-      import('./components/JamKerjaPage');
-    };
-    if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(prefetchRoutes);
-    } else {
-      setTimeout(prefetchRoutes, 200);
-    }
-  }, [isAuthenticated]);
-
   const handleLogin = React.useCallback((nip: string) => {
     login(nip);
     setQuote(getRandomQuote());
@@ -658,13 +636,13 @@ function App() {
               <p className="text-[11px] font-medium text-gray-400 group-hover:text-gray-300 transition-colors">Portal Kepegawaian</p>
             </div>
           </button>
-          <button onClick={() => setMobileMenuOpen(false)} className="md:hidden p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800 rounded-lg transition-colors cursor-pointer">
+          <button onClick={() => setMobileMenuOpen(false)} aria-label="Tutup Menu Navigasi" className="md:hidden p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800 rounded-lg transition-colors cursor-pointer">
             <X size={20} />
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
+        <nav aria-label="Navigasi Utama" className="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
           <button
             onClick={() => {
               setCurrentView('dashboard');
@@ -731,12 +709,13 @@ function App() {
           </button>
 
           <div className="pt-4 pb-2">
-            <p className="px-3 text-xs font-semibold text-gray-400 uppercase r">{t('sidebar_monitoring_services')}</p>
+            <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">{t('sidebar_monitoring_services')}</p>
           </div>
             
           {/* Layanan Kenaikan Pangkat */}
           <div className="space-y-1">
             <button
+              aria-expanded={isKenaikanPangkatExpanded}
               onClick={() => {
                 const newState = !isKenaikanPangkatExpanded;
                 setIsKenaikanPangkatExpanded(newState);
@@ -769,6 +748,7 @@ function App() {
           {/* Layanan KGB */}
           <div className="space-y-1">
             <button
+              aria-expanded={isLayananKgbExpanded}
               onClick={() => {
                 const newState = !isLayananKgbExpanded;
                 setIsLayananKgbExpanded(newState);
@@ -805,6 +785,7 @@ function App() {
           {/* Layanan Pensiun */}
           <div className="space-y-1">
             <button
+              aria-expanded={isPensiunExpanded}
               onClick={() => {
                 const newState = !isPensiunExpanded;
                 setIsPensiunExpanded(newState);
@@ -840,6 +821,7 @@ function App() {
           {/* Layanan Jam Kerja */}
           <div className="space-y-1">
             <button
+              aria-expanded={isJamKerjaExpanded}
               onClick={() => {
                 const newState = !isJamKerjaExpanded;
                 setIsJamKerjaExpanded(newState);
@@ -868,7 +850,7 @@ function App() {
           </div>
 
           <div className="pt-4 pb-2">
-            <p className="px-3 text-xs font-semibold text-gray-400 uppercase r">{t('sidebar_help')}</p>
+            <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">{t('sidebar_help')}</p>
           </div>
           <div>
             <MenuItem view="faq" icon={BookOpen} label={t('sidebar_info_center')} currentView={currentView} setCurrentView={setCurrentView} setMobileMenuOpen={setMobileMenuOpen} />

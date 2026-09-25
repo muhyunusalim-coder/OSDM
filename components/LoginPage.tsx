@@ -206,7 +206,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
             >
               {/* NIP Field */}
               <div className="space-y-1.5">
-                <label className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider block ml-0.5">
+                <label htmlFor="nip-input" className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider block ml-0.5">
                   {t("login_username")}
                 </label>
                 <div className="relative group">
@@ -214,6 +214,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     <CreditCard size={18} />
                   </div>
                   <input
+                    id="nip-input"
                     type="text"
                     maxLength={18}
                     inputMode="numeric"
@@ -234,7 +235,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
 
               {/* Password Field */}
               <div className="space-y-1.5">
-                <label className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider block ml-0.5">
+                <label htmlFor="password-input" className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider block ml-0.5">
                   {t("login_password")}
                 </label>
                 <div className="relative group">
@@ -242,6 +243,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     <Lock size={18} />
                   </div>
                   <input
+                    id="password-input"
                     type={showPassword ? "text" : "password"}
                     value={password}
                     autoComplete="current-password"
@@ -268,7 +270,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
               {/* Captcha Section */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider flex items-center gap-1.5 ml-0.5">
+                  <label htmlFor="captcha-input" className="text-[11px] sm:text-xs font-semibold text-gray-300 uppercase tracking-wider flex items-center gap-1.5 ml-0.5">
                     <ShieldCheck size={14} className="text-primary-400" />
                     {t("login_captcha")}
                   </label>
@@ -288,6 +290,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                     </span>
                   </div>
                   <input
+                    id="captcha-input"
                     type="text"
                     inputMode="numeric"
                     pattern="[0-9]*"
