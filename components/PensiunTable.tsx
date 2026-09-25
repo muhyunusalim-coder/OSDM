@@ -543,7 +543,7 @@ const PensiunTable = React.memo(({ employees }: Props) => {
         )}
 
         <div className="overflow-x-auto custom-scrollbar touch-pan-x overscroll-x-contain">
-          <table className="w-full text-left border-collapse min-w-[900px]">
+          <table className="w-full text-left border-collapse min-w-full md:min-w-[850px] lg:min-w-[950px]">
             <thead className="sticky top-0 z-10 shadow-sm">
               <tr className="bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 text-[10px] uppercase font-bold st border-b border-gray-200 dark:border-gray-700">
                 <th

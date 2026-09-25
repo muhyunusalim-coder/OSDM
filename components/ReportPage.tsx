@@ -337,18 +337,18 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
                 </p>
             </div>
             
-            <div className="flex gap-3">
-                <button onClick={handleExportExcel} disabled={filteredData.length === 0 || isExporting} className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-bold text-sm transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
-                    {isExporting ? <Loader2 size={18} className="animate-spin" /> : <FileSpreadsheet size={18} />}
-                    {isExporting ? 'Memproses...' : 'Ekspor Excel'}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <button onClick={handleExportExcel} disabled={filteredData.length === 0 || isExporting} className="flex items-center gap-2 min-h-[40px] px-3.5 sm:px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-bold text-xs sm:text-sm transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                    {isExporting ? <Loader2 size={16} className="animate-spin" /> : <FileSpreadsheet size={16} />}
+                    <span>{isExporting ? 'Memproses...' : 'Ekspor Excel'}</span>
                 </button>
-                <button onClick={handleExportPdf} disabled={filteredData.length === 0 || isExportingPdf} className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold text-sm transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
-                    {isExportingPdf ? <Loader2 size={18} className="animate-spin" /> : <FileDown size={18} />}
-                    {isExportingPdf ? 'Memproses...' : 'Unduh PDF'}
+                <button onClick={handleExportPdf} disabled={filteredData.length === 0 || isExportingPdf} className="flex items-center gap-2 min-h-[40px] px-3.5 sm:px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold text-xs sm:text-sm transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                    {isExportingPdf ? <Loader2 size={16} className="animate-spin" /> : <FileDown size={16} />}
+                    <span>{isExportingPdf ? 'Memproses...' : 'Unduh PDF'}</span>
                 </button>
-                <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-xl font-bold text-sm transition-all shadow-sm border border-gray-200 dark:border-gray-600">
-                    <Printer size={18} />
-                    Cetak
+                <button onClick={handlePrint} className="flex items-center gap-2 min-h-[40px] px-3.5 sm:px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-xl font-bold text-xs sm:text-sm transition-all shadow-sm border border-gray-200 dark:border-gray-600 cursor-pointer">
+                    <Printer size={16} />
+                    <span>Cetak</span>
                 </button>
             </div>
         </div>

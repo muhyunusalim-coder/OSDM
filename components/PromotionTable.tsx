@@ -723,7 +723,7 @@ const PromotionTable: React.FC<Props> = React.memo(({ employees }) => {
         )}
 
         <div className="overflow-x-auto custom-scrollbar touch-pan-x overscroll-x-contain">
-          <table className="w-full text-left border-collapse min-w-[1000px]">
+          <table className="w-full text-left border-collapse min-w-full md:min-w-[900px] lg:min-w-[1000px]">
             <thead className="sticky top-0 z-20 shadow-sm">
               <tr className="bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 text-[9px] md:text-[10px] uppercase font-bold st border-b border-gray-200 dark:border-gray-700">
                   <th className={`w-10 text-center hidden md:table-cell ${isCompact ? "px-2 py-1.5 md:py-2" : "px-2 py-2.5 md:px-4 md:py-3"}`}>#</th>

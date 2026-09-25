@@ -893,11 +893,11 @@ function App() {
         </>
         
         {/* Top Header */}
-        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between sticky top-0 z-30 w-full shrink-0 print:hidden shadow-xs pwa-safe-top">
+        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-3 sm:px-6 py-2 sm:py-3 flex items-center justify-between sticky top-0 z-30 w-full shrink-0 print:hidden shadow-xs pwa-safe-top">
           <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <button 
               onClick={() => setMobileMenuOpen(true)} 
-              className="md:hidden p-2 -ml-1 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800 rounded-xl transition-colors shrink-0 active:scale-95 cursor-pointer"
+              className="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center p-2 -ml-1 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800 rounded-xl transition-colors shrink-0 active:scale-95 cursor-pointer"
               title="Buka Menu"
               aria-label="Buka Navigasi"
             >
@@ -935,7 +935,7 @@ function App() {
             {/* Theme Switcher */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative cursor-pointer active:scale-95 border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+              className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative cursor-pointer active:scale-95 border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
               title={theme === 'dark' ? "Beralih ke Mode Terang (Light)" : "Beralih ke Mode Gelap (Dark)"}
               aria-label="Ganti Tema"
             >
@@ -951,14 +951,14 @@ function App() {
               <button 
                 id="notification-bell" 
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} 
-                className="p-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative cursor-pointer active:scale-95 border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+                className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative cursor-pointer active:scale-95 border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
                 title="Notifikasi Sistem"
                 aria-label="Notifikasi"
               >
                 {systemAlerts.length > 0 ? (
                   <>
                     <BellRing size={19} className="text-primary-600 dark:text-primary-400" />
-                    <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-red-500 border-2 border-white dark:border-gray-900"></span>
+                    <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-red-500 border-2 border-white dark:border-gray-900"></span>
                   </>
                 ) : (
                   <Bell size={19} />
@@ -1031,7 +1031,7 @@ function App() {
             <div className="relative z-50">
               <button
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                className="flex items-center gap-2 p-1 sm:px-2.5 sm:py-1.5 rounded-xl border border-gray-200/90 dark:border-gray-700/80 bg-gray-50/90 dark:bg-gray-800/80 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer text-left active:scale-95 shadow-2xs"
+                className="min-h-[44px] flex items-center gap-2 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-gray-200/90 dark:border-gray-700/80 bg-gray-50/90 dark:bg-gray-800/80 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer text-left active:scale-95 shadow-2xs"
                 title="Menu Pengguna"
                 aria-label="Profil Pengguna"
               >
@@ -1157,7 +1157,7 @@ function App() {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto overscroll-y-contain p-2.5 sm:p-5 md:p-6 scroll-smooth custom-scrollbar print:overflow-visible print:h-auto print:p-0">
+        <div className="flex-1 overflow-y-auto overscroll-y-contain p-2.5 sm:p-5 md:p-6 pb-24 md:pb-6 scroll-smooth custom-scrollbar print:overflow-visible print:h-auto print:p-0">
           <div className="w-full space-y-4 sm:space-y-6 pb-4 print:space-y-0 print:pb-0">
             {loading ? (
               <DashboardSkeleton />
@@ -1184,6 +1184,99 @@ function App() {
             )}
           </div>
         </div>
+
+        {/* Mobile Fixed Bottom Navigation Bar (Pattern 1 from Mobile Touch Guidelines) */}
+        <nav
+          aria-label="Navigasi Bawah Seluler"
+          className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200/90 dark:border-gray-800 shadow-lg px-2 py-1 flex items-center justify-around print:hidden"
+          style={{ paddingBottom: 'max(0.375rem, env(safe-area-inset-bottom, 0px))' }}
+        >
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentView('dashboard');
+              setIsKenaikanPangkatExpanded(false);
+              setIsLayananKgbExpanded(false);
+              setIsPensiunExpanded(false);
+              setIsJamKerjaExpanded(false);
+            }}
+            className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-2 rounded-xl transition-all cursor-pointer active:scale-95 ${
+              currentView === 'dashboard'
+                ? 'text-primary-600 dark:text-primary-400 font-bold'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+            }`}
+          >
+            <LayoutDashboard size={20} strokeWidth={currentView === 'dashboard' ? 2.5 : 2} />
+            <span className="text-[10px] mt-1 leading-tight">Beranda</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentView('data-kgb');
+              setIsLayananKgbExpanded(true);
+              setIsKenaikanPangkatExpanded(false);
+              setIsPensiunExpanded(false);
+              setIsJamKerjaExpanded(false);
+            }}
+            className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-2 rounded-xl transition-all cursor-pointer active:scale-95 ${
+              currentView === 'data-kgb' || currentView === 'report'
+                ? 'text-primary-600 dark:text-primary-400 font-bold'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+            }`}
+          >
+            <Banknote size={20} strokeWidth={currentView === 'data-kgb' ? 2.5 : 2} />
+            <span className="text-[10px] mt-1 leading-tight">KGB</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentView('kenaikan-pangkat');
+              setIsKenaikanPangkatExpanded(true);
+              setIsLayananKgbExpanded(false);
+              setIsPensiunExpanded(false);
+              setIsJamKerjaExpanded(false);
+            }}
+            className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-2 rounded-xl transition-all cursor-pointer active:scale-95 ${
+              isKPAreaActive
+                ? 'text-primary-600 dark:text-primary-400 font-bold'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+            }`}
+          >
+            <Award size={20} strokeWidth={isKPAreaActive ? 2.5 : 2} />
+            <span className="text-[10px] mt-1 leading-tight">Pangkat</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentView('pensiun');
+              setIsPensiunExpanded(true);
+              setIsKenaikanPangkatExpanded(false);
+              setIsLayananKgbExpanded(false);
+              setIsJamKerjaExpanded(false);
+            }}
+            className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-2 rounded-xl transition-all cursor-pointer active:scale-95 ${
+              currentView === 'pensiun'
+                ? 'text-primary-600 dark:text-primary-400 font-bold'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+            }`}
+          >
+            <Archive size={20} strokeWidth={currentView === 'pensiun' ? 2.5 : 2} />
+            <span className="text-[10px] mt-1 leading-tight">Pensiun</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(true)}
+            className="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 px-2 rounded-xl text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-all cursor-pointer active:scale-95"
+            aria-label="Buka Menu Selengkapnya"
+          >
+            <Menu size={20} />
+            <span className="text-[10px] mt-1 leading-tight">Menu</span>
+          </button>
+        </nav>
       </main>
       
       <ScrollToTop />

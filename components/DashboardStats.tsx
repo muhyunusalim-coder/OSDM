@@ -90,7 +90,7 @@ const StatCard = React.memo(
             </p>
 
             <div className="mt-3 flex items-end gap-2">
-              <span className="text-3xl font-semibold leading-none tracking-tight text-gray-950 dark:text-white sm:text-4xl">
+              <span className="text-3xl font-semibold leading-none tracking-tight text-gray-950 dark:text-white sm:text-4xl font-mono tabular-nums">
                 {Number(value || 0).toLocaleString("id-ID")}
               </span>
 

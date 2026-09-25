@@ -422,6 +422,68 @@ const KANBAN_COLUMNS: Array<{
   }
 ];
 
+const PRIORITY_FILTER_OPTIONS: Array<{
+  key: string;
+  label: string;
+  englishLabel: string;
+  badgeBg: string;
+  badgeText: string;
+  badgeBorder: string;
+  activeClass: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+}> = [
+  {
+    key: 'Semua',
+    label: 'Semua Prioritas',
+    englishLabel: 'All',
+    badgeBg: 'bg-gray-100 dark:bg-gray-800',
+    badgeText: 'text-gray-700 dark:text-gray-300',
+    badgeBorder: 'border-gray-200 dark:border-gray-700',
+    activeClass: 'bg-gray-900 text-white dark:bg-white dark:text-gray-900 border-transparent shadow-xs',
+    icon: Layers
+  },
+  {
+    key: 'urgent',
+    label: 'Mendesak',
+    englishLabel: 'Urgent',
+    badgeBg: 'bg-rose-50 dark:bg-rose-950/40',
+    badgeText: 'text-rose-700 dark:text-rose-300',
+    badgeBorder: 'border-rose-200 dark:border-rose-800',
+    activeClass: 'bg-rose-600 text-white border-rose-600 shadow-xs ring-2 ring-rose-500/40',
+    icon: Flame
+  },
+  {
+    key: 'high',
+    label: 'Prioritas Tinggi',
+    englishLabel: 'High',
+    badgeBg: 'bg-orange-50 dark:bg-orange-950/40',
+    badgeText: 'text-orange-800 dark:text-orange-300',
+    badgeBorder: 'border-orange-200 dark:border-orange-800',
+    activeClass: 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-500/40',
+    icon: AlertCircle
+  },
+  {
+    key: 'medium',
+    label: 'Prioritas Sedang',
+    englishLabel: 'Medium',
+    badgeBg: 'bg-blue-50 dark:bg-blue-950/40',
+    badgeText: 'text-blue-700 dark:text-blue-300',
+    badgeBorder: 'border-blue-200 dark:border-blue-800',
+    activeClass: 'bg-blue-600 text-white border-blue-600 shadow-xs ring-2 ring-blue-500/40',
+    icon: Clock
+  },
+  {
+    key: 'low',
+    label: 'Prioritas Rendah',
+    englishLabel: 'Low',
+    badgeBg: 'bg-emerald-50 dark:bg-emerald-950/40',
+    badgeText: 'text-emerald-700 dark:text-emerald-300',
+    badgeBorder: 'border-emerald-200 dark:border-emerald-800',
+    activeClass: 'bg-emerald-600 text-white border-emerald-600 shadow-xs ring-2 ring-emerald-500/40',
+    icon: CheckCircle2
+  }
+];
+
 export default function StickyNotesKanbanPage({ currentUser }: StickyNotesKanbanPageProps) {
   // Load tasks from localStorage or initial seed
   const [tasks, setTasks] = useState<StickyTask[]>(() => {
@@ -868,6 +930,17 @@ export default function StickyNotesKanbanPage({ currentUser }: StickyNotesKanban
     return counts;
   }, [tasks]);
 
+  // Count cards by priority
+  const priorityCounts = useMemo(() => {
+    const counts: Record<string, number> = { Semua: tasks.length, urgent: 0, high: 0, medium: 0, low: 0 };
+    tasks.forEach(t => {
+      if (counts[t.priority] !== undefined) {
+        counts[t.priority]++;
+      }
+    });
+    return counts;
+  }, [tasks]);
+
   // Render task label badge with optional quick inline color changer
   const renderTaskLabelBadge = (task: StickyTask, interactive = false) => {
     const resolvedLabelKey = getTaskLabelColor(task);
@@ -1259,7 +1332,15 @@ export default function StickyNotesKanbanPage({ currentUser }: StickyNotesKanban
             <span className="text-xl font-bold text-emerald-700 dark:text-emerald-300 mt-0.5 block">{stats.done}</span>
           </div>
 
-          <div className="p-3 rounded-xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/40">
+          <div
+            onClick={() => setSelectedPriority(selectedPriority === 'urgent' ? 'Semua' : 'urgent')}
+            className={`p-3 rounded-xl border transition-all cursor-pointer ${
+              selectedPriority === 'urgent'
+                ? 'bg-rose-100 dark:bg-rose-950/70 border-rose-400 ring-2 ring-rose-500/30 shadow-xs'
+                : 'bg-rose-50/70 dark:bg-rose-950/30 border-rose-100 dark:border-rose-900/40 hover:border-rose-300'
+            }`}
+            title="Klik untuk filter tugas level Mendesak (Urgent)"
+          >
             <span className="text-[11px] font-medium text-rose-700 dark:text-rose-300 block">Mendesak</span>
             <span className="text-xl font-bold text-rose-700 dark:text-rose-300 mt-0.5 block">{stats.urgent}</span>
           </div>
@@ -1351,17 +1432,19 @@ export default function StickyNotesKanbanPage({ currentUser }: StickyNotesKanban
             ))}
           </select>
 
-          {/* Priority Filter */}
+          {/* Priority Filter Dropdown */}
           <select
             value={selectedPriority}
             onChange={(e) => setSelectedPriority(e.target.value)}
             className="px-2.5 py-1.5 bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-xl text-xs text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer font-medium"
+            title="Filter berdasarkan level prioritas tugas"
+            aria-label="Filter berdasarkan level prioritas"
           >
-            <option value="Semua">Prioritas: Semua</option>
-            <option value="urgent">Mendesak</option>
-            <option value="high">Tinggi</option>
-            <option value="medium">Sedang</option>
-            <option value="low">Rendah</option>
+            <option value="Semua">Prioritas: Semua ({tasks.length})</option>
+            <option value="urgent">🔥 Mendesak / Urgent ({priorityCounts['urgent'] || 0})</option>
+            <option value="high">⚠️ Prioritas Tinggi / High ({priorityCounts['high'] || 0})</option>
+            <option value="medium">🔷 Prioritas Sedang / Medium ({priorityCounts['medium'] || 0})</option>
+            <option value="low">☕ Prioritas Rendah / Low ({priorityCounts['low'] || 0})</option>
           </select>
 
           {/* Label Color / Urgency Filter */}
@@ -1394,6 +1477,63 @@ export default function StickyNotesKanbanPage({ currentUser }: StickyNotesKanban
             <Pin size={13} className={onlyPinned ? 'fill-amber-500 text-amber-500' : ''} />
             <span>Tersemat</span>
           </button>
+        </div>
+      </div>
+
+      {/* Kontrol Filter Prioritas Tugas (High, Medium, Low, Urgent) */}
+      <div className="bg-white dark:bg-gray-800 p-3 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="w-7 h-7 rounded-lg bg-primary-50 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 flex items-center justify-center">
+            <Filter size={14} />
+          </div>
+          <div>
+            <span className="text-xs font-bold text-gray-900 dark:text-white block leading-tight">
+              Filter Level Prioritas:
+            </span>
+            <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">
+              Fokuskan alur kerja tugas berdasarkan urgensi
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1.5 flex-wrap flex-1 md:justify-end">
+          {PRIORITY_FILTER_OPTIONS.map((opt) => {
+            const isSelected = selectedPriority === opt.key;
+            const count = priorityCounts[opt.key] || 0;
+            const Icon = opt.icon;
+
+            return (
+              <button
+                key={opt.key}
+                type="button"
+                onClick={() => setSelectedPriority(isSelected && opt.key !== 'Semua' ? 'Semua' : opt.key)}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer select-none active:scale-95 ${
+                  isSelected
+                    ? `${opt.activeClass} scale-[1.02]`
+                    : `${opt.badgeBg} ${opt.badgeText} ${opt.badgeBorder} hover:opacity-90`
+                }`}
+                title={`Filter tugas dengan prioritas ${opt.label} (${opt.englishLabel})`}
+              >
+                <Icon size={13} className="shrink-0" />
+                <span>{opt.label}</span>
+                <span className="text-[10px] font-mono opacity-80">({opt.englishLabel})</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-0.5 ${isSelected ? 'bg-white/30 text-white' : 'bg-black/5 dark:bg-white/10'}`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+
+          {selectedPriority !== 'Semua' && (
+            <button
+              type="button"
+              onClick={() => setSelectedPriority('Semua')}
+              className="text-xs font-bold text-rose-600 hover:text-rose-700 dark:text-rose-400 hover:underline px-2 py-1 cursor-pointer shrink-0"
+              title="Reset filter level prioritas"
+            >
+              Reset Prioritas
+            </button>
+          )}
         </div>
       </div>
 

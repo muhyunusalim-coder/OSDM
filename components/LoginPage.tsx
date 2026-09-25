@@ -254,7 +254,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-200 transition-colors cursor-pointer"
+                    className="absolute inset-y-0 right-0 w-12 h-full flex items-center justify-center text-gray-400 hover:text-gray-200 transition-colors cursor-pointer"
                     tabIndex={-1}
                     title={
                       showPassword
@@ -277,7 +277,7 @@ const LoginPage: React.FC<Props> = React.memo(({ onLogin }) => {
                   <button
                     type="button"
                     onClick={generateCaptcha}
-                    className="text-[11px] text-primary-400 hover:text-primary-300 flex items-center gap-1 transition-colors font-medium px-2 py-0.5 bg-primary-500/10 hover:bg-primary-500/20 border border-primary-500/20 rounded-md touch-manipulation active:scale-95 cursor-pointer"
+                    className="text-[11px] text-primary-400 hover:text-primary-300 flex items-center gap-1.5 transition-colors font-medium min-h-[36px] px-3 py-1 bg-primary-500/10 hover:bg-primary-500/20 border border-primary-500/20 rounded-lg touch-manipulation active:scale-95 cursor-pointer"
                     title="Acak ulang pertanyaan verifikasi"
                   >
                     <RefreshCw size={12} className="text-primary-400" /> Refresh
