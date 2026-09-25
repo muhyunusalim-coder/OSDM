@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import {
   Kanban,
   StickyNote,
@@ -991,13 +992,45 @@ export default function StickyNotesKanbanPage({ currentUser }: StickyNotesKanban
     const totalCount = task.checklist.length;
     const checklistProgress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
+    // Quick step calculation between Kanban columns
+    const currentColIndex = KANBAN_COLUMNS.findIndex(col => col.id === task.status);
+    const prevCol = currentColIndex > 0 ? KANBAN_COLUMNS[currentColIndex - 1] : null;
+    const nextCol = currentColIndex >= 0 && currentColIndex < KANBAN_COLUMNS.length - 1 ? KANBAN_COLUMNS[currentColIndex + 1] : null;
+
     return (
-      <div
+      <motion.div
         key={task.id}
+        layout
+        layoutId={`kanban-card-${task.id}`}
+        initial={{ opacity: 0, scale: 0.94, y: 12 }}
+        animate={{
+          opacity: draggedTaskId === task.id ? 0.35 : 1,
+          scale: draggedTaskId === task.id ? 1.02 : 1,
+          y: 0
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.9,
+          transition: { duration: 0.18 }
+        }}
+        transition={{
+          layout: {
+            type: 'spring',
+            stiffness: 350,
+            damping: 28,
+            mass: 0.8
+          },
+          opacity: { duration: 0.2 },
+          scale: { duration: 0.2 }
+        }}
         draggable
-        onDragStart={(e) => handleDragStart(e, task.id)}
+        onDragStart={(e) => handleDragStart(e as unknown as React.DragEvent, task.id)}
+        onDragEnd={() => {
+          setDraggedTaskId(null);
+          setDragOverColumn(null);
+        }}
         onClick={() => handleOpenEditModal(task)}
-        className={`group relative rounded-2xl p-4 transition-all duration-200 cursor-pointer shadow-xs hover:shadow-md border ${colorStyle.bgLight} ${colorStyle.bgDark} ${colorStyle.borderLight} ${colorStyle.borderDark} hover:scale-[1.01] flex flex-col justify-between overflow-visible`}
+        className={`group relative rounded-2xl p-4 cursor-pointer shadow-xs hover:shadow-md border ${colorStyle.bgLight} ${colorStyle.bgDark} ${colorStyle.borderLight} ${colorStyle.borderDark} hover:scale-[1.01] transition-shadow flex flex-col justify-between overflow-visible`}
       >
         {/* Top Urgency Color Stripe for Kanban & Notes */}
         <div className={`-mt-4 -mx-4 mb-3.5 h-1.5 rounded-t-2xl ${labelStyle.topStripe}`} />
@@ -1095,7 +1128,7 @@ export default function StickyNotesKanbanPage({ currentUser }: StickyNotesKanban
           )}
         </div>
 
-        {/* Bottom meta: Due Date + Assignee + Fast Column Move */}
+        {/* Bottom meta: Due Date + Assignee + Fast Column Move with Step Chevrons */}
         <div className="mt-3 pt-2.5 border-t border-gray-200/50 dark:border-gray-700/40 flex items-center justify-between gap-2 text-[11px]">
           <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 min-w-0">
             {task.dueDate && (
@@ -1112,8 +1145,33 @@ export default function StickyNotesKanbanPage({ currentUser }: StickyNotesKanban
             )}
           </div>
 
-          {/* Column Switcher Pills */}
+          {/* Column Switcher with Quick Step Arrows & Status Dropdown */}
           <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+            {isKanban && (
+              <div className="flex items-center gap-0.5 mr-0.5">
+                {prevCol && (
+                  <button
+                    type="button"
+                    onClick={(e) => handleMoveStatus(task.id, prevCol.id, e)}
+                    title={`Geser kartu ke "${prevCol.title}"`}
+                    className="p-1 rounded-lg bg-white/90 dark:bg-gray-800 text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 border border-gray-200/70 dark:border-gray-700/70 hover:border-primary-400 transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <ChevronLeft size={12} />
+                  </button>
+                )}
+                {nextCol && (
+                  <button
+                    type="button"
+                    onClick={(e) => handleMoveStatus(task.id, nextCol.id, e)}
+                    title={`Geser kartu ke "${nextCol.title}"`}
+                    className="p-1 rounded-lg bg-white/90 dark:bg-gray-800 text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 border border-gray-200/70 dark:border-gray-700/70 hover:border-primary-400 transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <ChevronRight size={12} />
+                  </button>
+                )}
+              </div>
+            )}
+
             <select
               value={task.status}
               onChange={(e) => handleMoveStatus(task.id, e.target.value as TaskStatus)}
@@ -1126,7 +1184,7 @@ export default function StickyNotesKanbanPage({ currentUser }: StickyNotesKanban
             </select>
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   };
 
@@ -1397,87 +1455,116 @@ export default function StickyNotesKanbanPage({ currentUser }: StickyNotesKanban
 
       {/* VIEW 1: BAGAN KANBAN (KANBAN BOARD) */}
       {viewMode === 'kanban' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
-          {KANBAN_COLUMNS.map(col => {
-            const colTasks = filteredTasks.filter(t => t.status === col.id);
-            const isDragOver = dragOverColumn === col.id;
+        <LayoutGroup id="kanban-layout-group">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
+            {KANBAN_COLUMNS.map(col => {
+              const colTasks = filteredTasks.filter(t => t.status === col.id);
+              const isDragOver = dragOverColumn === col.id;
 
-            return (
-              <div
-                key={col.id}
-                onDragOver={(e) => handleDragOver(e, col.id)}
-                onDrop={(e) => handleDrop(e, col.id)}
-                className={`flex flex-col rounded-2xl bg-gray-100/70 dark:bg-gray-900/40 border transition-all duration-200 min-h-[480px] p-3.5 ${
-                  isDragOver
-                    ? 'border-primary-500 bg-primary-50/20 dark:bg-primary-950/20 ring-2 ring-primary-500/20'
-                    : 'border-gray-200/80 dark:border-gray-800'
-                }`}
-              >
-                {/* Column Header */}
-                <div className="flex items-center justify-between mb-3 px-1">
-                  <div className="flex items-center gap-2">
-                    <span className={`w-2.5 h-2.5 rounded-full ${col.dotColor}`} />
-                    <h3 className="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider">
-                      {col.title}
-                    </h3>
-                    <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${col.badgeBg} ${col.badgeText}`}>
-                      {colTasks.length}
-                    </span>
+              return (
+                <div
+                  key={col.id}
+                  onDragOver={(e) => handleDragOver(e, col.id)}
+                  onDrop={(e) => handleDrop(e, col.id)}
+                  className={`flex flex-col rounded-2xl bg-gray-100/70 dark:bg-gray-900/40 border transition-colors duration-200 min-h-[480px] p-3.5 ${
+                    isDragOver
+                      ? 'border-primary-500 bg-primary-50/25 dark:bg-primary-950/25 ring-2 ring-primary-500/20'
+                      : 'border-gray-200/80 dark:border-gray-800'
+                  }`}
+                >
+                  {/* Column Header */}
+                  <div className="flex items-center justify-between mb-3 px-1">
+                    <div className="flex items-center gap-2">
+                      <span className={`w-2.5 h-2.5 rounded-full ${col.dotColor}`} />
+                      <h3 className="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider">
+                        {col.title}
+                      </h3>
+                      <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${col.badgeBg} ${col.badgeText}`}>
+                        {colTasks.length}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => handleOpenCreateModal(col.id)}
+                      title={`Tambah tugas di kolom ${col.title}`}
+                      className="p-1 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-white dark:hover:bg-gray-800 transition-colors cursor-pointer"
+                    >
+                      <Plus size={16} />
+                    </button>
                   </div>
 
-                  <button
-                    onClick={() => handleOpenCreateModal(col.id)}
-                    title={`Tambah tugas di kolom ${col.title}`}
-                    className="p-1 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-white dark:hover:bg-gray-800 transition-colors cursor-pointer"
-                  >
-                    <Plus size={16} />
-                  </button>
-                </div>
+                  {/* Cards Container with Framer Motion AnimatePresence */}
+                  <div className="flex-1 space-y-3 overflow-y-auto min-h-[120px]">
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      {/* Interactive Smooth Drop Zone Indicator */}
+                      {isDragOver && (
+                        <motion.div
+                          key={`drop-target-${col.id}`}
+                          initial={{ opacity: 0, height: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, height: 48, scale: 1 }}
+                          exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                          transition={{ duration: 0.16 }}
+                          className="border-2 border-dashed border-primary-500 dark:border-primary-400 rounded-2xl bg-primary-50/70 dark:bg-primary-950/50 flex items-center justify-center text-xs font-bold text-primary-700 dark:text-primary-300 pointer-events-none shadow-2xs"
+                        >
+                          ✨ Lepaskan untuk memindahkan ke {col.title}
+                        </motion.div>
+                      )}
 
-                {/* Cards Container */}
-                <div className="flex-1 space-y-3 overflow-y-auto">
-                  {colTasks.length === 0 ? (
-                    <div className="h-40 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-xl flex flex-col items-center justify-center p-4 text-center">
-                      <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">Belum ada tugas</p>
-                      <button
-                        onClick={() => handleOpenCreateModal(col.id)}
-                        className="text-[11px] font-bold text-primary-600 dark:text-primary-400 hover:underline mt-1 cursor-pointer"
-                      >
-                        + Tambah sekarang
-                      </button>
-                    </div>
-                  ) : (
-                    colTasks.map(task => renderCard(task, true))
-                  )}
+                      {colTasks.length === 0 && !isDragOver ? (
+                        <motion.div
+                          key={`empty-${col.id}`}
+                          initial={{ opacity: 0, scale: 0.96 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.96 }}
+                          transition={{ duration: 0.15 }}
+                          className="h-40 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-xl flex flex-col items-center justify-center p-4 text-center"
+                        >
+                          <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">Belum ada tugas</p>
+                          <button
+                            onClick={() => handleOpenCreateModal(col.id)}
+                            className="text-[11px] font-bold text-primary-600 dark:text-primary-400 hover:underline mt-1 cursor-pointer"
+                          >
+                            + Tambah sekarang
+                          </button>
+                        </motion.div>
+                      ) : (
+                        colTasks.map(task => renderCard(task, true))
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </LayoutGroup>
       )}
 
       {/* VIEW 2: PAPAN STICKY NOTES (GRID VIEW) */}
       {viewMode === 'grid' && (
-        <div>
-          {filteredTasks.length === 0 ? (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-12 text-center">
-              <StickyNote size={36} className="mx-auto text-gray-400 mb-2" />
-              <h3 className="font-bold text-base text-gray-900 dark:text-white">Tidak ada sticky note</h3>
-              <p className="text-xs text-gray-500 mt-1">Coba ubah kata kunci pencarian atau buat catatan tugas baru.</p>
-              <button
-                onClick={() => handleOpenCreateModal()}
-                className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer inline-flex items-center gap-1.5"
-              >
-                <Plus size={15} />
-                <span>Buat Sticky Note Pertama</span>
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredTasks.map(task => renderCard(task, false))}
-            </div>
-          )}
-        </div>
+        <LayoutGroup id="grid-layout-group">
+          <div>
+            {filteredTasks.length === 0 ? (
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-12 text-center">
+                <StickyNote size={36} className="mx-auto text-gray-400 mb-2" />
+                <h3 className="font-bold text-base text-gray-900 dark:text-white">Tidak ada sticky note</h3>
+                <p className="text-xs text-gray-500 mt-1">Coba ubah kata kunci pencarian atau buat catatan tugas baru.</p>
+                <button
+                  onClick={() => handleOpenCreateModal()}
+                  className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer inline-flex items-center gap-1.5"
+                >
+                  <Plus size={15} />
+                  <span>Buat Sticky Note Pertama</span>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {filteredTasks.map(task => renderCard(task, false))}
+                </AnimatePresence>
+              </div>
+            )}
+          </div>
+        </LayoutGroup>
       )}
 
       {/* VIEW 3: TABEL TUGAS (NOTION TABLE VIEW) */}
