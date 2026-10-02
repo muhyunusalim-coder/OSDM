@@ -179,6 +179,7 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
           "Gaji Lama": hasAccess ? emp.gajiLama : "******",
           "Gaji Baru": hasAccess ? emp.gajiBaru : "******",
           "Masa Kerja": emp.masaKerja,
+          "TMT KGB Sebelumnya": emp.tmtKgbTerakhir || '-',
           "TMT Kenaikan Gaji Berkala": emp.tmt
         };
       });
@@ -187,7 +188,7 @@ const totalPages = Math.ceil(filteredData.length / itemsPerPage);
       // Auto width simple calculation
       const wscols = isKP 
         ? [ { wch: 5 }, { wch: 30 }, { wch: 20 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 } ]
-        : [ { wch: 5 }, { wch: 30 }, { wch: 20 }, { wch: 15 }, { wch: 25 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 } ];
+        : [ { wch: 5 }, { wch: 30 }, { wch: 20 }, { wch: 15 }, { wch: 25 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 20 } ];
       ws['!cols'] = wscols;
       const wb = XLSX.utils.book_new();
       const sheetName = viewMode === 'monthly' 

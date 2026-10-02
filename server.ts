@@ -33,7 +33,7 @@ async function startServer() {
       : (fs.existsSync(path.join(cwd, 'index.html')) ? cwd : path.join(cwd, 'dist'));
 
     app.use(express.static(distPath));
-    app.get('*all', (req, res) => {
+    app.use((req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
