@@ -1,12 +1,11 @@
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import {
-  Sparkles,
   CheckCircle,
   Activity,
   Banknote,
   Archive,
   ChevronRight,
-  Building,
+  Building2,
   Award,
   Clock,
   AlertTriangle,
@@ -15,6 +14,10 @@ import {
   ArrowRight,
   UserCheck,
   StickyNote,
+  Users,
+  Compass,
+  FileCheck2,
+  CalendarCheck
 } from "lucide-react";
 import { Employee } from "../types";
 import { Language, TRANSLATIONS } from "../utils/translationHelper";
@@ -23,6 +26,7 @@ import ServiceOverviewCharts from "./ServiceOverviewCharts";
 import ComparisonChart from "./ComparisonChart";
 import PensionProjectionDashboardChart from "./PensionProjectionDashboardChart";
 import { DeferredView } from "./DeferredView";
+import { formatNIP } from "../src/layouts/MainLayout";
 
 interface Props {
   language: Language;
@@ -57,6 +61,37 @@ interface Props {
   }>;
 }
 
+const ASN_CORE_VALUES = [
+  {
+    code: "Berorientasi Pelayanan",
+    description: "Berkomitmen memberikan pelayanan prima demi kepuasan masyarakat dan seluruh insan ASN BSKJI."
+  },
+  {
+    code: "Akuntabel",
+    description: "Bertanggung jawab atas kepercayaan yang diberikan dengan integritas tinggi, cermat, dan disiplin."
+  },
+  {
+    code: "Kompeten",
+    description: "Terus belajar dan mengembangkan kapabilitas profesional dalam tata kelola administrasi kepegawaian."
+  },
+  {
+    code: "Harmonis",
+    description: "Saling peduli dan menghargai perbedaan untuk mewujudkan lingkungan kerja yang kondusif di BSKJI."
+  },
+  {
+    code: "Loyal",
+    description: "Berdedikasi dan mengutamakan kepentingan bangsa, negara, dan instansi Kementerian Perindustrian."
+  },
+  {
+    code: "Adaptif",
+    description: "Terus berinovasi dan antusias dalam menggerakkan serta menghadapi transformasi digital birokrasi."
+  },
+  {
+    code: "Kolaboratif",
+    description: "Membangun kerja sama yang sinergis antar satuan kerja dan balai industri di lingkungan BSKJI."
+  }
+];
+
 const DashboardPage: React.FC<Props> = React.memo(
   ({
     language,
@@ -89,42 +124,17 @@ const DashboardPage: React.FC<Props> = React.memo(
       [language]
     );
 
-    const [activeMessageIndex, setActiveMessageIndex] = useState(0);
-
-    const messages = useMemo(
-      () => [
-        "💪 Dedikasi Tanpa Batas: Menjadi ASN bukan sekadar pekerjaan, melainkan pengabdian tulus kepada bangsa.",
-        "🌟 BerAKHLAK: Berorientasi Pelayanan, Akuntabel, Kompeten, Harmonis, Loyal, Adaptif, dan Kolaboratif.",
-        "🚀 Semangat Berinovasi: Tingkatkan terus kompetensi diri dan hadirkan solusi digital terbaik bagi negeri!",
-        "💡 Integritas Utama: Bekerja dengan jujur dan transparan adalah bentuk kepedulian terhadap masa depan Indonesia.",
-        "🔥 Gaji berkala naik, semangat makin membara! Lengkapi berkas KGB-mu ya sebelum masa TMT tiba.",
-        "❤️ Pelayanan Prima: Senyum ramah, solusi cepat, dan kepedulian tulus adalah hadiah terbaik untuk masyarakat.",
-        "🌱 Tumbuh Bersama: Kolaborasi antar instansi mempererat persatuan dan mempercepat kemajuan pembangunan.",
-        "🎯 Fokus & Presisi: Unggah dokumen secara lengkap dan teliti adalah cermin profesionalisme tinggi ASN.",
-        "✨ Kerja adalah Ibadah: Satukan niat baik, jadikan setiap pelayanan sebagai pengabdian bernilai berkah.",
-        "🧠 Adaptif & Gesit: Di era transformasi digital, mari responsif dan terus bergerak selangkah lebih maju!",
-        "🤝 Sinergi Positif: Lingkungan kerja yang harmonis melahirkan kreativitas tanpa batas dan produktivitas tinggi.",
-        "⭐ Bangga Melayani Bangsa: Jadilah teladan integritas karena kinerja kita mencerminkan wajah birokrasi negara.",
-        "📅 Disiplin Waktu: Mengurus administrasi tepat waktu menunjukkan komitmen sejati seorang abdi negara.",
-        "🌈 Energi Positif: Awali hari dengan senyuman hangat, layani dengan hati, sebarkan kebaikan di tempat kerja.",
-        "🛡️ Layanan Bersih: Komitmen BSKJI menghadirkan sistem administrasi cepat, bersih, dan bebas gratifikasi.",
-        "🎓 Pembelajar Sepanjang Hayat: ASN hebat adalah mereka yang selalu adaptif dan terus memperbarui wawasan.",
-        "⚡ Birokrasi Efisien: Sistem digital mempercepat layanan, memberi Anda waktu lebih untuk berfokus pada inovasi baru.",
-        "🎉 Apresiasi Pengabdian: Setiap langkah karir Anda sangat bernilai. Teruslah berkarya untuk kemakmuran bangsa!",
-      ],
-      []
-    );
+    const [activeValueIndex, setActiveValueIndex] = useState(0);
 
     useEffect(() => {
       const interval = setInterval(() => {
-        setActiveMessageIndex((prev) => (prev + 1) % messages.length);
-      }, 7000);
+        setActiveValueIndex((prev) => (prev + 1) % ASN_CORE_VALUES.length);
+      }, 8000);
       return () => clearInterval(interval);
-    }, [messages]);
+    }, []);
 
     const handleQuickNavigate = (view: string) => {
       if (!setCurrentView) return;
-
       if (view === "data-kgb" && setIsLayananKgbExpanded) {
         setIsLayananKgbExpanded(true);
         setIsKenaikanPangkatExpanded?.(false);
@@ -137,10 +147,6 @@ const DashboardPage: React.FC<Props> = React.memo(
         setIsPensiunExpanded(true);
         setIsLayananKgbExpanded?.(false);
         setIsKenaikanPangkatExpanded?.(false);
-      } else {
-        setIsLayananKgbExpanded?.(false);
-        setIsKenaikanPangkatExpanded?.(false);
-        setIsPensiunExpanded?.(false);
       }
       setCurrentView(view);
     };
@@ -156,266 +162,262 @@ const DashboardPage: React.FC<Props> = React.memo(
         .sort((a, b) => {
           const dateB =
             b.salaryHistory && b.salaryHistory.length > 0
-              ? new Date(
-                  b.salaryHistory[b.salaryHistory.length - 1].date
-                ).getTime()
+              ? new Date(b.salaryHistory[b.salaryHistory.length - 1].date).getTime()
               : 0;
           const dateA =
             a.salaryHistory && a.salaryHistory.length > 0
-              ? new Date(
-                  a.salaryHistory[a.salaryHistory.length - 1].date
-                ).getTime()
+              ? new Date(a.salaryHistory[a.salaryHistory.length - 1].date).getTime()
               : 0;
           return dateB - dateA;
         })
-        .slice(0, 4);
+        .slice(0, 5);
     }, [employees]);
 
     return (
-      <div className="space-y-6 pb-8">
-        {/* Simple & Clean Hero Welcome Banner */}
-        <div className="relative overflow-hidden rounded-3xl border border-gray-200/80 bg-gradient-to-br from-white via-blue-50/20 to-indigo-50/10 p-6 sm:p-8 shadow-sm dark:border-gray-800 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-900/90 dark:to-gray-950">
-          <div className="relative z-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
-            {/* Left Welcome Area */}
-            <div className="flex-1 space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/80 bg-blue-50/80 px-3 py-1 text-xs font-bold text-blue-700 backdrop-blur-sm dark:border-blue-800/60 dark:bg-blue-900/30 dark:text-blue-300">
-                <Building size={13} className="text-blue-600 dark:text-blue-400" />
-                <span>BSKJI Kemenperin</span>
+      <div className="space-y-6 pb-6">
+        
+        {/* Institutional Welcome & Officer Profile Banner */}
+        <section aria-label="Informasi Pegawai dan Instansi" className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+          {/* Top Institutional Header Ribbon */}
+          <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 px-5 py-3 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-blue-950">
+            <div className="flex items-center gap-2.5">
+              <Building2 size={16} className="text-blue-300 shrink-0" />
+              <div className="text-xs">
+                <span className="font-bold tracking-wider uppercase text-blue-200">
+                  BADAN STANDARDISASI DAN KEBIJAKAN JASA INDUSTRI
+                </span>
+                <span className="hidden md:inline mx-2 text-blue-400">·</span>
+                <span className="hidden md:inline text-blue-100 font-medium">
+                  Kementerian Perindustrian Republik Indonesia
+                </span>
+              </div>
+            </div>
+
+            <div className="text-[11px] text-blue-200 font-mono flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span>Sistem Pemantauan Terpadu ASN</span>
+            </div>
+          </div>
+
+          {/* Officer Profile & Quick Actions Area */}
+          <div className="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+            {/* Left Officer Info */}
+            <div className="lg:col-span-2 space-y-3">
+              <div>
+                <p className="text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+                  {greeting}
+                </p>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-0.5 leading-snug">
+                  {currentUser ? currentUser.nama : "Aparatur Sipil Negara BSKJI"}
+                </h1>
+                
+                {currentUser && (
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
+                    <span className="font-mono text-slate-700 dark:text-slate-300">
+                      NIP: {formatNIP(currentUser.nip)}
+                    </span>
+                    <span aria-hidden="true" className="text-slate-300 dark:text-slate-600">/</span>
+                    <span>{currentUser.jabatan || "Pengelola Kepegawaian"}</span>
+                    <span aria-hidden="true" className="text-slate-300 dark:text-slate-600">/</span>
+                    <span className="font-semibold text-blue-700 dark:text-blue-400">
+                      {currentUser.statusKepegawaian || "PNS"}
+                    </span>
+                  </div>
+                )}
               </div>
 
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-                {greeting},{" "}
-                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-indigo-400">
-                  {currentUser
-                    ? currentUser.nama.split(",")[0]
-                    : "Pegawai BSKJI"}
-                </span>
-              </h1>
-
-              <p className="max-w-2xl text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-medium leading-relaxed">
-                Pusat layanan administrasi Kenaikan Gaji Berkala (KGB), Kenaikan Pangkat (KP), dan Pensiun ASN BSKJI.
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl">
+                Selamat bertugas dalam pengelolaan administrasi Kenaikan Gaji Berkala (KGB), Kenaikan Pangkat (KP), Pensiun (BUP), dan pemantauan disiplin jam kerja aparatur sipil negara di lingkungan BSKJI.
               </p>
 
-              {/* Quick Navigation Action Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 pt-2">
+              {/* Functional Quick Navigation Cards */}
+              <div className="pt-2 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 <button
+                  type="button"
                   onClick={() => handleQuickNavigate("data-kgb")}
-                  className="group flex items-center gap-2.5 rounded-2xl border border-gray-200/90 bg-white/90 p-3 text-left shadow-sm transition-all hover:border-blue-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-800/80 dark:hover:border-blue-700/60 cursor-pointer"
+                  className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-blue-300 transition-all text-left cursor-pointer group"
                 >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-600 shadow-sm transition-transform group-hover:scale-105 dark:border-blue-900/50 dark:bg-blue-900/40 dark:text-blue-300">
-                    <Banknote size={16} />
+                  <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-xs">
+                    <Banknote size={15} className="text-blue-600 shrink-0" />
+                    <span>Layanan KGB</span>
                   </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-bold text-gray-900 dark:text-white">
-                      Data KGB
-                    </p>
-                    <p className="truncate text-[10px] text-gray-500 dark:text-gray-400 font-medium">
-                      Gaji Berkala
-                    </p>
-                  </div>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate">
+                    Pemantauan Berkala
+                  </p>
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => handleQuickNavigate("kenaikan-pangkat")}
-                  className="group flex items-center gap-2.5 rounded-2xl border border-gray-200/90 bg-white/90 p-3 text-left shadow-sm transition-all hover:border-emerald-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-800/80 dark:hover:border-emerald-700/60 cursor-pointer"
+                  className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-blue-300 transition-all text-left cursor-pointer group"
                 >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-600 shadow-sm transition-transform group-hover:scale-105 dark:border-emerald-900/50 dark:bg-emerald-950/50 dark:text-emerald-300">
-                    <Award size={16} />
+                  <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-xs">
+                    <Award size={15} className="text-emerald-600 shrink-0" />
+                    <span>Layanan KP</span>
                   </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-bold text-gray-900 dark:text-white">
-                      Kenaikan Pangkat
-                    </p>
-                    <p className="truncate text-[10px] text-gray-500 dark:text-gray-400 font-medium">
-                      KP Periode
-                    </p>
-                  </div>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate">
+                    Periode & Usulan
+                  </p>
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => handleQuickNavigate("pensiun")}
-                  className="group flex items-center gap-2.5 rounded-2xl border border-gray-200/90 bg-white/90 p-3 text-left shadow-sm transition-all hover:border-rose-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-800/80 dark:hover:border-rose-700/60 cursor-pointer"
+                  className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-blue-300 transition-all text-left cursor-pointer group"
                 >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-rose-100 bg-rose-50 text-rose-600 shadow-sm transition-transform group-hover:scale-105 dark:border-rose-900/50 dark:bg-rose-950/50 dark:text-rose-300">
-                    <Archive size={16} />
+                  <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-xs">
+                    <Archive size={15} className="text-amber-600 shrink-0" />
+                    <span>Pensiun (BUP)</span>
                   </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-bold text-gray-900 dark:text-white">
-                      Pensiun
-                    </p>
-                    <p className="truncate text-[10px] text-gray-500 dark:text-gray-400 font-medium">
-                      BUP ASN
-                    </p>
-                  </div>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate">
+                    Batas Usia Pensiun
+                  </p>
                 </button>
 
                 <button
-                  onClick={() => handleQuickNavigate("jam-kerja")}
-                  className="group flex items-center gap-2.5 rounded-2xl border border-gray-200/90 bg-white/90 p-3 text-left shadow-sm transition-all hover:border-amber-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-800/80 dark:hover:border-amber-700/60 cursor-pointer"
+                  type="button"
+                  onClick={() => handleQuickNavigate("susunan-pegawai")}
+                  className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-blue-300 transition-all text-left cursor-pointer group"
                 >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-amber-100 bg-amber-50 text-amber-600 shadow-sm transition-transform group-hover:scale-105 dark:border-amber-900/50 dark:bg-amber-950/50 dark:text-amber-300">
-                    <Clock size={16} />
+                  <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-xs">
+                    <Users size={15} className="text-indigo-600 shrink-0" />
+                    <span>Data DSP</span>
                   </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-bold text-gray-900 dark:text-white">
-                      Jam Kerja
-                    </p>
-                    <p className="truncate text-[10px] text-gray-500 dark:text-gray-400 font-medium">
-                      Presensi & Jam
-                    </p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => handleQuickNavigate("sticky-notes")}
-                  className="group flex items-center gap-2.5 rounded-2xl border border-amber-200/90 bg-amber-50/50 p-3 text-left shadow-sm transition-all hover:border-amber-400 hover:shadow-md dark:border-amber-800/60 dark:bg-amber-950/30 dark:hover:border-amber-600 cursor-pointer col-span-2 sm:col-span-1"
-                >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-amber-200 bg-amber-100 text-amber-700 shadow-sm transition-transform group-hover:scale-105 dark:border-amber-800 dark:bg-amber-900/60 dark:text-amber-300">
-                    <StickyNote size={16} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-bold text-gray-900 dark:text-white">
-                      Sticky Notes
-                    </p>
-                    <p className="truncate text-[10px] text-amber-600 dark:text-amber-400 font-bold">
-                      Bagan Kanban
-                    </p>
-                  </div>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate">
+                    Susunan Pegawai
+                  </p>
                 </button>
               </div>
             </div>
 
-            {/* Right Rotatable Announcement Box */}
-            <div className="w-full shrink-0 lg:max-w-[340px]">
-              <div className="relative overflow-hidden rounded-2xl border border-gray-200/90 bg-white/90 p-4 shadow-sm backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/90">
-                <div className="flex items-center justify-between pb-2.5 border-b border-gray-100 dark:border-gray-800">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300">
-                      <Sparkles size={13} />
-                    </div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      Inspirasi BerAKHLAK
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={handleNewQuote}
-                    title="Ganti Inspirasi"
-                    className="flex h-6 w-6 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
-                  >
-                    <RotateCw size={12} />
-                  </button>
+            {/* Right ASN Core Values Card (BerAKHLAK) */}
+            <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-800/40 p-4 space-y-2.5">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/80 pb-2">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                  <Compass size={14} className="text-blue-600 dark:text-blue-400" />
+                  <span>Nilai Dasar ASN BerAKHLAK</span>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveValueIndex((prev) => (prev + 1) % ASN_CORE_VALUES.length)}
+                  title="Nilai Selanjutnya"
+                  className="p-1 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                >
+                  <RotateCw size={12} />
+                </button>
+              </div>
 
-                <div className="mt-2.5 min-h-[52px] flex items-center">
-                  <p
-                    key={activeMessageIndex}
-                    className="text-xs leading-relaxed font-medium text-gray-700 dark:text-gray-200 transition-opacity duration-300"
-                  >
-                    {messages[activeMessageIndex]}
-                  </p>
-                </div>
+              <div className="space-y-1">
+                <p className="text-xs font-bold text-blue-700 dark:text-blue-400">
+                  {ASN_CORE_VALUES[activeValueIndex].code}
+                </p>
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-normal min-h-[48px]">
+                  {ASN_CORE_VALUES[activeValueIndex].description}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-700/50 text-[10px] text-slate-400 font-mono">
+                <span>Panduan Perilaku Kerja ASN</span>
+                <span>{activeValueIndex + 1} / {ASN_CORE_VALUES.length}</span>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Section: Kartu Statistik Utama */}
-        <div className="space-y-3">
+        {/* Section: Kartu Statistik Utama Kepegawaian */}
+        <section aria-label="Statistik Utama Kepegawaian" className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-              <Activity size={18} className="text-blue-600 dark:text-blue-400" />
-              Ringkasan Layanan Kepegawaian
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <Activity size={16} className="text-blue-600 dark:text-blue-400" />
+              <span>Ikhtisar Data Layanan Kepegawaian</span>
             </h2>
           </div>
 
           <DashboardStats stats={stats} onCardClick={onCardClick} />
-        </div>
+        </section>
 
-        {/* System Alerts / Prioritas Layanan (if any) */}
+        {/* Early Warning System (EWS) - Peringatan Jatuh Tempo Layanan */}
         {systemAlerts && systemAlerts.length > 0 && (
-          <div className="rounded-3xl border border-amber-200/80 bg-amber-50/50 p-4 shadow-sm dark:border-amber-900/40 dark:bg-amber-950/20">
-            <div className="flex items-center justify-between pb-3 border-b border-amber-200/50 dark:border-amber-900/30">
+          <section aria-label="Peringatan Dini Kepegawaian" className="rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/40 dark:bg-amber-950/20 p-4 sm:p-5 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-200/60 dark:border-amber-900/40 pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50">
-                  <ShieldAlert size={16} />
+                <div className="p-2 rounded-lg bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
+                  <ShieldAlert size={18} />
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold text-gray-900 dark:text-white">
-                    Peringatan TMT ({systemAlerts.length})
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-amber-950 dark:text-amber-200">
+                    Sistem Peringatan Dini Kepegawaian ({systemAlerts.length} Peringatan)
                   </h3>
-                  <p className="text-[10px] text-gray-600 dark:text-gray-400 font-medium">
-                    Pegawai mendekati jatuh tempo TMT KGB atau pensiun
+                  <p className="text-[11px] text-amber-800 dark:text-amber-300/80">
+                    Daftar pegawai yang mendekati batas waktu TMT KGB (H-30 hari) atau batas usia pensiun (BUP).
                   </p>
                 </div>
               </div>
 
               <button
+                type="button"
                 onClick={() => handleQuickNavigate("data-kgb")}
-                className="inline-flex items-center gap-1 text-xs font-bold text-amber-700 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 hover:text-amber-950 dark:text-amber-300 dark:hover:text-amber-100 cursor-pointer self-start sm:self-auto"
               >
-                <span>Lihat Semua</span>
+                <span>Kelola Seluruh Daftar</span>
                 <ArrowRight size={13} />
               </button>
             </div>
 
-            <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
               {systemAlerts.slice(0, 3).map((alert) => (
                 <div
                   key={alert.id}
-                  className="flex flex-col justify-between rounded-2xl border border-gray-200/80 bg-white p-3 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+                  className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 space-y-2 shadow-2xs"
                 >
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-1">
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                          alert.severity === "critical"
-                            ? "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-900"
-                            : "bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-900"
-                        }`}
-                      >
-                        <AlertTriangle size={10} />
-                        {alert.title}
-                      </span>
-                      <span className="text-[10px] font-mono text-gray-400">
-                        NIP: {alert.employee.nip}
-                      </span>
-                    </div>
+                  <div className="flex items-center justify-between gap-2 text-[10px]">
+                    <span className={`font-semibold flex items-center gap-1 ${
+                      alert.severity === "critical"
+                        ? "text-rose-700 dark:text-rose-400 font-bold"
+                        : "text-amber-700 dark:text-amber-400 font-bold"
+                    }`}>
+                      <AlertTriangle size={12} />
+                      {alert.title}
+                    </span>
+                    <span className="font-mono text-slate-400">
+                      NIP: {formatNIP(alert.employee.nip).slice(0, 11)}...
+                    </span>
+                  </div>
 
-                    <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                  <div>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
                       {alert.employee.nama}
                     </p>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed mt-0.5 line-clamp-1">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5 line-clamp-2 leading-relaxed">
                       {alert.message}
                     </p>
                   </div>
 
-                  <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-[10px]">
-                    <span className="text-gray-500 dark:text-gray-400 truncate">
-                      {alert.employee.unitKerja}
+                  <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[10px]">
+                    <span className="text-slate-500 dark:text-slate-400 truncate max-w-[170px]">
+                      {alert.employee.unitKerja || "BSKJI"}
                     </span>
                     <button
+                      type="button"
                       onClick={() => handleQuickNavigate(alert.type === "pensiun" ? "pensiun" : "data-kgb")}
-                      className="font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 cursor-pointer shrink-0 ml-2"
+                      className="font-bold text-blue-700 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer"
                     >
-                      Proses &rarr;
+                      Tindak Lanjut &rarr;
                     </button>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
         {/* Section: Analitik & Visualisasi Data Layanan */}
-        <div className="space-y-3 pt-2">
+        <section aria-label="Analitik Data Kepegawaian" className="space-y-3 pt-2">
           <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-                <Activity size={18} className="text-blue-600 dark:text-blue-400" />
-                {t("chart_overview_title") || "Analitik Layanan Kepegawaian"}
-              </h2>
-            </div>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <Activity size={16} className="text-blue-600 dark:text-blue-400" />
+              <span>Analisis & Visualisasi Realisasi Layanan</span>
+            </h2>
           </div>
 
           <DeferredView minHeight="300px">
@@ -433,61 +435,59 @@ const DashboardPage: React.FC<Props> = React.memo(
               />
             </div>
           </DeferredView>
-        </div>
+        </section>
 
-        {/* Section: Riwayat Layanan Terakhir Diproses */}
+        {/* Section: Riwayat Realisasi Penerbitan SK Terakhir */}
         {latestProcessed && latestProcessed.length > 0 && (
-          <div className="space-y-3 pt-2">
+          <section aria-label="Riwayat Layanan Selesai" className="space-y-3 pt-2">
             <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-base font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-                  <UserCheck size={18} className="text-emerald-600 dark:text-emerald-400" />
-                  SK Selesai Diproses Terbaru
-                </h2>
-              </div>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                <FileCheck2 size={16} className="text-emerald-600 dark:text-emerald-400" />
+                <span>Realisasi SK Selesai Diproses Terbaru</span>
+              </h2>
 
               <button
+                type="button"
                 onClick={() => handleQuickNavigate("data-kgb")}
-                className="text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors flex items-center gap-1 cursor-pointer"
+                className="text-xs font-semibold text-blue-700 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 transition-colors flex items-center gap-1 cursor-pointer"
               >
-                <span>Kelola Data KGB</span>
+                <span>Lihat Data KGB Lengkap</span>
                 <ChevronRight size={14} />
               </button>
             </div>
 
-            <div className="overflow-hidden rounded-3xl border border-gray-200/80 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              <div className="divide-y divide-gray-100 dark:divide-gray-800">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden">
+              <div className="divide-y divide-slate-100 dark:divide-slate-800">
                 {latestProcessed.map((emp) => {
-                  const lastHistory = emp.salaryHistory?.[emp.salaryHistory.length - 1];
                   return (
                     <div
                       key={emp.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 transition-colors hover:bg-gray-50/80 dark:hover:bg-gray-800/50"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-700 font-bold text-xs shadow-sm dark:border-emerald-900/50 dark:bg-emerald-950/50 dark:text-emerald-300">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-800 font-bold text-xs dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                           {emp.nama.charAt(0)}
                         </div>
 
                         <div className="min-w-0">
-                          <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                          <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
                             {emp.nama}
                           </p>
-                          <div className="flex flex-wrap items-center gap-2 text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">
-                            <span className="font-mono">NIP: {emp.nip}</span>
-                            <span>•</span>
+                          <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                            <span className="font-mono">NIP: {formatNIP(emp.nip)}</span>
+                            <span aria-hidden="true">·</span>
                             <span>Gol: {emp.pangkat || emp.golonganRaw || "-"}</span>
-                            <span>•</span>
-                            <span className="truncate">{emp.unitKerja}</span>
+                            <span aria-hidden="true">·</span>
+                            <span className="truncate">{emp.unitKerja || "BSKJI"}</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
+                      <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 text-xs">
                         <div className="text-left sm:text-right">
-                          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/50 dark:text-emerald-300">
-                            <CheckCircle size={10} />
-                            Selesai Diproses
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
+                            <CheckCircle size={13} />
+                            <span>SK Selesai Diterbitkan</span>
                           </span>
                         </div>
                       </div>
@@ -496,7 +496,7 @@ const DashboardPage: React.FC<Props> = React.memo(
                 })}
               </div>
             </div>
-          </div>
+          </section>
         )}
       </div>
     );

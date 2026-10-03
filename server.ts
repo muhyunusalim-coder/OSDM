@@ -1,20 +1,12 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
-import cors from 'cors';
-import authRoutes from './server/routes/authRoutes';
-import employeeRoutes from './server/routes/employeeRoutes';
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  app.use(cors());
   app.use(express.json());
-
-  // API Routes
-  app.use('/api/auth', authRoutes);
-  app.use('/api/employees', employeeRoutes);
 
   // API health route
   app.get('/api/health', (req, res) => {

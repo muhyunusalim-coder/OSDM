@@ -4,7 +4,6 @@ import {
   CalendarClock,
   CheckCircle2,
   ArrowRight,
-  TrendingUp,
   AlertTriangle,
 } from "lucide-react";
 import { DashboardStats as StatsType } from "../types";
@@ -20,34 +19,34 @@ const toneMap: Record<
   Tone,
   {
     icon: string;
-    glow: string;
-    pill: string;
-    bar: string;
+    border: string;
+    badge: string;
+    accent: string;
   }
 > = {
   blue: {
-    icon: "bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:border-blue-500/20",
-    glow: "from-blue-500/15",
-    pill: "bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:border-blue-500/20",
-    bar: "bg-blue-500",
+    icon: "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+    border: "hover:border-blue-300 dark:hover:border-blue-700",
+    badge: "text-blue-700 dark:text-blue-400 font-semibold",
+    accent: "bg-blue-600",
   },
   amber: {
-    icon: "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20",
-    glow: "from-amber-500/15",
-    pill: "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20",
-    bar: "bg-amber-500",
+    icon: "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+    border: "hover:border-amber-300 dark:hover:border-amber-700",
+    badge: "text-amber-700 dark:text-amber-400 font-semibold",
+    accent: "bg-amber-600",
   },
   rose: {
-    icon: "bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-500/10 dark:text-rose-300 dark:border-rose-500/20",
-    glow: "from-rose-500/15",
-    pill: "bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-500/10 dark:text-rose-300 dark:border-rose-500/20",
-    bar: "bg-rose-500",
+    icon: "bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
+    border: "hover:border-rose-300 dark:hover:border-rose-700",
+    badge: "text-rose-700 dark:text-rose-400 font-semibold",
+    accent: "bg-rose-600",
   },
   emerald: {
-    icon: "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20",
-    glow: "from-emerald-500/15",
-    pill: "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20",
-    bar: "bg-emerald-500",
+    icon: "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
+    border: "hover:border-emerald-300 dark:hover:border-emerald-700",
+    badge: "text-emerald-700 dark:text-emerald-400 font-semibold",
+    accent: "bg-emerald-600",
   },
 };
 
@@ -75,55 +74,51 @@ const StatCard = React.memo(
     return (
       <Component
         onClick={onClick}
-        className={`group relative w-full overflow-hidden rounded-3xl border border-gray-200/80 bg-white p-4 sm:p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-xl dark:border-gray-800/80 dark:bg-gray-900/90 dark:hover:border-gray-700 ${
-          onClick ? "cursor-pointer active:scale-[0.98]" : ""
+        className={`group relative w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 text-left shadow-2xs transition-all duration-200 ${
+          t.border
+        } ${
+          onClick ? "cursor-pointer active:scale-[0.99] hover:shadow-xs" : ""
         }`}
       >
-        <div
-          className={`pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br ${t.glow} to-transparent blur-2xl`}
-        />
-
-        <div className="relative flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               {title}
             </p>
 
-            <div className="mt-3 flex items-end gap-2">
-              <span className="text-3xl font-semibold leading-none tracking-tight text-gray-950 dark:text-white sm:text-4xl font-mono tabular-nums">
+            <div className="mt-2.5 flex items-baseline gap-2">
+              <span className="text-3xl sm:text-4xl font-extrabold leading-none tracking-tight text-slate-900 dark:text-white font-mono tabular-nums">
                 {Number(value || 0).toLocaleString("id-ID")}
               </span>
-
-              <span
-                className={`mb-1 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${t.pill}`}
-              >
-                <TrendingUp size={12} />
-                Live
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                Pegawai
               </span>
             </div>
           </div>
 
-          <div className={`rounded-2xl border p-3 shadow-sm ${t.icon}`}>
-            <Icon size={22} />
+          <div className={`rounded-lg p-2.5 shrink-0 ${t.icon}`}>
+            <Icon size={20} />
           </div>
         </div>
 
-        <p className="relative mt-4 min-h-10 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+        <p className="mt-3 text-xs leading-relaxed text-slate-600 dark:text-slate-300 line-clamp-2">
           {description}
         </p>
 
-        <div className="relative mt-4 flex items-center justify-between border-t border-gray-100 pt-3 dark:border-gray-800">
-          <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+        <div className="mt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800/80 pt-2.5 text-xs">
+          <span className="text-slate-500 dark:text-slate-400 font-medium">
             {caption}
           </span>
 
           {onClick ? (
-            <ArrowRight
-              size={16}
-              className="text-gray-400 transition-transform group-hover:translate-x-1 group-hover:text-blue-600 dark:group-hover:text-blue-400"
-            />
+            <span className="inline-flex items-center gap-1 font-semibold text-blue-700 dark:text-blue-400 group-hover:translate-x-0.5 transition-transform">
+              <span>Buka Data</span>
+              <ArrowRight size={13} />
+            </span>
           ) : (
-            <span className={`h-2 w-2 rounded-full ${t.bar}`} />
+            <span className="text-[11px] text-slate-400 font-mono">
+              Terverifikasi
+            </span>
           )}
         </div>
       </Component>
@@ -134,47 +129,47 @@ const StatCard = React.memo(
 StatCard.displayName = "StatCard";
 
 const DashboardStats: React.FC<Props> = React.memo(({ stats, onCardClick }) => (
-  <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4 sm:gap-4">
+  <section aria-label="Statistik Kepegawaian BSKJI" className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4 sm:gap-4">
     <StatCard
-      title="Total Pegawai"
+      title="Total Pegawai Terdata"
       value={stats.totalEmployees}
       icon={Users}
       tone="blue"
-      description="Seluruh data ASN/pegawai yang termuat dalam sistem monitoring kepegawaian."
-      caption="Basis data aktif"
+      description="Jumlah keseluruhan data pegawai ASN BSKJI aktif yang terdaftar dalam sistem."
+      caption="Basis Data Kepegawaian"
     />
 
     <StatCard
-      title="KGB Mendatang"
+      title="KGB Periode Terdekat"
       value={stats.upcomingKGB}
       icon={CalendarClock}
       tone="amber"
-      description={`Agenda KGB terdekat${
+      description={`Agenda kenaikan gaji berkala yang jatuh tempo${
         stats.nextMonthName
-          ? ` periode ${stats.nextMonthName} ${stats.nextMonthYear || ""}`
+          ? ` pada ${stats.nextMonthName} ${stats.nextMonthYear || ""}`
           : ""
       }.`}
-      caption="Klik untuk filter"
+      caption="Jadwal Mendatang"
       onClick={() => onCardClick?.("upcoming")}
     />
 
     <StatCard
-      title="Perlu Tindak Lanjut"
+      title="Perlu Verifikasi Berkas"
       value={stats.pendingKGB}
       icon={AlertTriangle}
       tone="rose"
-      description="Berkas atau layanan yang masih perlu diperiksa agar tidak melewati tenggat."
-      caption="Prioritas layanan"
+      description="Daftar berkas atau usulan yang memerlukan verifikasi kelengkapan dokumen."
+      caption="Tindak Lanjut Administrasi"
       onClick={() => onCardClick?.("pending")}
     />
 
     <StatCard
-      title="Selesai Diproses"
+      title="SK Telah Diterbitkan"
       value={stats.processedKGB}
       icon={CheckCircle2}
       tone="emerald"
-      description="Dokumen/layanan yang sudah selesai dan dapat ditindaklanjuti untuk arsip."
-      caption="Riwayat selesai"
+      description="KGB yang telah selesai diproses dan surat keputusan (SK) telah diterbitkan."
+      caption="Arsip Realisasi Layanan"
       onClick={() => onCardClick?.("processed")}
     />
   </section>
