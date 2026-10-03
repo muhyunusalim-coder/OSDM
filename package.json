@@ -40,7 +40,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^5.0.0",
-    "esbuild": "^0.28.2",
+    "esbuild": "^0.25.0",
     "sharp": "^0.35.3",
     "sharp-cli": "^6.0.0",
     "tailwindcss": "^4.3.0",
@@ -49,6 +49,16 @@
     "typescript": "~5.8.2",
     "vite-plugin-pwa": "^0.21.1",
     "workbox-build": "^7.4.1"
+  },
+  "allowScripts": {
+    "core-js": true,
+    "protobufjs": true,
+    "esbuild": true,
+    "core-js@3.49.0": true,
+    "protobufjs@7.5.4": true,
+    "esbuild@0.28.2": true,
+    "esbuild@0.25.12": true,
+    "esbuild@0.25.0": true
   },
   "type": "module"
 }
