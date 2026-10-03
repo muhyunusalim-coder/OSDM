@@ -500,13 +500,13 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                   <th className={`hidden lg:table-cell ${isCompact ? 'px-2 py-1.5 md:px-3 md:py-2' : 'px-3 py-2.5 md:px-4 md:py-3'}`}>Detail</th>
                   <th className={`hidden xl:table-cell ${isCompact ? 'px-2 py-1.5 md:px-3 md:py-2' : 'px-3 py-2.5 md:px-4 md:py-3'}`}>Status</th>
                   <th className={`whitespace-nowrap hidden xl:table-cell ${isCompact ? 'px-2 py-1.5 md:px-3 md:py-2' : 'px-3 py-2.5 md:px-4 md:py-3'}`}>Masa Kerja</th>
-                  <th className={`hidden md:table-cell cursor-pointer hover:bg-gray-100 dark:bg-gray-800 transition-colors ${isCompact ? 'px-2 py-1.5 md:px-3 md:py-2' : 'px-3 py-2.5 md:px-4 md:py-3'}`} onClick={() => requestSort('tmtDate')}>
+                  <th className={`cursor-pointer hover:bg-gray-100 dark:bg-gray-800 transition-colors ${isCompact ? 'px-2 py-1.5 md:px-3 md:py-2' : 'px-3 py-2.5 md:px-4 md:py-3'}`} onClick={() => requestSort('tmtDate')}>
                     <div className="flex items-center gap-1">
                       TMT KGB
                       <ArrowUpDown size={10} className={sortConfig?.key === 'tmtDate' ? 'text-primary-600' : 'text-gray-500 dark:text-gray-400'} />
                     </div>
                   </th>
-                  <th className={`hidden md:table-cell ${isCompact ? 'px-2 py-1.5 md:px-3 md:py-2' : 'px-3 py-2.5 md:px-4 md:py-3'}`}>
+                  <th className={`${isCompact ? 'px-2 py-1.5 md:px-3 md:py-2' : 'px-3 py-2.5 md:px-4 md:py-3'}`}>
                     TMT Sebelumnya
                   </th>
                   <th className={`text-center ${isCompact ? 'px-2 py-1.5 md:px-3 md:py-2' : 'px-3 py-2.5 md:px-4 md:py-3'}`}>Hitungan Mundur KGB</th>
@@ -565,12 +565,12 @@ const EmployeeTable = React.memo(({ employees, onStatusToggle, onDeleteEmployee,
                       {emp.masaKerja}
                     </span>
                   </td>
-                  <td className={`hidden md:table-cell ${isCompact ? 'px-2 py-1 md:px-3 md:py-1.5' : 'px-3 py-2 md:px-4 md:py-2.5'}`}>
+                  <td className={`${isCompact ? 'px-2 py-1 md:px-3 md:py-1.5' : 'px-3 py-2 md:px-4 md:py-2.5'}`}>
                     <div className={`font-mono text-gray-800 dark:text-gray-200 font-bold bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg inline-block shadow-sm ${isCompact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs'}`}>
                       {emp.tmt}
                     </div>
                   </td>
-                  <td className={`hidden md:table-cell ${isCompact ? 'px-2 py-1 md:px-3 md:py-1.5' : 'px-3 py-2 md:px-4 md:py-2.5'}`}>
+                  <td className={`${isCompact ? 'px-2 py-1 md:px-3 md:py-1.5' : 'px-3 py-2 md:px-4 md:py-2.5'}`}>
                     <div className={`font-mono text-gray-600 dark:text-gray-400 font-medium bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg inline-block shadow-sm ${isCompact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs'}`}>
                       {emp.tmtKgbTerakhir || '-'}
                     </div>
